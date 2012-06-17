@@ -38,6 +38,9 @@ We're working on the additional modules and they will be available soon at [UseS
 
 == Changelog ==
 
+= 1.1.1 =
+* Fixed localization bugs in Canada Post module
+
 = 1.1 = 
 * Added install logic for additional third-party modules such as USPS
 

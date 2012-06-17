@@ -84,7 +84,7 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 		{
 			if (!is_array($val) && (! isset($val) || $val === ''))
 			{
-				add_settings_error($key,$key, sprintf(__('%s is a required value!'), ucwords(str_replace('_', ' ',$key))), 'error');
+				add_settings_error($key,$key, sprintf(__('%s is a required value!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
 			}
 			elseif (is_array($val)) // Handles test/live credentials
 			{
@@ -92,11 +92,11 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 				{
 					if (! isset($v) || $v === '')
 					{
-						add_settings_error($k,$k, sprintf(__('%s %s is a required value!'), ucwords($key), ucwords($k)), 'error');
+						add_settings_error($k,$k, sprintf(__('%s %s is a required value!',$this->domain), ucwords($key), ucwords($k)), 'error');
 					}
 					elseif (! preg_match('/^[a-zA-Z0-9]+$/',$v))
 					{
-						add_settings_error($k,$k, sprintf(__('%s %s does not contain a valid string'), ucwords($key), ucwords($k)), 'error');
+						add_settings_error($k,$k, sprintf(__('%s %s does not contain a valid string',$this->domain), ucwords($key), ucwords($k)), 'error');
 					}
 					
 				}
@@ -105,7 +105,7 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 		
 		if (! preg_match('/^[0-9]+$/',$input[$this->my_options_name]['customer_number']))
 		{
-			add_settings_error('customer_number','customer_number', __('Customer Number must be a number!'), 'error');
+			add_settings_error('customer_number','customer_number', __('Customer Number must be a number!', $this->domain), 'error');
 		}
 		
 		return $input;
@@ -122,7 +122,8 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 	{
 		return __('<p>In order to use Canada Post API, you must first join the <a href="https://www.canadapost.ca/cpotools/apps/drc/home" target="_new"> '.
 				  'Canada Post Developer Program</a>. It\'s free and you\'ll also get a VentureOne™ card which gives you some nice discounts on their services.' .
-				  '<br /><br /><i>Note that it takes up to 24 hours for your registration to be processed for production access, and the test mode will return dummy values.</i></p>');
+				  '<br /><br /><i>Note that it takes up to 24 hours for your registration to be processed ' .
+				  'for production access, and the test mode will return dummy values.</i></p>',$this->domain);
 	}
 	
 	
@@ -137,11 +138,11 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 		$opts = $this->get_options();
 		$po   = parent::get_options_name();
 		
-		$customer_number = __('Customer Number');
-		$test_uname      = __('Test Username');
-		$test_pass       = __('Test Password');
-		$live_uname      = __('Live Username');
-		$live_pass       = __('Live Password');
+		$customer_number = __('Customer Number', $this->domain);
+		$test_uname      = __('Test Username', $this->domain);
+		$test_pass       = __('Test Password', $this->domain);
+		$live_uname      = __('Live Username', $this->domain);
+		$live_pass       = __('Live Password', $this->domain);
 		
 		return <<<EOF
 			<table>
@@ -213,7 +214,7 @@ EOF;
 	{
 		$out .= '<fieldset class="eshop fld0"><legend id="shiplegend">'. __('Please Choose Shipping','eshop').eshop_checkreqd($reqdarray,'shipping').'</legend>';
 		$out .= '<div id="usc_shipping_error_msgs"></div><div id="usc_shipping_options"></div><div id="usc_shipping_details"></div>';
-		$out .= '<a id="usc_update_shipping_options" href="#">' . __('Update Shipping Options', 'eshop-shipping-extension'). '</a>';
+		$out .= '<a id="usc_update_shipping_options" href="#">' . __('Update Shipping Options', $this->domain). '</a>';
 		$out .= '<img style="display:none" id="usc_shipping_throbber" class="usc_shipping_throbber" src="' . plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/images/arrows-throbber.gif') . '" />';
 		$out .= "</fieldset>";
 		
@@ -407,7 +408,7 @@ XML;
 		if (!$xml) 
 		{
 			$out['success'] = false;
-			$out['msgs'][] = __('Failed loading XML\n') . $curl_response . "\n"; 	
+			$out['msgs'][] = __('Failed loading XML', $this->domain) . $curl_response . "\n"; 	
 			
 			foreach(libxml_get_errors() as $error) {
 				$out['msgs'][] = $error->message;
@@ -463,7 +464,7 @@ XML;
 		{
 			if (count($out['msgs']) == 0)
 			{
-				$out['msgs'][] = __('No shipping plans were found for your options!');
+				$out['msgs'][] = __('No shipping plans were found for your options!', $this->domain);
 			}
 		}
 		else
