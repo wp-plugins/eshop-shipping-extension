@@ -1,0 +1,603 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: eshop-shipping-extension\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-16 15:19-0500\n"
+"PO-Revision-Date: 2012-06-16 15:19-0500\n"
+"Last-Translator: \n"
+"Language-Team: UseStrict Consulting <vinny@usestrict.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-Language: Portuguese\n"
+"X-Poedit-Country: BRAZIL\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-SearchPath-0: ..\n"
+"X-Poedit-SearchPath-1: ../..\n"
+
+#: ../admin.php:93
+#: ../../includes/admin.php:93
+msgid "Invalid option selected!"
+msgstr "Opção selecionada inválida!"
+
+#: ../admin.php:98
+#: ../../includes/admin.php:98
+msgid "Zip/Postal Code is required!"
+msgstr "Código Postal é obrigatório!"
+
+#: ../admin.php:121
+#: ../../includes/admin.php:121
+msgid "eShop is not installed. Please install it in order to use this!"
+msgstr "O eShop não está instalado. Por favor instale-o para poder usar este plugin!"
+
+#: ../admin.php:125
+#: ../../includes/admin.php:125
+msgid "eShop is not active. Don't forget to activate it!"
+msgstr "O eShop não está ativo. Não esqueça de ativá-lo!"
+
+#: ../admin.php:152
+#: ../../includes/admin.php:152
+msgid "Please remember to change eShop shipping mode to <em>\"Weight &amp; Zone\"</em> in order to use third-party services."
+msgstr "Não esqueça de mudar o modo de envio do eShop para <em>\"Weight &amp; Zone\"</em> para poder usar as extensões."
+
+#: ../admin.php:197
+#: ../../includes/admin.php:197
+msgid "eShop Shipping Extension Settings"
+msgstr "Configurações da Extensão de Envio do eShop"
+
+#: ../admin.php:203
+#: ../../includes/admin.php:203
+msgid "About the Author:"
+msgstr "Sobre o Autor:"
+
+#: ../admin.php:206
+#: ../../includes/admin.php:206
+msgid "This plugin is brought to you by <a href=\"http://usestrict.net\" target=\"_new\">UseStrict Consulting</a>, where you can find information on Perl, PHP, and Web Technologies in general."
+msgstr "Este plugin é oferecido por <a href=\"http://usestrict.net\" target=\"_new\">UseStrict Consulting</a>, onde você pode encontrar informações sobre Perl, PHP, e Tecnologias Web em geral."
+
+#: ../admin.php:210
+#: ../../includes/admin.php:210
+msgid "You can reach us on Twitter <a href=\"http://twitter.com/vinnyusestrict\" target=\"_new\">@vinnyusestrict</a> and <a href=\"http://www.facebook.com/vinny.alves\" target=\"_new\">Facebook</a>"
+msgstr "Fale conosco no Twitter <a href=\"http://twitter.com/vinnyusestrict\" target=\"_new\">@vinnyusestrict</a> e <a href=\"http://www.facebook.com/vinny.alves\" target=\"_new\">Facebook</a>"
+
+#: ../admin.php:213
+#: ../../includes/admin.php:213
+msgid "Donate"
+msgstr "Doar"
+
+#: ../admin.php:214
+#: ../../includes/admin.php:214
+msgid "Writing and maintaining a plugin takes time and coffee - a lot of it. If you enjoy this plugin, please consider making a donation towards my next all-nighter ;-). <strong>Thank You!</strong>"
+msgstr "Escrever e manter um plugin requer tempo e muito café. Se você curtiu este plugin, por favor considere fazer uma doação para ajudar a me manter acordado ;-). <strong>Obrigado!</strong>"
+
+#: ../admin.php:217
+#: ../../includes/admin.php:217
+msgid ""
+"<form action=\"https://www.paypal.com/cgi-bin/webscr\" method=\"post\">\n"
+"\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" name=\"cmd\" value=\"_s-xclick\">\n"
+"\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" name=\"hosted_button_id\" value=\"VLQU2MMXKB6S2\">\n"
+"\t\t\t\t\t\t\t\t\t\t\t<input type=\"image\" src=\"https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif\" border=\"0\" name=\"submit\" alt=\"PayPal - The safer, easier way to pay online!\">\n"
+"\t\t\t\t\t\t\t\t\t\t\t<img alt=\"\" border=\"0\" src=\"https://www.paypalobjects.com/en_US/i/scr/pixel.gif\" width=\"1\" height=\"1\">\n"
+"\t\t\t\t\t\t\t\t\t\t\t</form>"
+msgstr "<form action=\"https://www.paypal.com/cgi-bin/webscr\" method=\"post\"><input type=\"hidden\" name=\"cmd\" value=\"_s-xclick\"><input type=\"hidden\" name=\"hosted_button_id\" value=\"F2T9SXPM3HFWJ\"><input type=\"image\" src=\"https://www.paypalobjects.com/pt_BR/i/btn/btn_donate_SM.gif\" border=\"0\" name=\"submit\" alt=\"PayPal - A maneira mais fácil e segura de efetuar pagamentos online!\"><img alt=\"\" border=\"0\" src=\"https://www.paypalobjects.com/en_US/i/scr/pixel.gif\" width=\"1\" height=\"1\"></form>"
+
+#: ../admin.php:236
+#: ../../includes/admin.php:236
+msgid "General Settings"
+msgstr "Configurações Gerais"
+
+#: ../admin.php:238
+#: ../../includes/admin.php:238
+msgid "eShop Shipping Extension overrides the default options that ships with eShop. It provides a way to interact directly with available third-party services such as Canada Post and get real-time shipping rates. Use the options below to set up your services."
+msgstr "A Extensão de Envio do eShop substitui as opções que vêm padrão com o eShop. Ela fornece uma maneira de interagir diretamente com serviçoes de terceiros disponíveis (como o Canada Post) para obter taxas de envio em tempo real. Utilize as opções abaixo para configurar seus serviços."
+
+#: ../admin.php:242
+#: ../../includes/admin.php:242
+msgid "Zip/Postal Code of origin?"
+msgstr "Código Postal de origem?"
+
+#: ../admin.php:246
+#: ../../includes/admin.php:246
+msgid "Select which interface (if any) you want to use:"
+msgstr "Selecione qual interface você deseja usar:"
+
+#: ../admin.php:248
+#: ../../includes/admin.php:248
+msgid "None"
+msgstr "Nenhuma"
+
+#: ../admin.php:252
+#: ../../includes/admin.php:252
+msgid "\"None\" means eShop's default settings."
+msgstr "\"Nenhuma\" significa usar as opções selecionadas no eShop."
+
+#: ../admin.php:253
+#: ../../includes/admin.php:253
+msgid "Shipping Details CSS Styles:"
+msgstr "Estilo de CSS dos detalhes de Envio:"
+
+#: ../admin.php:278
+#: ../../includes/admin.php:278
+msgid "Save Preferences"
+msgstr "Salvar Preferências"
+
+#: ../override_eshop_display_cart.php:49
+#: ../../includes/override_eshop_display_cart.php:49
+msgid "Shopping cart contents overview"
+msgstr "Visão geral do conteúdo do carrinho"
+
+#: ../override_eshop_display_cart.php:50
+#: ../../includes/override_eshop_display_cart.php:50
+msgid "Shopping Cart"
+msgstr "Carrinho"
+
+#: ../override_eshop_display_cart.php:53
+#: ../../includes/override_eshop_display_cart.php:53
+msgid "Item Description"
+msgstr "Descrição do item"
+
+#: ../override_eshop_display_cart.php:54
+#: ../../includes/override_eshop_display_cart.php:54
+msgid "<abbr title=\"Quantity\">Qty</abbr>"
+msgstr "Shopping cart contents overview"
+
+#: ../override_eshop_display_cart.php:56
+#: ../override_eshop_display_cart.php:204
+#: ../../includes/override_eshop_display_cart.php:56
+#: ../../includes/override_eshop_display_cart.php:204
+msgid "Sub-Total"
+msgstr "Subtotal"
+
+#: ../override_eshop_display_cart.php:61
+#: ../../includes/override_eshop_display_cart.php:61
+msgid "Tax %"
+msgstr "Tax %"
+
+#: ../override_eshop_display_cart.php:62
+#: ../../includes/override_eshop_display_cart.php:62
+msgid "Tax Amt"
+msgstr "Tax Amt"
+
+#: ../override_eshop_display_cart.php:66
+#: ../../includes/override_eshop_display_cart.php:66
+msgid "Delete"
+msgstr "Delete"
+
+#: ../override_eshop_display_cart.php:151
+#: ../override_eshop_display_cart.php:165
+#: ../override_eshop_display_cart.php:202
+#: ../override_eshop_display_cart.php:204
+#: ../override_eshop_display_cart.php:295
+#: ../override_eshop_display_cart.php:302
+#: ../../includes/override_eshop_display_cart.php:151
+#: ../../includes/override_eshop_display_cart.php:165
+#: ../../includes/override_eshop_display_cart.php:202
+#: ../../includes/override_eshop_display_cart.php:204
+#: ../../includes/override_eshop_display_cart.php:295
+#: ../../includes/override_eshop_display_cart.php:302
+#, php-format
+msgid "%1$s%2$s"
+msgstr "%1$s%2$s"
+
+#: ../override_eshop_display_cart.php:151
+#: ../override_eshop_display_cart.php:165
+#: ../override_eshop_display_cart.php:202
+#: ../override_eshop_display_cart.php:204
+#: ../override_eshop_display_cart.php:295
+#: ../override_eshop_display_cart.php:302
+#: ../override_eshop_display_cart.php:319
+#: ../override_eshop_display_cart.php:327
+#: ../../includes/override_eshop_display_cart.php:151
+#: ../../includes/override_eshop_display_cart.php:165
+#: ../../includes/override_eshop_display_cart.php:202
+#: ../../includes/override_eshop_display_cart.php:204
+#: ../../includes/override_eshop_display_cart.php:295
+#: ../../includes/override_eshop_display_cart.php:302
+#: ../../includes/override_eshop_display_cart.php:319
+#: ../../includes/override_eshop_display_cart.php:327
+msgid "2"
+msgstr "2"
+
+#: ../override_eshop_display_cart.php:178
+#: ../../includes/override_eshop_display_cart.php:178
+msgid "Delete this item"
+msgstr "Delete this item"
+
+#: ../override_eshop_display_cart.php:194
+#: ../../includes/override_eshop_display_cart.php:194
+#, php-format
+msgid "Including Discount of <span>%s%%</span>"
+msgstr "Including Discount of <span>%s%%</span>"
+
+#: ../override_eshop_display_cart.php:285
+#: ../../includes/override_eshop_display_cart.php:285
+msgid "Change Shipping"
+msgstr "Change Shipping"
+
+#: ../override_eshop_display_cart.php:287
+#: ../override_eshop_order_handle.php:330
+#: ../../includes/override_eshop_display_cart.php:287
+#: ../../includes/override_eshop_order_handle.php:330
+msgid "Shipping"
+msgstr "Shipping"
+
+#: ../override_eshop_display_cart.php:316
+#: ../../includes/override_eshop_display_cart.php:316
+msgid "(excl.tax)"
+msgstr "(excl.tax)"
+
+#: ../override_eshop_display_cart.php:319
+#: ../../includes/override_eshop_display_cart.php:319
+msgid "Total Order Charges"
+msgstr "Total Order Charges"
+
+#: ../override_eshop_display_cart.php:319
+#: ../override_eshop_display_cart.php:327
+#: ../../includes/override_eshop_display_cart.php:319
+#: ../../includes/override_eshop_display_cart.php:327
+#, php-format
+msgid "%1$s%2$s <span>%3$s</span>"
+msgstr "%1$s%2$s <span>%3$s</span>"
+
+#: ../override_eshop_display_cart.php:327
+#: ../../includes/override_eshop_display_cart.php:327
+msgid "(incl.tax)"
+msgstr "(incl.tax)"
+
+#: ../override_eshop_display_cart.php:337
+#: ../../includes/override_eshop_display_cart.php:337
+msgid "Update Cart"
+msgstr "Update Cart"
+
+#: ../override_eshop_display_cart.php:338
+#: ../../includes/override_eshop_display_cart.php:338
+msgid "Empty Cart"
+msgstr "Empty Cart"
+
+#: ../override_eshop_display_cart.php:346
+#: ../../includes/override_eshop_display_cart.php:346
+msgid "Your shopping cart is currently empty."
+msgstr "Your shopping cart is currently empty."
+
+#: ../override_eshop_display_cart.php:349
+#: ../../includes/override_eshop_display_cart.php:349
+msgid "Test Mode &#8212; No money will be collected."
+msgstr "Test Mode &#8212; No money will be collected."
+
+#: ../override_eshop_display_cart.php:352
+#: ../../includes/override_eshop_display_cart.php:352
+#, php-format
+msgid "Discount Code <span>%s</span> has been applied to your cart."
+msgstr "Discount Code <span>%s</span> has been applied to your cart."
+
+#: ../override_eshop_display_cart.php:360
+#: ../../includes/override_eshop_display_cart.php:360
+msgid "Edit Cart"
+msgstr "Edit Cart"
+
+#: ../override_eshop_display_cart.php:361
+#: ../../includes/override_eshop_display_cart.php:361
+msgid "Checkout"
+msgstr "Checkout"
+
+#: ../override_eshop_order_handle.php:98
+#: ../../includes/override_eshop_order_handle.php:98
+msgid "cash"
+msgstr "cash"
+
+#: ../override_eshop_order_handle.php:103
+#: ../../includes/override_eshop_order_handle.php:103
+msgid "bank"
+msgstr "bank"
+
+#: ../override_eshop_order_handle.php:170
+#: ../../includes/override_eshop_order_handle.php:170
+msgid "Processing&#8230;"
+msgstr "Processing&#8230;"
+
+#: ../override_eshop_order_handle.php:358
+#: ../../includes/override_eshop_order_handle.php:358
+msgid "Test Mode &#8212; No money will be collected. This page will not auto redirect in test mode."
+msgstr "Test Mode &#8212; No money will be collected. This page will not auto redirect in test mode."
+
+#: ../override_eshop_showform.php:49
+#: ../../includes/override_eshop_showform.php:49
+msgid "Denotes Required Field "
+msgstr "Denotes Required Field "
+
+#: ../override_eshop_showform.php:133
+#: ../../includes/override_eshop_showform.php:133
+msgid "Please Enter Your Details"
+msgstr "Please Enter Your Details"
+
+#: ../override_eshop_showform.php:136
+#: ../../includes/override_eshop_showform.php:136
+msgid "Mailing Address"
+msgstr "Mailing Address"
+
+#: ../override_eshop_showform.php:138
+#: ../../includes/override_eshop_showform.php:138
+msgid "Contact Details"
+msgstr "Contact Details"
+
+#: ../override_eshop_showform.php:140
+#: ../../includes/override_eshop_showform.php:140
+msgid "First Name"
+msgstr "First Name"
+
+#: ../override_eshop_showform.php:142
+#: ../../includes/override_eshop_showform.php:142
+msgid "Last Name"
+msgstr "Last Name"
+
+#: ../override_eshop_showform.php:145
+#: ../override_eshop_showform.php:249
+#: ../../includes/override_eshop_showform.php:145
+#: ../../includes/override_eshop_showform.php:249
+msgid "Company"
+msgstr "Company"
+
+#: ../override_eshop_showform.php:148
+#: ../../includes/override_eshop_showform.php:148
+msgid "Email"
+msgstr "Email"
+
+#: ../override_eshop_showform.php:151
+#: ../override_eshop_showform.php:251
+#: ../../includes/override_eshop_showform.php:151
+#: ../../includes/override_eshop_showform.php:251
+msgid "Phone"
+msgstr "Phone"
+
+#: ../override_eshop_showform.php:153
+#: ../override_eshop_showform.php:253
+#: ../../includes/override_eshop_showform.php:153
+#: ../../includes/override_eshop_showform.php:253
+msgid "Address"
+msgstr "Address"
+
+#: ../override_eshop_showform.php:155
+#: ../../includes/override_eshop_showform.php:155
+msgid "Address (continued)"
+msgstr "Address (continued)"
+
+#: ../override_eshop_showform.php:157
+#: ../override_eshop_showform.php:255
+#: ../../includes/override_eshop_showform.php:157
+#: ../../includes/override_eshop_showform.php:255
+msgid "City or town"
+msgstr "City or town"
+
+#: ../override_eshop_showform.php:171
+#: ../override_eshop_showform.php:258
+#: ../../includes/override_eshop_showform.php:171
+#: ../../includes/override_eshop_showform.php:258
+msgid "State/County/Province"
+msgstr "State/County/Province"
+
+#: ../override_eshop_showform.php:173
+#: ../override_eshop_showform.php:261
+#: ../../includes/override_eshop_showform.php:173
+#: ../../includes/override_eshop_showform.php:261
+msgid "Please Select"
+msgstr "Please Select"
+
+#: ../override_eshop_showform.php:174
+#: ../override_eshop_showform.php:262
+#: ../../includes/override_eshop_showform.php:174
+#: ../../includes/override_eshop_showform.php:262
+msgid "not applicable"
+msgstr "not applicable"
+
+#: ../override_eshop_showform.php:199
+#: ../override_eshop_showform.php:281
+#: ../../includes/override_eshop_showform.php:199
+#: ../../includes/override_eshop_showform.php:281
+msgid "State/County/Province <small>if not listed above</small>"
+msgstr "State/County/Province <small>if not listed above</small>"
+
+#: ../override_eshop_showform.php:202
+#: ../../includes/override_eshop_showform.php:202
+msgid "Zip/Post code"
+msgstr "Zip/Post code"
+
+#: ../override_eshop_showform.php:204
+#: ../override_eshop_showform.php:287
+#: ../../includes/override_eshop_showform.php:204
+#: ../../includes/override_eshop_showform.php:287
+msgid "Country"
+msgstr "Country"
+
+#: ../override_eshop_showform.php:216
+#: ../../includes/override_eshop_showform.php:216
+msgid "Error, please contact site owner."
+msgstr "Error, please contact site owner."
+
+#: ../override_eshop_showform.php:218
+#: ../override_eshop_showform.php:290
+#: ../../includes/override_eshop_showform.php:218
+#: ../../includes/override_eshop_showform.php:290
+msgid "Select your Country"
+msgstr "Select your Country"
+
+#: ../override_eshop_showform.php:235
+#: ../../includes/override_eshop_showform.php:235
+msgid "Additional information"
+msgstr "Additional information"
+
+#: ../override_eshop_showform.php:236
+#: ../../includes/override_eshop_showform.php:236
+msgid "Reference or <abbr title=\"Purchase Order number\">PO</abbr>"
+msgstr "Reference or <abbr title=\"Purchase Order number\">PO</abbr>"
+
+#: ../override_eshop_showform.php:238
+#: ../../includes/override_eshop_showform.php:238
+msgid "Comments or special instructions"
+msgstr "Comments or special instructions"
+
+#: ../override_eshop_showform.php:246
+#: ../../includes/override_eshop_showform.php:246
+msgid "Shipping address (if different)"
+msgstr "Shipping address (if different)"
+
+#: ../override_eshop_showform.php:247
+#: ../../includes/override_eshop_showform.php:247
+msgid "Name"
+msgstr "Name"
+
+#: ../override_eshop_showform.php:284
+#: ../../includes/override_eshop_showform.php:284
+msgid "Zip/Post Code"
+msgstr "Zip/Post Code"
+
+#: ../override_eshop_showform.php:311
+#: ../../includes/override_eshop_showform.php:311
+msgid "Discount Code"
+msgstr "Discount Code"
+
+#: ../override_eshop_showform.php:317
+#: ../../includes/override_eshop_showform.php:317
+msgid "Pay Via"
+msgstr "Pay Via"
+
+#: ../override_eshop_showform.php:343
+#: ../override_eshop_showform.php:367
+#: ../../includes/override_eshop_showform.php:343
+#: ../../includes/override_eshop_showform.php:367
+msgid "Pay via"
+msgstr "Pay via"
+
+#: ../override_eshop_showform.php:387
+#: ../../includes/override_eshop_showform.php:387
+msgid "Sign me up to the site so I can view my orders."
+msgstr "Sign me up to the site so I can view my orders."
+
+#: ../override_eshop_showform.php:391
+#: ../../includes/override_eshop_showform.php:391
+msgid "<strong>Note:</strong> Submit to show shipping charges."
+msgstr "<strong>Note:</strong> Submit to show shipping charges."
+
+#: ../override_eshop_showform.php:396
+#: ../../includes/override_eshop_showform.php:396
+msgid "Proceed to Confirmation &raquo;"
+msgstr "Proceed to Confirmation &raquo;"
+
+#: ../third-party/USC_eShop_Canada_Post.php:87
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:87
+#, php-format
+msgid "%s is a required value!"
+msgstr "%s é obrigatório!"
+
+#: ../third-party/USC_eShop_Canada_Post.php:95
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:95
+#, php-format
+msgid "%s %s is a required value!"
+msgstr "%s %s é obrigatório!"
+
+#: ../third-party/USC_eShop_Canada_Post.php:99
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:99
+#, php-format
+msgid "%s %s does not contain a valid string"
+msgstr "%s %s não contem um valor válido"
+
+#: ../third-party/USC_eShop_Canada_Post.php:108
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:108
+msgid "Customer Number must be a number!"
+msgstr "\"Número do Cliente\" deve ser um número"
+
+#: ../third-party/USC_eShop_Canada_Post.php:123
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:123
+msgid "<p>In order to use Canada Post API, you must first join the <a href=\"https://www.canadapost.ca/cpotools/apps/drc/home\" target=\"_new\"> Canada Post Developer Program</a>. It's free and you'll also get a VentureOne™ card which gives you some nice discounts on their services.<br /><br /><i>Note that it takes up to 24 hours for your registration to be processed for production access, and the test mode will return dummy values.</i></p>"
+msgstr "<p>Para poder usar a API do Canada Post, você precisa primeiro registrar-se no <a href=\"https://www.canadapost.ca/cpotools/apps/drc/home\" target=\"_new\">Canada Post Developer Program</a>. É gratuito e você ainda recebe um cartão do VentureOne™ que oferece descontos nos seus serviços.<br /><br /><em>Note que leva até 24 horas para sue registro ser processado no ambiente de produção, e que o modo de teste retornará valores ficítios.</em></p>"
+
+#: ../third-party/USC_eShop_Canada_Post.php:140
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:140
+msgid "Customer Number"
+msgstr "Número do Cliente"
+
+#: ../third-party/USC_eShop_Canada_Post.php:141
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:141
+msgid "Test Username"
+msgstr "Usuário de Teste"
+
+#: ../third-party/USC_eShop_Canada_Post.php:142
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:142
+msgid "Test Password"
+msgstr "Senha de Teste"
+
+#: ../third-party/USC_eShop_Canada_Post.php:143
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:143
+msgid "Live Username"
+msgstr "Usuário de Produção"
+
+#: ../third-party/USC_eShop_Canada_Post.php:144
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:144
+msgid "Live Password"
+msgstr "Senha de Produção"
+
+#: ../third-party/USC_eShop_Canada_Post.php:214
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:214
+msgid "Please Choose Shipping"
+msgstr "Selecione Modo de Envio"
+
+#: ../third-party/USC_eShop_Canada_Post.php:216
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:216
+msgid "Update Shipping Options"
+msgstr "Atualizar Opções de Envio"
+
+#: ../third-party/USC_eShop_Canada_Post.php:411
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:411
+msgid "Failed loading XML\\n"
+msgstr "Falha ao carregar o XML\\n"
+
+#: ../third-party/USC_eShop_Canada_Post.php:467
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:467
+msgid "No shipping plans were found for your options!"
+msgstr "Não encontramos planos de envio para suas opções!"
+
+#: ../third-party/USC_eShop_Canada_Post.php:513
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:513
+#, php-format
+msgid "Required field '%s' is missing!"
+msgstr "Campo obrigatório '%s' está faltando!"
+
+#: ../third-party/USC_eShop_Canada_Post.php:536
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:536
+msgid "Zip/Postal code is required for US/Canada postage"
+msgstr "O Código postal é obrigatório para EUA/Canadá"
+
+#: ../third-party/USC_eShop_Canada_Post.php:537
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:537
+msgid "Invalid weight"
+msgstr "Peso inválido"
+
+#: ../third-party/USC_eShop_Canada_Post.php:538
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:538
+msgid "Expected Delivery Date"
+msgstr "Data Prevista de Entrega"
+
+#: ../third-party/USC_eShop_Canada_Post.php:539
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:539
+msgid "Guaranteed Delivery"
+msgstr "Entrega Garantida"
+
+#: ../third-party/USC_eShop_Canada_Post.php:540
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:540
+msgid "Yes"
+msgstr "Sim"
+
+#: ../third-party/USC_eShop_Canada_Post.php:541
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:541
+msgid "No"
+msgstr "Não"
+
+#: ../../eshop-shipping-extension.php:154
+msgid "No shipping module is currently active!"
+msgstr "Nenhum módulo de envio está ativo!"
+
+#: ../../eshop-shipping-extension.php:307
+msgid "Invalid value to convert into Kilos!"
+msgstr "Valor inválido para converter em Kilos!"
+

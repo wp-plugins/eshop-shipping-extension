@@ -1,0 +1,43 @@
+@CHARSET "UTF-8";
+h2.usc {
+	font-style:italic;
+}
+
+hr {
+    border:0;
+    border-top: 1px solid #ccc;
+}
+
+th {
+    text-align:left;
+}
+
+.hidden {
+    display:none;
+}
+
+.has-right-sidebar .inner-sidebar {
+    display: block;
+}
+
+.inner-sidebar {
+    float: right;
+    clear: right;
+    display: none;
+    width: 281px;
+    position: relative;
+}
+
+.has-right-sidebar #post-body-content {
+    margin-right: 300px;
+}
+
+#post-body-content {
+    width: auto !important;
+    float: none !important;
+}
+
+textarea#general_css {
+	width: 90%;
+	height:200px;
+}
