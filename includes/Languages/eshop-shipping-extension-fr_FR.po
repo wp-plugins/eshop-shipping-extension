@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eshop-shipping-extension\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-16 15:59-0500\n"
-"PO-Revision-Date: 2012-06-17 00:02-0500\n"
+"POT-Creation-Date: 2012-06-17 19:12-0500\n"
+"PO-Revision-Date: 2012-06-17 19:13-0500\n"
 "Last-Translator: \n"
 "Language-Team: UseStrict Consulting <vinny@usestrict.net>\n"
 "MIME-Version: 1.0\n"
@@ -42,38 +42,38 @@ msgstr "eShop n'est pas active. Installez-le!"
 msgid "Please remember to change eShop shipping mode to <em>\"Weight &amp; Zone\"</em> in order to use third-party services."
 msgstr "Rappelez-vous d'échanger eShop livraison code to <em>\"Poid &amp; Zone\" pour utilizer le service d'externalization"
 
-#: ../admin.php:197
-#: ../../includes/admin.php:197
+#: ../admin.php:191
+#: ../../includes/admin.php:191
 msgid "eShop Shipping Extension Settings"
 msgstr "eShop Shipping Extension paramètres"
 
-#: ../admin.php:203
-#: ../../includes/admin.php:203
+#: ../admin.php:197
+#: ../../includes/admin.php:197
 msgid "About the Author:"
 msgstr "À propos de l'auteur"
 
-#: ../admin.php:206
-#: ../../includes/admin.php:206
+#: ../admin.php:200
+#: ../../includes/admin.php:200
 msgid "This plugin is brought to you by <a href=\"http://usestrict.net\" target=\"_new\">UseStrict Consulting</a>, where you can find information on Perl, PHP, and Web Technologies in general."
 msgstr "Ce plugin vous est apporté par"
 
-#: ../admin.php:210
-#: ../../includes/admin.php:210
+#: ../admin.php:204
+#: ../../includes/admin.php:204
 msgid "You can reach us on Twitter <a href=\"http://twitter.com/vinnyusestrict\" target=\"_new\">@vinnyusestrict</a> and <a href=\"http://www.facebook.com/vinny.alves\" target=\"_new\">Facebook</a>"
 msgstr "Vous pouvez nous joindre au Twitter"
 
-#: ../admin.php:213
-#: ../../includes/admin.php:213
+#: ../admin.php:207
+#: ../../includes/admin.php:207
 msgid "Donate"
 msgstr "Donnez"
 
-#: ../admin.php:214
-#: ../../includes/admin.php:214
+#: ../admin.php:208
+#: ../../includes/admin.php:208
 msgid "Writing and maintaining a plugin takes time and coffee - a lot of it. If you enjoy this plugin, please consider making a donation towards my next all-nighter ;-). <strong>Thank You!</strong>"
 msgstr "Rédiger et maintenir un plug-in nécessite du temps et beaucoup de café. Si vous aimez ce plugin, s'il vous plaît pensez à faire un don pour aider à me tenir éveillé ;-). <strong>Merci!</strong>"
 
-#: ../admin.php:217
-#: ../../includes/admin.php:217
+#: ../admin.php:211
+#: ../../includes/admin.php:211
 msgid ""
 "<form action=\"https://www.paypal.com/cgi-bin/webscr\" method=\"post\">\n"
 "\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" name=\"cmd\" value=\"_s-xclick\">\n"
@@ -83,43 +83,43 @@ msgid ""
 "\t\t\t\t\t\t\t\t\t\t\t</form>"
 msgstr "<form action=\"https://www.paypal.com/cgi-bin/webscr\" method=\"post\"><input type=\"hidden\" name=\"cmd\" value=\"_s-xclick\"><input type=\"hidden\" name=\"hosted_button_id\" value=\"3V74UJWM9776J\"><input type=\"image\" src=\"https://www.paypalobjects.com/fr_FR/FR/i/btn/btn_donate_SM.gif\" border=\"0\" name=\"submit\" alt=\"PayPal - la solution de paiement en ligne la plus simple et la plus sécurisée !\"><img alt=\"\" border=\"0\" src=\"https://www.paypalobjects.com/en_US/i/scr/pixel.gif\" width=\"1\" height=\"1\"></form>"
 
-#: ../admin.php:236
-#: ../../includes/admin.php:236
+#: ../admin.php:230
+#: ../../includes/admin.php:230
 msgid "General Settings"
 msgstr "Configuration Général"
 
-#: ../admin.php:238
-#: ../../includes/admin.php:238
+#: ../admin.php:232
+#: ../../includes/admin.php:232
 msgid "eShop Shipping Extension overrides the default options that ships with eShop. It provides a way to interact directly with available third-party services such as Canada Post and get real-time shipping rates. Use the options below to set up your services."
 msgstr "eShop Livraison Extension remplace les options par défaut qui est livré avec eShop. Il fournit un moyen d'interagir directement avec des services tiers tels que Postes Canada, et d'obtenir des tarifs d'expédition en temps réel. Utilisez les options ci-dessous pour configurer vos services."
 
-#: ../admin.php:242
-#: ../../includes/admin.php:242
+#: ../admin.php:236
+#: ../../includes/admin.php:236
 msgid "Zip/Postal Code of origin?"
 msgstr "Code postal est obligatoire!"
 
-#: ../admin.php:246
-#: ../../includes/admin.php:246
+#: ../admin.php:240
+#: ../../includes/admin.php:240
 msgid "Select which interface (if any) you want to use:"
 msgstr "Sélectionnez l'interface que vous voulez utiliser:"
 
-#: ../admin.php:248
-#: ../../includes/admin.php:248
+#: ../admin.php:242
+#: ../../includes/admin.php:242
 msgid "None"
 msgstr "Aucun"
 
-#: ../admin.php:252
-#: ../../includes/admin.php:252
+#: ../admin.php:246
+#: ../../includes/admin.php:246
 msgid "\"None\" means eShop's default settings."
 msgstr "«Aucun» signifie les paramètres par défaut du eShop."
 
-#: ../admin.php:253
-#: ../../includes/admin.php:253
+#: ../admin.php:247
+#: ../../includes/admin.php:247
 msgid "Shipping Details CSS Styles:"
 msgstr "Détails sur l'expédition styles CSS:"
 
-#: ../admin.php:278
-#: ../../includes/admin.php:278
+#: ../admin.php:272
+#: ../../includes/admin.php:272
 msgid "Save Preferences"
 msgstr "Sauvegarder les préférences"
 
@@ -512,45 +512,45 @@ msgstr "le «numéro de client\" champ doit être un nombre"
 msgid "<p>In order to use Canada Post API, you must first join the <a href=\"https://www.canadapost.ca/cpotools/apps/drc/home\" target=\"_new\"> Canada Post Developer Program</a>. It's free and you'll also get a VentureOne™ card which gives you some nice discounts on their services.<br /><br /><i>Note that it takes up to 24 hours for your registration to be processed for production access, and the test mode will return dummy values.</i></p>"
 msgstr "<p>Pour utiliser l'API de Postes Canada, vous devez d'abord adhérer à <a href=\"https://www.canadapost.ca/cpotools/apps/drc/home\" target=\"_new\">le Canada Post Developer Program</a>C'est gratuit et vous aurez aussi une carte Entrepreneur ™ qui vous donne des rabais sur leurs services.<br /><br /><i>Notez qu'il faut jusqu'à 24 heures pour que votre inscription soit traitée pour accès à la production, et le mode de test aura de retour des valeurs fictives.</i></p>"
 
-#: ../third-party/USC_eShop_Canada_Post.php:140
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:140
+#: ../third-party/USC_eShop_Canada_Post.php:141
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:141
 msgid "Customer Number"
 msgstr "Numéro de client"
 
-#: ../third-party/USC_eShop_Canada_Post.php:141
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:141
+#: ../third-party/USC_eShop_Canada_Post.php:142
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:142
 msgid "Test Username"
 msgstr "Nom d'utilisateur de test"
 
-#: ../third-party/USC_eShop_Canada_Post.php:142
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:142
+#: ../third-party/USC_eShop_Canada_Post.php:143
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:143
 msgid "Test Password"
 msgstr "Mot de passe (test)"
 
-#: ../third-party/USC_eShop_Canada_Post.php:143
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:143
+#: ../third-party/USC_eShop_Canada_Post.php:144
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:144
 msgid "Live Username"
 msgstr "Utilisateur (production)"
 
-#: ../third-party/USC_eShop_Canada_Post.php:144
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:144
+#: ../third-party/USC_eShop_Canada_Post.php:145
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:145
 msgid "Live Password"
 msgstr "Mot de passe (production)"
 
-#: ../third-party/USC_eShop_Canada_Post.php:214
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:214
+#: ../third-party/USC_eShop_Canada_Post.php:215
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:215
 msgid "Please Choose Shipping"
 msgstr "S'il vous plaît choisissez la livraison"
 
-#: ../third-party/USC_eShop_Canada_Post.php:216
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:216
+#: ../third-party/USC_eShop_Canada_Post.php:217
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:217
 msgid "Update Shipping Options"
 msgstr "Mettre à jour les options d'expédition"
 
 #: ../third-party/USC_eShop_Canada_Post.php:411
 #: ../../includes/third-party/USC_eShop_Canada_Post.php:411
-msgid "Failed loading XML\\n"
-msgstr "Échec de chargement XML\\n"
+msgid "Failed loading XML"
+msgstr "Échec de chargement XML"
 
 #: ../third-party/USC_eShop_Canada_Post.php:467
 #: ../../includes/third-party/USC_eShop_Canada_Post.php:467
@@ -593,11 +593,15 @@ msgstr "Oui"
 msgid "No"
 msgstr "Non"
 
-#: ../../eshop-shipping-extension.php:154
+#: ../../eshop-shipping-extension.php:160
 msgid "No shipping module is currently active!"
 msgstr "Aucun module d'expédition est actuellement actif!"
 
-#: ../../eshop-shipping-extension.php:307
+#: ../../eshop-shipping-extension.php:323
 msgid "Invalid value to convert into Kilos!"
 msgstr "Valeur incorrecte pour convertir en kilos!"
+
+#: ../../eshop-shipping-extension.php:379
+msgid "Failed to install module file: "
+msgstr "Impossible d'installer le fichier module:"
 
