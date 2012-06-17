@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post.
-* Version:       1.0
+* Version:       1.1
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -25,7 +25,7 @@
 define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.0');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.1');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_JS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/js'));
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
@@ -58,6 +58,12 @@ class USC_eShop_Shipping_Extension
 
 		// Load language files for admin and ajax calls
 		add_action('plugins_loaded', array(&$this,'load_lang'));
+		
+		// Show any admin notices
+		add_action('admin_notices', array(&$this,'admin_notices'));
+		
+		// Copy any extra third-party modules into self
+		register_activation_hook(__FILE__ , array(&$this,'install_extra_modules'));
 
 		if (is_admin())
 		{
@@ -217,6 +223,7 @@ class USC_eShop_Shipping_Extension
 		return $this->options_name;
 	}
 	
+	
 	/**
 	 * Method: load_lang
 	 * Description: Loads the locale file into the domain
@@ -235,18 +242,27 @@ class USC_eShop_Shipping_Extension
 	 */
 	function set_notice($msg, $is_error = false)
 	{
-		$class = $is_error ? 'error' : 'updated fade';
+		$_SESSION['usc_notices'][] = array('msg' => $msg, 'is_error' => $is_error);
+	}
 	
-		list($b_start,$b_end) = array();
 	
-		if ($is_error)
+	/**
+	 * Method: admin_notices
+	 * Desc: Shows important notices in the admin interface
+	 */
+	function admin_notices()
+	{
+	if (isset($_SESSION['usc_notices']))
 		{
-			list($b_start,$b_end) = array('<strong>','</strong>');
+			foreach ($_SESSION['usc_notices'] as $notice)
+			{
+				$class = $notice['is_error'] === true ? 'error' : 'updated fade';
+				
+				echo sprintf('<div class="%s"><p><strong>%s</strong></p></div>',$class, $notice['msg']);
+			}
+			
+			unset($_SESSION['usc_notices']);
 		}
-	
-		$msg = "<div class=\"$class\"><p>$b_start" . $msg . "$b_end</p></div>";
-	
-		$this->notices[] = $msg;
 	}
 	
 	
@@ -327,6 +343,44 @@ class USC_eShop_Shipping_Extension
 	
 		return $out;
 	}
+	
+	
+	/**
+	 * Method: install_extra_modules()
+	 * Description: look for any extra modules the user may have and copy the files over
+	 */
+	function install_extra_modules()
+	{
+		// Look for extra modules under eshop-shipping-extension-*
+		// Copy contents from js and third-party into framework dir
+		$plugins_dir = ESHOP_SHIPPING_EXTENSION_ABSPATH . '../';
+		$dir_str     = $plugins_dir . $this->domain . '-*/includes/*/*';
+		$files       = glob($dir_str);
+
+		foreach ($files as $file)
+		{
+			// Get file names
+			preg_match(',/([^/]+)/(includes/[^/]+/[^\.]+\.(js|php))$,', $file, $matches);
+			
+			if ($matches[0])
+			{
+				$module = $matches[1] . '/' .  $matches[1] . '.php';
+				
+				// Don't do anything if the module isn't active!
+				if (! is_plugin_active($module)) continue;
+				
+				$filepath = $matches[2];
+				
+				if (! @copy($file, ESHOP_SHIPPING_EXTENSION_ABSPATH . $filepath))
+				{
+					error_log(__LINE__ . ' Copying ' . $filepath );
+					
+					$e = error_get_last();
+					$this->set_notice(__('Failed to install module file: ', $this->domain) . $filepath . sprintf(' (%s)', $e['message']), true);
+				}
+			}
+		}
+	}
 }
 
 
@@ -337,7 +391,7 @@ if (is_admin())
 {
 	# REMEMBER: Ajax requests land here
 	require_once(ESHOP_SHIPPING_EXTENSION_INCLUDES . '/admin.php');
-	$USC_eShop_Shipping_Extension_Admin =& new USC_eShop_Shipping_Extension_Admin();
+	$USC_eShop_Shipping_Extension_Admin = new USC_eShop_Shipping_Extension_Admin();
 }
 else
 {

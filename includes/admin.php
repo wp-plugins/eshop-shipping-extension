@@ -152,13 +152,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 			$this->set_notice(__("Please remember to change eShop shipping mode to <em>\"Weight &amp; Zone\"</em> in order to use third-party services.",$this->domain), true);
 		}
 		
-		if (count($this->notices) > 0)
-		{
-			foreach ($this->notices as $n)
-			{
-				echo $n;
-			}
-		}		
+		$this->admin_notices();
 		?>
 		<?php settings_errors();?>
 		<div class="wrap">
