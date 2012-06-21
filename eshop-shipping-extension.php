@@ -314,10 +314,10 @@ class USC_eShop_Shipping_Extension
 	function convert_to_kilos($input)
 	{
 		$eshop_opts = $this->get_eshop_options();
-		$units_from = str_replace('.','',strtolower($eshop_opts['eshop_weight_unit']));
+		$units_from = str_replace('.','',strtolower($eshop_opts['weight_unit'])); // strip out any periods
 		$out        = array('success' => true);
 		
-		if (! is_numeric($input))
+		if (! is_numeric($input) || $input == '0')
 		{
 			$out['succes'] = false;
 			$out['msgs'][] = __('Invalid value to convert into Kilos!', $this->domain);
@@ -335,12 +335,19 @@ class USC_eShop_Shipping_Extension
 			case 'l':
 			case 'lb':
 			case 'pound':
+			case 'pounds':
 				$out['data'] = $input * 0.45359237;
 				break;
+			case 'g':
+			case 'gr':
+			case 'gram':
+			case 'grams':
+				$out['data'] = $input / 1000;
+				break;				
 			default:
 				$out['data'] = $input;
 		}
-	
+
 		return $out;
 	}
 	
