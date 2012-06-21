@@ -38,6 +38,10 @@ We're working on the additional modules and they will be available soon at [UseS
 
 == Changelog ==
 
+= 1.1.3 =
+* Added "grams" support to the weight converter.
+* Fixed a bug when checking for eShop's weight measurement value
+
 = 1.1.2 = 
 * Fixed Admin CSS placement bug.
 
