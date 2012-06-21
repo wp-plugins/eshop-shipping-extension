@@ -10,6 +10,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 	protected $notices;
 	private $modules;
 	private $admin_css = 'USC_eShop_Shipping_Admin.css';
+	private $plugin_page;
 	
 	function __construct()
 	{
@@ -27,22 +28,35 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 		add_action('admin_menu', array(&$this, 'add_options_page'));
 		add_action('admin_init', array(&$this, 'register_options'));
 		
-		// Add CSS file
-		wp_enqueue_style( $this->domain . '-admin-style', ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL . '/' . $this->admin_css,
-						  null,  ESHOP_SHIPPING_EXTENSION_VERSION , 'all' );
-		
 		// Initialize any Shipping modules
 		$this->initialize_modules();
 	}
 	
+	
+	/**
+	 * Method: add_admin_css
+	 * Description: Adds Admin CSS only for this options page
+	 */
+	function add_admin_css()
+	{
+		// Add CSS file
+		wp_enqueue_style( $this->domain . '-admin-style', ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL . '/' . $this->admin_css,
+				null,  ESHOP_SHIPPING_EXTENSION_VERSION , 'all' );
+		
+	}
+	
+	
 	/**
 	 * Method: add_options_page
-	 * Description: Creates Settings options
+	 * Description: Creates Settings options, adds action to enqueue admin style
 	 */
 	function add_options_page()
 	{
-		add_options_page('eShop Shipping Extension', 'eShop Shipping Extension', 'manage_options',
-				$this->options_name, array(&$this,'show_admin'));
+		$this->plugin_page = add_options_page('eShop Shipping Extension', 'eShop Shipping Extension', 'manage_options',
+								$this->options_name, array(&$this,'show_admin'));
+
+		// Add action to insert css
+		add_action('admin_head-' . $this->plugin_page, array(&$this,'add_admin_css'));
 	}
 	
 	/**
