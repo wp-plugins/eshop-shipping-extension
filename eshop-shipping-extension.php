@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post.
-* Version:       1.1.3
+* Version:       1.1.4
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -25,7 +25,7 @@
 define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.1.3');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.1.4');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_JS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/js'));
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));

@@ -349,9 +349,10 @@ EOF;
 		$opts = $this->get_options();
 
 		$mailed_by        = $opts['customer_number'];
-		$from_postal_code = $input['from_zip'];
+		$from_postal_code = str_replace(' ','',strtoupper($input['from_zip']));
 		$conv             = $this->convert_to_kilos($input['weight']);
 		$out              = array('success' => true);
+		$to_zip           = str_replace(' ','',strtoupper($input['zip']));
 		
 		if ($conv['success'] === false)
 		{
@@ -363,10 +364,10 @@ EOF;
 		switch ($input['country']) 
 		{
 			case 'CA':
-				$destination = "<domestic><postal-code>{$input[zip]}</postal-code></domestic>";
+				$destination = "<domestic><postal-code>{$to_zip}</postal-code></domestic>";
 				break;
 			case 'US':
-				$destination = "<united-states><zip-code>{$input[zip]}</zip-code></united-states>";
+				$destination = "<united-states><zip-code>{$to_zip}</zip-code></united-states>";
 				break;
 			default:
 				$destination = "<international><country-code>{$input[country]}</country-code></international>";
