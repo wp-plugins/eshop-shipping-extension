@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post.
-* Version:       1.1.4
+* Version:       1.1.5
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -25,7 +25,7 @@
 define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.1.4');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.1.5');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_JS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/js'));
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
@@ -65,6 +65,9 @@ class USC_eShop_Shipping_Extension
 		// Copy any extra third-party modules into self
 		register_activation_hook(__FILE__ , array(&$this,'install_extra_modules'));
 
+		// Add ajax handling for non-logged in people
+		add_action('wp_ajax_nopriv_' . $this->domain . '-get-rates', array(&$this,'get_rates'));
+		
 		if (is_admin())
 		{
 			// Add ajax capability for logged-in people, even though it's not really
@@ -99,8 +102,6 @@ class USC_eShop_Shipping_Extension
 			wp_enqueue_style( $this->domain . '-style', ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL . '/' . $this->css_filename, 
 							  null,  ESHOP_SHIPPING_EXTENSION_VERSION , 'all' );
 			
-			// Add ajax handling for non-logged in people
-			add_action('wp_ajax_nopriv_' . $this->domain . '-get-rates', array(&$this,'get_rates'));
 		}
 		
 	}
