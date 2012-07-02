@@ -3,8 +3,8 @@ Contributors: useStrict
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VLQU2MMXKB6S2
 Tags: eShop, Canada Post, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
-Tested up to: 3.4
-Stable tag: 1.1.5
+Tested up to: 3.4.1
+Stable tag: 1.1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,7 +14,7 @@ Replace eShop's default shipping methods with live calls to Canada Post.
 
 eShop Shipping Extension framework overrides eShop's default shipping methods, interacting directly with Canada Post for real-time shipping rates and services.
 
-Other services such as USPS, Correios, Fedex, DHL and UPS will be made available soon by [UseStrict Consulting](http://usestrict.net)
+Other services such as USPS, Correios, Fedex, DHL and UPS will be made available soon at [UseStrict Consulting](http://usestrict.net)
 
 == Installation ==
 
@@ -37,6 +37,9 @@ We're working on the additional modules and they will be available soon at [UseS
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+
+= 1.1.6 =
+* Added package dimension options for Canada Post users. This will address most cases of Volumetric Weight vs. Actual Weight. 
 
 = 1.1.5 =
 * Fixed ajax bug with non-logged-in users.
@@ -62,4 +65,4 @@ We're working on the additional modules and they will be available soon at [UseS
 
 == Upgrade Notice ==
 
-Fixed several bugs.
+Added package dimension options for Canada Post users.
