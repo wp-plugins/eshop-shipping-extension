@@ -12,11 +12,13 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 	public $options          = array();
 	private $live_url        = 'https://soa-gw.canadapost.ca/rs/ship/price';
 	private $test_url        = 'https://ct.soa-gw.canadapost.ca/rs/ship/price';
+	private $msgs_set        = array();
 	
 	function __construct()
 	{
-		// NOOP
+		//NOOP
 	}
+	
 	
 	function USC_eShop_Canada_Post()
 	{
@@ -84,7 +86,26 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 		{
 			if (!is_array($val) && (! isset($val) || $val === ''))
 			{
-				add_settings_error($key,$key, sprintf(__('%s is a required value!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
+				if ($key === 'width' || $key === 'length' || $key === 'height')
+				{
+					if ($input[$this->my_options_name]['unpackaged'] == 'false')
+					{
+						if (!$val)
+						{
+							add_settings_error($key,$key, sprintf(__('%s is required when Unpackaged = No!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
+						}
+						elseif (!is_numeric($val) || $val > 999.9 || $val < 0)
+						{
+							add_settings_error($key,$key, sprintf(__('%s has an invalid value. Must be > 0 and < 999.9', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
+						}
+					}
+					
+					continue;
+				}
+				else
+				{
+					add_settings_error($key,$key, sprintf(__('%s is a required value!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
+				}
 			}
 			elseif (is_array($val)) // Handles test/live credentials
 			{
@@ -143,6 +164,35 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 		$test_pass       = __('Test Password', $this->domain);
 		$live_uname      = __('Live Username', $this->domain);
 		$live_pass       = __('Live Password', $this->domain);
+		$length          = __('Length',$this->domain);
+		$width           = __('Width',$this->domain);
+		$height          = __('Height',$this->domain);
+		$mailing_tube    = __('Mailing Tube',$this->domain);
+		$unpackaged      = __('Unpackaged',$this->domain);
+		
+		$length_info       = __('Must always be the longest dimension.',$this->domain);
+		$mailing_tube_info = __('A surcharge will be applied to mailing tubes that are cylindrical in shape. ' . 
+				                'Cylinder shaped packages generate high processing costs due to their unique shape. '. 
+								'Customers are encouraged to use other non-cylinder shaped containers (e.g. triangular shape) to avoid the surcharge.',$this->domain);
+		
+		$unpackaged_info   = __('Yes indicates that the parcel will be unpackaged (e.g. tires).',$this->domain); 
+		
+		
+		$dimensions_text = __('<p>Although Canada Post does not require dimensions for their API calls (no errors occur if not passed), ' . 
+				              ' the size of the package may influence the price of the quote (e.g., if the volumetric weight is larger than the actual weight). '.
+				              ' We recommend entering the dimensions of ' . 
+				              ' the largest box according to your products or adjusting product prices to absorb any differences. '.
+				              '<a href="http://www.canadapost.ca/tools/pg/manual/PGabcmail_web_business-e.asp#1378832" target="_new">Read more here.</a></p><p><em>Note: All dimensions are in centimeters.</em></p>', $this->domain);
+		
+		$yes = __('Yes', $this->domain);
+		$no  = __('No', $this->domain);
+		
+		$yes_no_array = array($no => 'false', $yes => 'true');
+		foreach ($yes_no_array as $key => $val)
+		{
+			$mt_options         .= '<option value="'.$val.'" '.selected($val,$opts['mailing_tube'],false).'>'.$key.'</option>';
+			$unpackaged_options .= '<option value="'.$val.'" '.selected($val,$opts['unpackaged'],false).'>'.$key.'</option>';
+		}
 		
 		return <<<EOF
 			<table>
@@ -167,8 +217,46 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 					<th>$live_pass:</th>
 					<td><input type="text" name="{$po}[$this->my_options_name][live][password]" value="{$opts[live][password]}" /></td>
 				</tr>
-				
 			</table>
+		<hr />
+		{$dimensions_text}
+		<table>
+			<tr>
+				<th width="100">$length:</th>
+				<td><input type="text" name="{$po}[$this->my_options_name][length]" value="{$opts[length]}" size="5" maxlength="5"/></td>
+				<td><span id="length_info"><small>{$length_info}</small></span></td>
+			</tr>
+			<tr>
+				<th>$width:</th>
+				<td><input type="text" name="{$po}[$this->my_options_name][width]" value="{$opts[width]}" size="5" maxlength="5"/></td>
+				<td><span id="width_info"><small>{$width_info}</small></span></td>
+			</tr>
+			<tr>
+				<th>$height:</th>
+				<td><input type="text" name="{$po}[$this->my_options_name][height]" value="{$opts[height]}" size="5" maxlength="5"/></td>
+				<td><span id="height_info"><small>{$height_info}</small></span></td>
+			</tr>
+			<tr>
+				<th>$mailing_tube:</th>
+				<td>
+					<select name="{$po}[$this->my_options_name][mailing_tube]">
+						$mt_options
+					</select>
+				</td>
+				<td><span id="mailing_tube_info"><small>{$mailing_tube_info}</small></span></td>
+			</tr>
+			<tr>
+				<th>$unpackaged:</th>
+				<td>
+					<select name="{$po}[$this->my_options_name][unpackaged]">
+						$unpackaged_options
+					</select>
+				</td>
+				<td><span id="unpackaged_info"><small>{$unpackaged_info}</small></span></td>
+			</tr>
+		</table>
+		
+		
 EOF;
 	}
 	
@@ -373,12 +461,29 @@ EOF;
 				$destination = "<international><country-code>{$input[country]}</country-code></international>";
 		}
 		
+		if ($opts['length'] && $opts['width'] && $opts['height'])
+		{
+			$dimensions .= "<dimensions>
+				    <length>{$opts[length]}</length>
+					<width>{$opts[width]}</width>
+					<height>{$opts[height]}</height>
+				</dimensions>";
+		}
+		
+		if ($opts['unpackaged'] && $opts['unpackaged'] == 'true')
+		{
+			$unpackaged = "<unpackaged>{$opts['unpackaged']}</unpackaged>";
+		}
+		
+		
 		$out['data'] =<<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
 			<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate">
 			  <customer-number>{$mailed_by}</customer-number>
 			  <parcel-characteristics>
 			    <weight>{$weight}</weight>
+			    $dimensions
+			    $unpackaged
 			  </parcel-characteristics>
 			  <origin-postal-code>{$from_postal_code}</origin-postal-code>
 			  <destination>
@@ -387,6 +492,8 @@ EOF;
 			</mailing-scenario>
 XML;
 			  
+					
+		file_put_contents('/Sites/wordpress_plugins/html/wp-content/plugins/eshop-shipping-extension/out.xml',$out);
 		return $out;
 	}
 	
