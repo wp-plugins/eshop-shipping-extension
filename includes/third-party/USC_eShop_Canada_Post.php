@@ -208,7 +208,6 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 					<th>$test_pass:</th>
 					<td><input type="text" name="{$po}[$this->my_options_name][test][password]" value="{$opts[test][password]}" /></td>
 				</tr>
-				</tr>
 				<tr>
 					<th>$live_uname:</th>
 					<td><input type="text" name="{$po}[$this->my_options_name][live][username]" value="{$opts[live][username]}" /></td>

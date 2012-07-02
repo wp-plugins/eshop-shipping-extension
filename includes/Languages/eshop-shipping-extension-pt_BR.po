@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eshop-shipping-extension\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-02 12:58-0500\n"
-"PO-Revision-Date: 2012-07-02 12:58-0500\n"
+"POT-Creation-Date: 2012-07-02 13:26-0500\n"
+"PO-Revision-Date: 2012-07-02 13:41-0500\n"
 "Last-Translator: \n"
 "Language-Team: UseStrict Consulting <vinny@usestrict.net>\n"
 "MIME-Version: 1.0\n"
@@ -484,190 +484,191 @@ msgstr "<strong>Note:</strong> Submit to show shipping charges."
 msgid "Proceed to Confirmation &raquo;"
 msgstr "Proceed to Confirmation &raquo;"
 
-#: ../third-party/USC_eShop_Canada_Post.php:33
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:33
-msgid "New options are available in the admin section of eShop Shipping Extension. It is highly recommended that you set them!"
-msgstr "Novas opções estão disponíveis na seção de administração de eShop Shipping Extension. É altamente recomendável que você os configure!"
-
-#: ../third-party/USC_eShop_Canada_Post.php:111
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:111
+#: ../third-party/USC_eShop_Canada_Post.php:96
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:96
 #, php-format
 msgid "%s is required when Unpackaged = No!"
 msgstr "%s é obrigatório quando \"Sem Pacote\"= Não!"
 
-#: ../third-party/USC_eShop_Canada_Post.php:116
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:116
+#: ../third-party/USC_eShop_Canada_Post.php:101
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:101
 #, php-format
 msgid "%s has an invalid value. Must be > 0 and < 999.9"
 msgstr "%s tem um valor inválido. Deve ser entre 0 e 999.9"
 
-#: ../third-party/USC_eShop_Canada_Post.php:124
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:124
+#: ../third-party/USC_eShop_Canada_Post.php:109
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:109
 #, php-format
 msgid "%s is a required value!"
 msgstr "%s é obrigatório!"
 
-#: ../third-party/USC_eShop_Canada_Post.php:133
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:133
+#: ../third-party/USC_eShop_Canada_Post.php:118
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:118
 #, php-format
 msgid "%s %s is a required value!"
 msgstr "%s %s é obrigatório!"
 
-#: ../third-party/USC_eShop_Canada_Post.php:137
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:137
+#: ../third-party/USC_eShop_Canada_Post.php:122
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:122
 #, php-format
 msgid "%s %s does not contain a valid string"
 msgstr "%s %s não contem um valor válido"
 
-#: ../third-party/USC_eShop_Canada_Post.php:146
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:146
+#: ../third-party/USC_eShop_Canada_Post.php:131
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:131
 msgid "Customer Number must be a number!"
 msgstr "\"Número do Cliente\" deve ser um número"
 
-#: ../third-party/USC_eShop_Canada_Post.php:161
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:161
+#: ../third-party/USC_eShop_Canada_Post.php:146
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:146
 msgid "<p>In order to use Canada Post API, you must first join the <a href=\"https://www.canadapost.ca/cpotools/apps/drc/home\" target=\"_new\"> Canada Post Developer Program</a>. It's free and you'll also get a VentureOne™ card which gives you some nice discounts on their services.<br /><br /><i>Note that it takes up to 24 hours for your registration to be processed for production access, and the test mode will return dummy values.</i></p>"
 msgstr "<p>Para poder usar a API do Canada Post, você precisa primeiro registrar-se no <a href=\"https://www.canadapost.ca/cpotools/apps/drc/home\" target=\"_new\">Canada Post Developer Program</a>. É gratuito e você ainda recebe um cartão do VentureOne™ que oferece descontos nos seus serviços.<br /><br /><em>Note que leva até 24 horas para sue registro ser processado no ambiente de produção, e que o modo de teste retornará valores ficítios.</em></p>"
 
-#: ../third-party/USC_eShop_Canada_Post.php:179
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:179
+#: ../third-party/USC_eShop_Canada_Post.php:164
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:164
 msgid "Customer Number"
 msgstr "Número do Cliente"
 
-#: ../third-party/USC_eShop_Canada_Post.php:180
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:180
+#: ../third-party/USC_eShop_Canada_Post.php:165
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:165
 msgid "Test Username"
 msgstr "Usuário de Teste"
 
-#: ../third-party/USC_eShop_Canada_Post.php:181
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:181
+#: ../third-party/USC_eShop_Canada_Post.php:166
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:166
 msgid "Test Password"
 msgstr "Senha de Teste"
 
-#: ../third-party/USC_eShop_Canada_Post.php:182
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:182
+#: ../third-party/USC_eShop_Canada_Post.php:167
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:167
 msgid "Live Username"
 msgstr "Usuário de Produção"
 
-#: ../third-party/USC_eShop_Canada_Post.php:183
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:183
+#: ../third-party/USC_eShop_Canada_Post.php:168
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:168
 msgid "Live Password"
 msgstr "Senha de Produção"
 
-#: ../third-party/USC_eShop_Canada_Post.php:184
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:184
+#: ../third-party/USC_eShop_Canada_Post.php:169
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:169
 msgid "Length"
 msgstr "Comprimento"
 
-#: ../third-party/USC_eShop_Canada_Post.php:185
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:185
+#: ../third-party/USC_eShop_Canada_Post.php:170
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:170
 msgid "Width"
 msgstr "Largura"
 
-#: ../third-party/USC_eShop_Canada_Post.php:186
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:186
+#: ../third-party/USC_eShop_Canada_Post.php:171
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:171
 msgid "Height"
 msgstr "Algura"
 
-#: ../third-party/USC_eShop_Canada_Post.php:187
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:187
+#: ../third-party/USC_eShop_Canada_Post.php:172
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:172
 msgid "Mailing Tube"
 msgstr "Tubo"
 
-#: ../third-party/USC_eShop_Canada_Post.php:188
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:188
+#: ../third-party/USC_eShop_Canada_Post.php:173
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:173
 msgid "Unpackaged"
 msgstr "Sem Pacote"
 
-#: ../third-party/USC_eShop_Canada_Post.php:190
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:190
+#: ../third-party/USC_eShop_Canada_Post.php:175
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:175
 msgid "Must always be the longest dimension."
 msgstr "Deve ser sempre a maior dimensão."
 
-#: ../third-party/USC_eShop_Canada_Post.php:191
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:191
+#: ../third-party/USC_eShop_Canada_Post.php:176
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:176
 msgid "A surcharge will be applied to mailing tubes that are cylindrical in shape. Cylinder shaped packages generate high processing costs due to their unique shape. Customers are encouraged to use other non-cylinder shaped containers (e.g. triangular shape) to avoid the surcharge."
 msgstr "Uma sobretaxa será aplicada a pacotes de forma cilíndrica (tubos). Pacotes em forma de cilindro geram alto custo de processamento devido à sua forma especial. Clientes são incentivados a utilizar outros recipientes não-cilíndricos (forma triangular, por exemplo) para evitar a sobretaxa."
 
-#: ../third-party/USC_eShop_Canada_Post.php:195
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:195
+#: ../third-party/USC_eShop_Canada_Post.php:180
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:180
 msgid "Yes indicates that the parcel will be unpackaged (e.g. tires)."
 msgstr "\"Sim\" indica que o produto não será empacotado (ex. pneus)."
 
-#: ../third-party/USC_eShop_Canada_Post.php:198
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:198
+#: ../third-party/USC_eShop_Canada_Post.php:183
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:183
 msgid "<p>Although Canada Post does not require dimensions for their API calls (no errors occur if not passed),  the size of the package may influence the price of the quote (e.g., if the volumetric weight is larger than the actual weight).  We recommend entering the dimensions of  the largest box according to your products or adjusting product prices to absorb any differences. <a href=\"http://www.canadapost.ca/tools/pg/manual/PGabcmail_web_business-e.asp#1378832\" target=\"_new\">Read more here.</a></p><p><em>Note: All dimensions are in centimeters.</em></p>"
 msgstr "<p>Embora a Canada Post não obrigue que se adicione dimensões em suas chamadas de API (não ocorrem erros se omitidos), o tamanho do pacote pode influenciar o preço da cotação (ex. se o peso volumétrico for maior que o peso real). Recomendamos entrar as dimensões da maior caixa de acordo com seus produtos, ou ajustar os preços para absorver qualquer diferença. <a href=\"http://www.canadapost.ca/tools/pg/manual/PGabcmail_web_business-e.asp#1378832\" target=\"_new\">Leia mais aqui.</a></p><p>Obs: Todas as dimensões são em centímetros.</p>"
 
-#: ../third-party/USC_eShop_Canada_Post.php:204
-#: ../third-party/USC_eShop_Canada_Post.php:665
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:204
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:665
+#: ../third-party/USC_eShop_Canada_Post.php:189
+#: ../third-party/USC_eShop_Canada_Post.php:650
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:189
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:650
 msgid "Yes"
 msgstr "Sim"
 
-#: ../third-party/USC_eShop_Canada_Post.php:205
-#: ../third-party/USC_eShop_Canada_Post.php:666
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:205
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:666
+#: ../third-party/USC_eShop_Canada_Post.php:190
+#: ../third-party/USC_eShop_Canada_Post.php:651
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:190
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:651
 msgid "No"
 msgstr "Não"
 
-#: ../third-party/USC_eShop_Canada_Post.php:320
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:320
+#: ../third-party/USC_eShop_Canada_Post.php:305
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:305
 msgid "Please Choose Shipping"
 msgstr "Selecione Modo de Envio"
 
-#: ../third-party/USC_eShop_Canada_Post.php:322
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:322
+#: ../third-party/USC_eShop_Canada_Post.php:307
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:307
 msgid "Update Shipping Options"
 msgstr "Atualizar Opções de Envio"
 
-#: ../third-party/USC_eShop_Canada_Post.php:536
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:536
+#: ../third-party/USC_eShop_Canada_Post.php:521
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:521
 msgid "Failed loading XML"
 msgstr "Falha ao carregar o XML"
 
-#: ../third-party/USC_eShop_Canada_Post.php:592
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:592
+#: ../third-party/USC_eShop_Canada_Post.php:577
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:577
 msgid "No shipping plans were found for your options!"
 msgstr "Não encontramos planos de envio para suas opções!"
 
-#: ../third-party/USC_eShop_Canada_Post.php:638
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:638
+#: ../third-party/USC_eShop_Canada_Post.php:623
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:623
 #, php-format
 msgid "Required field '%s' is missing!"
 msgstr "Campo obrigatório '%s' está faltando!"
 
-#: ../third-party/USC_eShop_Canada_Post.php:661
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:661
+#: ../third-party/USC_eShop_Canada_Post.php:646
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:646
 msgid "Zip/Postal code is required for US/Canada postage"
 msgstr "O Código postal é obrigatório para EUA/Canadá"
 
-#: ../third-party/USC_eShop_Canada_Post.php:662
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:662
+#: ../third-party/USC_eShop_Canada_Post.php:647
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:647
 msgid "Invalid weight"
 msgstr "Peso inválido"
 
-#: ../third-party/USC_eShop_Canada_Post.php:663
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:663
+#: ../third-party/USC_eShop_Canada_Post.php:648
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:648
 msgid "Expected Delivery Date"
 msgstr "Data Prevista de Entrega"
 
-#: ../third-party/USC_eShop_Canada_Post.php:664
-#: ../../includes/third-party/USC_eShop_Canada_Post.php:664
+#: ../third-party/USC_eShop_Canada_Post.php:649
+#: ../../includes/third-party/USC_eShop_Canada_Post.php:649
 msgid "Guaranteed Delivery"
 msgstr "Entrega Garantida"
 
-#: ../../eshop-shipping-extension.php:192
+#: ../../eshop-shipping-extension.php:202
 msgid "No shipping module is currently active!"
 msgstr "Nenhum módulo de envio está ativo!"
 
-#: ../../eshop-shipping-extension.php:355
+#: ../../eshop-shipping-extension.php:365
 msgid "Invalid value to convert into Kilos!"
 msgstr "Valor inválido para converter em Kilos!"
 
-#: ../../eshop-shipping-extension.php:416
+#: ../../eshop-shipping-extension.php:426
 msgid "Failed to install module file: "
 msgstr "Falha ao instalar arquivo do módulo:"
 
+#~ msgid ""
+#~ "New options are available in the admin section of eShop Shipping "
+#~ "Extension. It is highly recommended that you set them!"
+#~ msgstr ""
+#~ "Novas opções estão disponíveis na seção de administração de eShop "
+#~ "Shipping Extension. É altamente recomendável que você os configure!"
