@@ -492,7 +492,6 @@ EOF;
 XML;
 			  
 					
-		file_put_contents('/Sites/wordpress_plugins/html/wp-content/plugins/eshop-shipping-extension/out.xml',$out);
 		return $out;
 	}
 	
