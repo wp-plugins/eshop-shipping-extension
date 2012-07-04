@@ -211,6 +211,14 @@ class USC_override_eShop_Display_Cart
 			$shipping=0;
 			//$pzone will only be set after the checkout address fields have been filled in
 			// we can only work out shipping after that point
+			
+			// USC: $pzone is set to '' if a state is missing. We really don't care about state zones anymore
+			// so force $pzone to be non empty so we can see the shipping stuff.
+			if ($_POST['eshop_shiptype'])
+			{
+				$pzone = 'USC-SHIPPING';
+			} 
+			
 			if($pzone!='' || ('yes' == $eshopoptions['downloads_only'] && isset($etax['unknown']) && $etax['unknown']!='')){
 				if($pzone!=''){
 					//shipping for cart.
@@ -267,7 +275,11 @@ class USC_override_eShop_Display_Cart
 							//$totalweight
 							// 							$shipzone='zone'.$pzone;
 							// 							$shipcost=$wpdb->get_var("SELECT $shipzone FROM $table2 where weight <= '$totalweight' && class='$shiparray' and rate_type='ship_weight' order by weight DESC limit 1");
-							$shipping += $_SESSION['usc_3rd_party_shipping'.$blog_id][$_POST['eshop_shiptype']];
+							
+							
+							$shipping += $_SESSION['usc_3rd_party_shipping'.$blog_id][$_POST['eshop_shiptype']]['price'];
+							$shipping += apply_filters('usc_calc_additional_services',$_POST['eshop_shiptype'],$_POST['additional_shipping_services']);
+							
 							$_SESSION['eshopshiptype'.$blog_id] = $_POST['eshop_shiptype'];
 							$shiparray = 0;
 							// End USC Eshop Shipping Modules Customization

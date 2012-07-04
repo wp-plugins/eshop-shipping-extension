@@ -50,6 +50,9 @@ jQuery(document).ready(function($){
 			return false;
 		}
 		
+		// Change link verbiage
+		$("#usc_update_shipping_options").text(eShopShippingModule.lang['update-shipping-options']);
+		
 		// Make the call
 		eShopShippingModule.get_rates(validated_fields.data);
 		

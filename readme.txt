@@ -1,20 +1,22 @@
 === Plugin Name ===
 Contributors: useStrict
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VLQU2MMXKB6S2
-Tags: eShop, Canada Post, Shipping Extension, Third Party Shipping, Shipping Quotes
+Tags: eShop, Canada Post, USPS, United States Postal Service, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
 Tested up to: 3.4.1
-Stable tag: 1.1.6
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Replace eShop's default shipping methods with live calls to Canada Post. 
+Replace eShop's default shipping methods with live calls to Canada Post and USPS.
 
 == Description ==
 
-eShop Shipping Extension framework overrides eShop's default shipping methods, interacting directly with Canada Post for real-time shipping rates and services.
+eShop Shipping Extension framework overrides eShop's default shipping methods, interacting directly with Canada Post and USPS for real-time shipping rates and services.
 
-Other services such as USPS, Correios, Fedex, DHL and UPS will be made available soon at [UseStrict Consulting](http://usestrict.net)
+This framework includes the Canada Post module for free. [Click here to purchase the USPS module](http://usestrict.net/2012/07/usps-module-for-wordpress-eshop-shipping-extension/). 
+
+Correios (Brazil), Fedex, DHL and UPS modules will be made available soon at [UseStrict Consulting](http://usestrict.net)
 
 == Installation ==
 
@@ -28,7 +30,8 @@ Other services such as USPS, Correios, Fedex, DHL and UPS will be made available
 
 = How can I enable API calls for services like United States Postal Service, Correios, Fedex, etc.? =
 
-We're working on the additional modules and they will be available soon at [UseStrict Consulting](http://usestrict.net)
+* USPS module is available for purchase at [The USPS module can be purchased here](http://usestrict.net/2012/07/usps-module-for-wordpress-eshop-shipping-extension/).
+* Other modules will be available soon at [UseStrict Consulting](http://usestrict.net)
 
 == Screenshots ==
 
@@ -37,6 +40,9 @@ We're working on the additional modules and they will be available soon at [UseS
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+
+= 1.2 =
+* Modifications to work with USPS module. Absolutely required for USPS to work.
 
 = 1.1.6 =
 * Added package dimension options for Canada Post users. This will address most cases of Volumetric Weight vs. Actual Weight. 
@@ -64,5 +70,3 @@ We're working on the additional modules and they will be available soon at [UseS
 * Initial release
 
 == Upgrade Notice ==
-
-Added package dimension options for Canada Post users.
