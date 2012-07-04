@@ -10,6 +10,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 	protected $notices;
 	private $modules;
 	private $admin_css = 'USC_eShop_Shipping_Admin.css';
+	private $plugin_page;
 	
 	function __construct()
 	{
@@ -27,10 +28,10 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 		add_action('admin_menu', array(&$this, 'add_options_page'));
 		add_action('admin_init', array(&$this, 'register_options'));
 		
-		
 		// Initialize any Shipping modules
 		$this->initialize_modules();
 	}
+	
 	
 	/**
 	 * Method: add_admin_css
@@ -65,9 +66,9 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 	 */
 	function initialize_modules()
 	{
-		$mod_path = ESHOP_SHIPPING_EXTENSION_MODULES;
+		$mod_path = ESHOP_SHIPPING_EXTENSION_THIRD_PARTY;
 
-		foreach (glob($mod_path . '/*/*.php') as $filename)
+		foreach (glob($mod_path . '/*.php') as $filename)
 		{
 			require_once($filename);
 			$class_name = basename($filename, '.php');
@@ -170,49 +171,40 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 		<?php settings_errors();?>
 		<div class="wrap">
 			<script type="text/javascript">
-				jQuery(document).ready(function($){
+				jQuery(document).ready(function(){
 
-					// Shows the selected div - used by onchange and onload
-					show_selected_div = function(){
+					jQuery("h3.toggle_child").click(function(){
+						jQuery(this).next().slideToggle();
+					});
 
-						var val = $("#third_party_select").val();
-						
-						if (val == 'none') {
-							
-							$("div.modules").slideUp();
+					jQuery("#third_party_select").change(function(){
+						var val = jQuery(this).val();
+						  
+
+						if (val == 'none')
+						{
+							jQuery("div.modules").slideUp();
 						}
-						else {
-							mod_div = $("div."+val);
-							// Hide all modules except active one
-							$("div.modules").not(mod_div).hide();
-
-							if (mod_div.is(':hidden')){
+						else
+						{
+							mod_div = jQuery("div."+val);
+							jQuery("div."+val).not(mod_div).hide();
+							if (mod_div.is(':hidden'))
+							{
 								mod_div.slideDown();
 							}
 						}
-					};
-
-					// On click...
-					$("h3.toggle_child").click(function(){
-						$(this).next().slideToggle();
+						
 					});
-
-					// On change...
-					$("#third_party_select").change(function(){
-						show_selected_div();
-					});
-
-					// On load...
-					show_selected_div();
+					
 				});
 			</script>
 			
 		</div>
 		<div id="icon-options-general" class="icon32"><br /></div>
-		<h2><?php _e('eShop Shipping Extension Settings', $this->domain); ?> v<?php echo ESHOP_SHIPPING_EXTENSION_VERSION; ?></h2>
+		<h2><?php _e('eShop Shipping Extension Settings', $this->domain); ?> v <?php echo ESHOP_SHIPPING_EXTENSION_VERSION; ?></h2>
 		
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
-
 			<div id="side-info-column" class="inner-sidebar">
 				<div class="meta-box-sortables">
 					<div id="about" class="postbox">
@@ -225,19 +217,18 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 								
 							<p><?php _e('You can reach us on Twitter <a href="http://twitter.com/vinnyusestrict" target="_new">@vinnyusestrict</a> and ' . 
 										'<a href="http://www.facebook.com/vinny.alves" target="_new">Facebook</a>',$this->domain); ?></p>
-							
-							<?php if (! defined('USC_IS_PAID')) : ?>											
-								<p><strong><?php _e('Donate', $this->domain); ?>:</strong><br />
-								<?php _e('Writing and maintaining a plugin takes time and coffee - a lot of it. If you enjoy this plugin, ' . 
-										 'please consider making a donation towards my next all-nighter ;-). <strong>Thank You!</strong>', $this->domain ); ?>
-								</p>
-								<?php _e('<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-												<input type="hidden" name="cmd" value="_s-xclick">
-												<input type="hidden" name="hosted_button_id" value="VLQU2MMXKB6S2">
-												<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-												<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-												</form>',$this->domain);?>
-							<?php endif;?>
+											
+							<p><strong><?php _e('Donate', $this->domain); ?>:</strong><br />
+							<?php _e('Writing and maintaining a plugin takes time and coffee - a lot of it. If you enjoy this plugin, ' . 
+									 'please consider making a donation towards my next all-nighter ;-). <strong>Thank You!</strong>', $this->domain ); ?>
+							</p>
+							<?php _e('<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+											<input type="hidden" name="cmd" value="_s-xclick">
+											<input type="hidden" name="hosted_button_id" value="VLQU2MMXKB6S2">
+											<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+											<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+											</form>',$this->domain);?>
+						
 						</div>
 					</div>
 				</div>
@@ -285,7 +276,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 								<div class="inside modules <?php echo get_class($v); echo $mod_count > 1 ? ' hidden' : ' '; ?>">
 									<?php echo $v->intro_paragraph();?>
 									<hr />
-									<?php echo $v->admin_form_html(); ?>
+									<?php echo $v->form_html(); ?>
 								</div>
 							</div>
 						</div>

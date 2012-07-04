@@ -327,7 +327,7 @@ class USC_override_eShop_Order_Handle
 			$typearr=explode("\n", $eshopoptions['ship_types']);
 					$postage_name=stripslashes(esc_attr($typearr[$st])).' ';
 		}
-				$postage_name.=__('Shipping','eshop') . '<br />' . apply_filters('usc_shipping_info_for_orders', $_POST, $_SESSION);
+		$postage_name.=__('Shipping','eshop') . " ($_POST[eshop_shiptype])";
 				$querypostage=$wpdb->query("INSERT INTO  $itemstable
 				(checkid, item_id,item_qty,item_amt,tax_rate,tax_amt,optsets)values(
 				'$checkid',

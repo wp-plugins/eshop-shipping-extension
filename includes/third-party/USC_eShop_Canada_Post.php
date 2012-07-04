@@ -7,16 +7,18 @@
  */
 class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 {
-	protected $my_options_name = 'canada-post-module';
+	private $my_options_name = 'canada-post-module';
 	public $module_name      = 'Canada Post';
 	public $options          = array();
 	private $live_url        = 'https://soa-gw.canadapost.ca/rs/ship/price';
 	private $test_url        = 'https://ct.soa-gw.canadapost.ca/rs/ship/price';
+	private $msgs_set        = array();
 	
 	function __construct()
 	{
-		// NOOP
+		//NOOP
 	}
+	
 	
 	function USC_eShop_Canada_Post()
 	{
@@ -148,11 +150,11 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 	
 	/**
 	 * @package USC_eShop_Canada_Post
-	 * @method  admin_form_html()
-	 * @desc    Returns the html that makes up the admin form fields
+	 * @method  form_html()
+	 * @desc    Returns the html that makes up the form fields
 	 * @return  string
 	 */
-	function admin_form_html()
+	function form_html()
 	{
 		$opts = $this->get_options();
 		$po   = parent::get_options_name();
@@ -169,18 +171,18 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 		$unpackaged      = __('Unpackaged',$this->domain);
 		
 		$length_info       = __('Must always be the longest dimension.',$this->domain);
-		$mailing_tube_info = __('A surcharge will be applied to mailing tubes that are cylindrical in shape. ' .
-				'Cylinder shaped packages generate high processing costs due to their unique shape. '.
-				'Customers are encouraged to use other non-cylinder shaped containers (e.g. triangular shape) to avoid the surcharge.',$this->domain);
+		$mailing_tube_info = __('A surcharge will be applied to mailing tubes that are cylindrical in shape. ' . 
+				                'Cylinder shaped packages generate high processing costs due to their unique shape. '. 
+								'Customers are encouraged to use other non-cylinder shaped containers (e.g. triangular shape) to avoid the surcharge.',$this->domain);
 		
-		$unpackaged_info   = __('Yes indicates that the parcel will be unpackaged (e.g. tires).',$this->domain);
+		$unpackaged_info   = __('Yes indicates that the parcel will be unpackaged (e.g. tires).',$this->domain); 
 		
 		
-		$dimensions_text = __('<p>Although Canada Post does not require dimensions for their API calls (no errors occur if not passed), ' .
-				' the size of the package may influence the price of the quote (e.g., if the volumetric weight is larger than the actual weight). '.
-				' We recommend entering the dimensions of ' .
-				' the largest box according to your products or adjusting product prices to absorb any differences. '.
-				'<a href="http://www.canadapost.ca/tools/pg/manual/PGabcmail_web_business-e.asp#1378832" target="_new">Read more here.</a></p><p><em>Note: All dimensions are in centimeters.</em></p>', $this->domain);
+		$dimensions_text = __('<p>Although Canada Post does not require dimensions for their API calls (no errors occur if not passed), ' . 
+				              ' the size of the package may influence the price of the quote (e.g., if the volumetric weight is larger than the actual weight). '.
+				              ' We recommend entering the dimensions of ' . 
+				              ' the largest box according to your products or adjusting product prices to absorb any differences. '.
+				              '<a href="http://www.canadapost.ca/tools/pg/manual/PGabcmail_web_business-e.asp#1378832" target="_new">Read more here.</a></p><p><em>Note: All dimensions are in centimeters.</em></p>', $this->domain);
 		
 		$yes = __('Yes', $this->domain);
 		$no  = __('No', $this->domain);
