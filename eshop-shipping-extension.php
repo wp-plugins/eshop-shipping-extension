@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post.
-* Version:       1.1.6
+* Version:       1.2
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -24,11 +24,12 @@
 */
 define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
+define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.1.6');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.2');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
-define('ESHOP_SHIPPING_EXTENSION_DOMAIN_JS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/js'));
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
+define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
 
 
 class USC_eShop_Shipping_Extension
@@ -48,14 +49,21 @@ class USC_eShop_Shipping_Extension
 	{
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' ); # needed for is plugin active
 		
+		
 		$this->eshop_is_installed = file_exists(ABSPATH . 'wp-content/plugins/eshop/eshop.php') ? TRUE : FALSE;
 		$this->eshop_is_active    = is_plugin_active('eshop/eshop.php') ? TRUE : FALSE;
 		$this->eshop_options      = $this->get_eshop_options();
 		$mod                      = $this->init_active_module();
 		
 		// Add the filter to update the cart form with the shipping fields
-		add_filter('usc_add_shipping_fields', array(&$this,'add_shipping_fields'),10,2);
+		add_filter('usc_add_shipping_fields', array(&$this,'add_shipping_fields'), 10, 2);
+		
+		// Add the filter to show the shipping selection in the order
+		add_filter('usc_shipping_info_for_orders', array(&$this, 'shipping_info_for_orders'), 10, 0);
 
+		// Add filter for handling additional_services string
+		add_filter('usc_calc_additional_services', array(&$this, 'calc_additional_services'), 10, 2);
+		
 		// Load language files for admin and ajax calls
 		add_action('plugins_loaded', array(&$this,'load_lang'));
 		
@@ -90,13 +98,14 @@ class USC_eShop_Shipping_Extension
 			require_once( ABSPATH . 'wp-includes/pluggable.php'); // imports is_user_logged_in()
 			
 			// embed the javascript file that makes the AJAX request
-			wp_enqueue_script( $this->domain . '-get-rates', ESHOP_SHIPPING_EXTENSION_DOMAIN_JS_URL . '/' . get_class($mod) . '.js', array( 'jquery' ),  ESHOP_SHIPPING_EXTENSION_VERSION);
+			wp_enqueue_script( $this->domain . '-get-rates', ESHOP_SHIPPING_EXTENSION_MODULES_URL . '/' . $mod->my_options_name . '/' . get_class($mod) . '.js', array( 'jquery' ),  ESHOP_SHIPPING_EXTENSION_VERSION);
+			
 			
 			// declare the URL to the file that handles the AJAX request (wp-admin/admin-ajax.php)
-			wp_localize_script( $this->domain . '-get-rates', 'eShopShippingModule', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			wp_localize_script( $this->domain . '-get-rates', 'eShopShippingModule', array( 'ajaxurl'    => admin_url( 'admin-ajax.php' ),
 																							'ajaxaction' => $this->domain . '-get-rates',
-																							'method'  => (is_user_logged_in()?'GET':'POST'),
-																							'lang'    => $mod->get_js_msgs() ) );
+																							'method'     => (is_user_logged_in()?'GET':'POST'),
+																							'lang'       => $this->js_msgs() ) );
 
 			// Add CSS file
 			wp_enqueue_style( $this->domain . '-style', ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL . '/' . $this->css_filename, 
@@ -106,7 +115,7 @@ class USC_eShop_Shipping_Extension
 		
 	}
 
-		
+	
 	/**
 	 * Method: get_eshop_options()
 	 * Description: Gets/caches eshop options
@@ -130,11 +139,13 @@ class USC_eShop_Shipping_Extension
 	{
 		$opts   = $this->get_options();
 		$active = $opts['third_party'];
-		$path   = ESHOP_SHIPPING_EXTENSION_THIRD_PARTY;
+		$path   = ESHOP_SHIPPING_EXTENSION_MODULES;
 		
 		if (isset($active) && $active !== 'none')
 		{
-			$file = $path . '/' . $active . '.php';
+			$files = glob($path . '/*/' . $active . '.php');
+			$file  = $files[0];
+			
 			if (file_exists($file))
 			{
 				require_once($file);
@@ -158,7 +169,7 @@ class USC_eShop_Shipping_Extension
 		if (! is_object($mod))
 		{
 			$out['success'] = false;
-			$out['msgs'][] = __('No shipping module is currently active!');
+			$out['msgs'][] = __('No shipping module is currently active!', $this->domain);
 			
 			echo json_encode($out);
 			exit; // WP requirement for ajax-related methods
@@ -205,9 +216,54 @@ class USC_eShop_Shipping_Extension
 	 */
 	function add_shipping_fields($form_html,$reqdarray)
 	{
+		global $blog_id;
+		
 		if (is_object($this->active_module))
 		{
-			return $this->active_module->add_shipping_fields($form_html,$reqdarray);
+			// Note: method_exists() returns true for child against add_shipping_fields (inherited). 
+			// Changed the child name to child_add_shipping_fields.
+			if (method_exists($this->active_module, 'child_add_shipping_fields'))
+			{
+				$form_html = $this->active_module->child_add_shipping_fields($form_html,$reqdarray);
+			}
+			else 
+			{
+				$out  = '<fieldset class="eshop fld0"><legend id="shiplegend">'. __('Please Choose Shipping','eshop').eshop_checkreqd($reqdarray,'shipping').'</legend>';
+				$out .= '<div id="usc_shipping_error_msgs"></div><div id="usc_shipping_options">';
+				
+				// Build select with options if the form is being re-displayed after an error
+				if (isset($_POST['eshop_shiptype']))
+				{
+					$out .= '<script type="text/javascript">' ."\n";
+					$out .= 'eShopShippingModule.startup_details = {success: true, data:{}, selected_service:"'.$_POST['eshop_shiptype'].'", selected_services:{}};' ."\n";
+					
+					if (isset($_POST['additional_shipping_services']))
+					{
+						$svc_array = explode('; ',$_POST['additional_shipping_services']);
+						foreach($svc_array as $svc)
+						{
+							$out .= 'eShopShippingModule.startup_details.selected_services["'.$svc.'"] = 1;' ."\n";
+						}
+					}
+					
+					// Rebuild the shipping and details form from JS. Delete startup data after the first rendering
+					$out .= 'eShopShippingModule.startup_details.data = ' . json_encode($_SESSION['usc_3rd_party_shipping'.$blog_id]) . ';' . "\n";
+					$out .= 'jQuery(document).ready(function(){
+								eShopShippingModule.create_shipping_html(eShopShippingModule.startup_details,true);
+								delete eShopShippingModule.startup_details;
+						     });';
+					$out .= '</script>' ."\n";
+				}
+				
+				$view_update = isset($_POST['eshop_shiptype']) ?  __('Update Shipping Options', $this->domain) : __('View Shipping Options', $this->domain);
+				
+				$out .= '</div><div id="usc_shipping_details"></div>';
+				$out .= '<a id="usc_update_shipping_options" href="#">' . $view_update . '</a>';
+				$out .= '<img style="display:none" id="usc_shipping_throbber" class="usc_shipping_throbber" src="' . plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/images/arrows-throbber.gif') . '" />';
+				$out .= "</fieldset>";
+				
+				$form_html .= $out;
+			}
 		}
 		
 		return $form_html;
@@ -253,7 +309,7 @@ class USC_eShop_Shipping_Extension
 	 */
 	function admin_notices()
 	{
-		if (isset($_SESSION['usc_notices']))
+	if (isset($_SESSION['usc_notices']))
 		{
 			foreach ($_SESSION['usc_notices'] as $notice)
 			{
@@ -335,6 +391,7 @@ class USC_eShop_Shipping_Extension
 				break;
 			case 'l':
 			case 'lb':
+			case 'lbs':
 			case 'pound':
 			case 'pounds':
 				$out['data'] = $input * 0.45359237;
@@ -344,11 +401,11 @@ class USC_eShop_Shipping_Extension
 			case 'gram':
 			case 'grams':
 				$out['data'] = $input / 1000;
-				break;				
+				break;
 			default:
 				$out['data'] = $input;
 		}
-
+	
 		return $out;
 	}
 	
@@ -362,30 +419,142 @@ class USC_eShop_Shipping_Extension
 		// Look for extra modules under eshop-shipping-extension-*
 		// Copy contents from js and third-party into framework dir
 		$plugins_dir = ESHOP_SHIPPING_EXTENSION_ABSPATH . '../';
-		$dir_str     = $plugins_dir . $this->domain . '-*/includes/*/*';
+		$dir_str     = $plugins_dir . $this->domain . '-*/modules/*/*';
 		$files       = glob($dir_str);
 
 		foreach ($files as $file)
 		{
 			// Get file names
-			preg_match(',/([^/]+)/(includes/[^/]+/[^\.]+\.(js|php))$,', $file, $matches);
-			
+			preg_match('!/([^/]+)/modules/([^/]+)/([^\.]+\.(js|php))$!', $file, $matches);
+
 			if ($matches[0])
 			{
-				$module = $matches[1] . '/' .  $matches[1] . '.php';
+				$plugin    = $matches[1] . '/' .  $matches[1] . '.php';
+				$vendor_id = $matches[2];
+				$to_dir    = ESHOP_SHIPPING_EXTENSION_ABSPATH . 'includes/modules/' . $vendor_id;
+
+				// Don't do anything if the plugin isn't active!
+				if (! is_plugin_active($plugin)) continue;
 				
-				// Don't do anything if the module isn't active!
-				if (! is_plugin_active($module)) continue;
+				// Create the module dir if it doesn't exist
+				if (! is_dir($to_dir))
+				{
+					if (! @mkdir($to_dir))
+					{
+						$e = error_get_last();
+						$this->set_notice(__('Failed to create directory: ', $this->domain) . $to_dir . sprintf(' (%s)', $e['message']), true);
+					}
+				}
 				
-				$filepath = $matches[2];
+				$filepath = $matches[3];
 				
-				if (! @copy($file, ESHOP_SHIPPING_EXTENSION_ABSPATH . $filepath))
+				if (! @copy($file, $to_dir . '/' . $filepath))
 				{
 					$e = error_get_last();
 					$this->set_notice(__('Failed to install module file: ', $this->domain) . $filepath . sprintf(' (%s)', $e['message']), true);
 				}
 			}
 		}
+	}
+	
+	
+	/**
+	 * Method: js_msgs()
+	 * Description: global javascript messages (translation)
+	 */
+	function js_msgs()
+	{
+		$msgs = array();
+		
+		// Child messages
+		if (is_object($this->active_module))
+		{
+			if (method_exists($this->active_module, 'get_js_msgs'))
+			{
+				$msgs = $this->active_module->get_js_msgs(); 			
+			}
+		}
+		
+		$msgs['update-shipping-options'] = __('Update Shipping Options', $this->domain);
+
+		
+		return $msgs;
+	}
+	
+	
+	/**
+	 * Method: calc_additional_services()
+	 * Desc: splits additional services string and returns sum of values found in session
+	 * @param string $main_service - e.g Priority Mail
+	 * @param string $input_string - the string with all selected additional services
+	 * @param string $split        - the field separator
+	 */
+	function calc_additional_services($main_service,$input_string,$split='; ')
+	{
+		global $blog_id;
+		
+		$sel_services = explode($split, $input_string);
+		$sess         = $_SESSION['usc_3rd_party_shipping'. $blog_id][$main_service]['services'];
+		$sum          = 0;
+		
+		foreach ($sel_services as $service)
+		{
+			if (isset($sess[$service]) && is_numeric($sess[$service]))
+			{
+				$sum += $sess[$service];
+			}
+		}
+		
+		return $sum;
+	}
+	
+	
+	/**
+	 * Method: shipping_info_for_orders()
+	 * Desc: Takes shipping information from the session and post and formats it nicely
+	 * Returns: string
+	 */
+	function shipping_info_for_orders()
+	{
+		global $blog_id;
+		
+		$sel_svc = $_SESSION['usc_3rd_party_shipping' . $blog_id][$_POST['eshop_shiptype']];
+		
+		$svcs = array('Service: ' . $_POST['eshop_shiptype'] . ' ('.$sel_svc['price'].')');
+		
+		$extra_arr = explode('; ', $_POST['additional_shipping_services']);
+		
+		foreach ($extra_arr as $extra)
+		{
+			$svcs[] = 'Extra: ' . $extra . ' ('.$sel_svc['services'][$extra].')';
+		}
+		 
+		$str = join('<br />', $svcs);
+		return "<small>$str</small>"; 		
+	}
+	
+	
+	/**
+	 * Method: make_hash_from_values()
+	 * Desc: Takes an assoc_array's values and transforms them into val => 1 
+	 * Returns: array
+	 */
+	function make_hash_from_values($input)
+	{
+		$output = array();
+		if (is_array($input))
+		{
+			foreach ($input as $key => $val)
+			{
+				$output[$val] = 1;
+			}
+		}
+		else
+		{
+			$output = $input;
+		}
+		
+		return $output;
 	}
 }
 
@@ -406,8 +575,8 @@ else
 	
 	if ( (! $_REQUEST['action'] || 
 			$_REQUEST['action'] !== $USC_eShop_Shipping_Extension->domain . '-get-rates') && # Only override anything if it's not a get-rates ajax call 
-		 is_object($USC_eShop_Shipping_Extension->active_module) &&    # and there is an active shipping module
-		 (int)$eshop_opts['shipping'] === 4)                         # and the user selected weight mode
+		 is_object($USC_eShop_Shipping_Extension->active_module) &&                          # and there is an active shipping module
+		 (int)$eshop_opts['shipping'] === 4)                                                 # and the user selected weight mode
 	{
 		
 		require_once(ESHOP_SHIPPING_EXTENSION_INCLUDES . '/override_eshop_display_cart.php');
