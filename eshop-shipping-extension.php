@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post and USPS. USPS module can be purchased at http://usestrict.net/2012/07/usps-module-for-wordpress-eshop-shipping-extension/
-* Version:       1.2
+* Version:       1.2.1
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,10 +26,12 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.2');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.2.1');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
+define('ESHOP_SHIPPING_EXTENSION_DBG_REQUEST', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/debug_request.xml');
+define('ESHOP_SHIPPING_EXTENSION_DBG_RESPONSE', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/debug_response.xml');
 
 
 class USC_eShop_Shipping_Extension
@@ -43,7 +45,9 @@ class USC_eShop_Shipping_Extension
 	var $options_name  = 'eshop-shipping-extension';
 	var $active_module = 'none';
 	var $css_filename  = 'USC_eShop_Shipping.css';
-	
+
+	var $debug_request_file  = ESHOP_SHIPPING_EXTENSION_DBG_REQUEST;
+	var $debug_response_file = ESHOP_SHIPPING_EXTENSION_DBG_RESPONSE;
 	
 	function __construct()
 	{
@@ -115,6 +119,16 @@ class USC_eShop_Shipping_Extension
 		
 	}
 
+	
+	/**
+	 * Method: debug_mode()
+	 * Description: Returns value of debug mode. Needs to be a method because child classes don't necessarily hit __construct() to set a variable.
+	 */
+	function debug_mode()
+	{
+		$opts = $this->get_options();
+		return $opts['debug_mode'];
+	}
 	
 	/**
 	 * Method: get_eshop_options()
@@ -197,7 +211,7 @@ class USC_eShop_Shipping_Extension
 	
 		$default = array();
 		$default[$this->options_name]['third_party'] = 'none';
-// 		$default[$this->options_name]['mode']        = 'test';
+		$default[$this->options_name]['debug_mode']  = 0;
 	
 		$this->options = get_option($this->options_name, $default);
 	

@@ -42,3 +42,7 @@ textarea#general_css {
 	width: 90%;
 	height:200px;
 }
+
+#debug_contents {display: none}
+
+.debug_xml {width: 90%; height:300px}
