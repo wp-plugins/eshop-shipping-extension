@@ -8,8 +8,8 @@
 class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 {
 	protected $my_options_name = 'canada-post-module';
-	public $module_name      = 'Canada Post';
-	public $options          = array();
+	public  $module_name     = 'Canada Post';
+	public  $options         = array();
 	private $live_url        = 'https://soa-gw.canadapost.ca/rs/ship/price';
 	private $test_url        = 'https://ct.soa-gw.canadapost.ca/rs/ship/price';
 	
@@ -32,7 +32,7 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 	 */
 	function get_options($force = FALSE)
 	{
-		if ($this->options && !$force)
+		if ($this->options && $force === TRUE)
 		{
 			return $this->options;
 		}
@@ -50,8 +50,10 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 
 		if ($options)
 		{
-			$this->options             = $options[$this->my_options_name];
-			$this->options['from_zip'] = $options['from_zip'];
+			// Pass some parent options down to the kids
+			$this->options               = $options[$this->my_options_name];
+			$this->options['from_zip']   = $options['from_zip'];
+			$this->options['debug_mode'] = $options['debug_mode'];
 		}
 		else
 		{
@@ -489,7 +491,15 @@ EOF;
 			</mailing-scenario>
 XML;
 			  
-					
+		if ($this->debug_mode())
+		{
+			$dom = new DOMDocument('1.0');
+			$dom->preserveWhiteSpace = false;
+			$dom->formatOutput       = true;
+			$dom->loadXML($out['data']);
+			$dom->save($this->debug_request_file);
+		}
+									
 		return $out;
 	}
 	
@@ -519,7 +529,18 @@ XML;
 			}
 			
 			return $out;	
-		} 
+		}
+
+
+		if ($this->debug_mode())
+		{
+			$dom = new DOMDocument('1.0');
+			$dom->preserveWhiteSpace = false;
+			$dom->formatOutput       = true;
+			$dom->loadXML($xml->asXML());
+			$dom->save($this->debug_response_file);
+		}
+		
 		
 		$service_price = array();
 		// Make the call to Canada Post
