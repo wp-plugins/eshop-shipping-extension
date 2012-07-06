@@ -204,6 +204,24 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 
 					// On load...
 					show_selected_div();
+
+					// Debug events
+					$("#display_debug_contents").click(function(e){
+						e.preventDefault();
+						if ($("#debug_contents").is(':hidden'))
+						{
+							$(this).text('<?php echo addslashes(__('Hide debug contents',$this->domain));?>');
+						}
+						else
+						{
+							$(this).text('<?php echo addslashes(__('Display debug contents',$this->domain));?>');
+						}
+						$("#debug_contents").slideToggle();
+					});
+
+					$(".debug_xml").focus(function(){
+						$(this).select();
+					});
 				});
 			</script>
 			
@@ -220,7 +238,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 						<div class="inside">
 						
 							<p><?php _e('This plugin is brought to you by <a href="http://usestrict.net" target="_new">UseStrict Consulting</a>, ' . 
-									        'where you can find information on Perl, PHP, and Web Technologies in general.',$this->domain); ?>
+									    'where you can find information on Perl, PHP, and Web Technologies in general.',$this->domain); ?>
 							</p>
 								
 							<p><?php _e('You can reach us on Twitter <a href="http://twitter.com/vinnyusestrict" target="_new">@vinnyusestrict</a> and ' . 
@@ -253,9 +271,56 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 								<h3><?php _e('General Settings',$this->domain); ?></h3>
 								<div class="inside">
 									<p><?php _e('eShop Shipping Extension overrides the default options that ships with eShop. It provides a way to ' . 
-											 'interact directly with available third-party services such as Canada Post and get real-time shipping rates. ' .
-											 'Use the options below to set up your services.',$this->domain);?></p>
+											    'interact directly with available third-party services such as Canada Post and get real-time shipping rates. ' .
+											    'Use the options below to set up your services.',$this->domain);?></p>
 									<hr />
+									<p><strong><?php _e('Debug Mode',$this->domain); ?>:</strong>
+										<select name="<?php echo $this->options_name?>[debug_mode]">
+											<option value="0" <?php selected('0', $opts['debug_mode']) ?>><?php _e('No', $this->domain)?></option>
+											<option value="1" <?php selected('1', $opts['debug_mode']) ?>><?php _e('Yes', $this->domain)?></option>
+										</select><br />
+										<em><?php _e('Debug mode saves the request and response XMLs every time a quote is triggered. These files may be 
+										   needed for support requests. Do not turn it on unless something is wrong!',$this->domain); ?></em> 
+										  
+										  <?php if ($opts['debug_mode']) :?>
+										  <p><a href="#" id="display_debug_contents"><?php _e('Display debug contents',$this->domain); ?></a></p>
+										  <?php endif;?>
+									</p>
+									
+									<?php if ($opts['debug_mode']) :?>
+									<div id="debug_contents">
+										<table style="width:90%">
+											<tr>
+												<th style="width:45%"><?php _e('Latest Request XML',$this->domain); ?></th>
+												<th style="width:45%"><?php _e('Latest Response XML',$this->domain); ?></th>
+											</tr>
+											<tr>
+												<td>
+													<?php 
+													$request_xml = __('No data found',$this->domain);
+													if (file_exists($this->debug_request_file))
+													{
+														$request_xml = file_get_contents($this->debug_request_file);
+													}	
+													?>
+													<textarea id="request_xml" class="debug_xml"><?php echo $request_xml; ?></textarea>		
+												</td>
+												<td>
+													<?php 
+													$response_xml = __('No data found',$this->domain);
+													if (file_exists($this->debug_response_file))
+													{
+														$response_xml = file_get_contents($this->debug_response_file);
+													}	
+													?>
+													<textarea id="response_xml" class="debug_xml"><?php echo $response_xml; ?></textarea>		
+												</td>
+											</tr>
+										</table>
+									</div>
+									<?php endif;?>
+									
+									
 									<p><strong><?php _e('Zip/Postal Code of origin?',$this->domain); ?></strong><br />
 									<input type="text" id="from_zip" name="<?php echo $this->options_name?>[from_zip]" 
 										      value="<?php echo $opts['from_zip']; ?>" /> </p>
@@ -266,7 +331,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 										<?php foreach ($this->modules as $k => $v) :?>
 										<option value="<?php echo $k; ?>" <?php selected($opts['third_party'],$k);?>><?php echo $v->module_name; ?></option>
 										<?php endforeach;?>
-									</select> <i><?php _e('"None" means eShop\'s default settings.',$this->domain); ?></i></p>
+									</select> <em><?php _e('"None" means eShop\'s default settings.',$this->domain); ?></em></p>
 									<p><strong><?php _e('Shipping Details CSS Styles:',$this->domain); ?></strong><br />
 									
 									<textarea id="general_css" name="<?php echo $this->options_name; ?>[css]"><?php echo $css_contents;?></textarea>
