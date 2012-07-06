@@ -45,6 +45,7 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 		$default[$parent_optname][$this->my_options_name]['test']['password'] = null;
 		$default[$parent_optname][$this->my_options_name]['live']['username'] = null;
 		$default[$parent_optname][$this->my_options_name]['live']['password'] = null;
+		$default[$parent_optname][$this->my_options_name]['quote_type']       = 'counter';
 
 		$options = get_option($parent_optname, $default);
 
@@ -194,6 +195,14 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 			$unpackaged_options .= '<option value="'.$val.'" '.selected($val,$opts['unpackaged'],false).'>'.$key.'</option>';
 		}
 		
+		$quote_type = __('Quote Type',$this->domain);
+		$quote_type_array = array(__('Counter',$this->domain) => 'counter', __('Commercial',$this->domain) => 'commercial');
+		foreach ($quote_type_array as $key => $val)
+		{
+			$quote_type_options .= '<option value="'.$val.'" '.selected($val,$opts['quote_type'],false).'>'.$key.'</option>';
+		} 
+		$quote_type_info = __('Commercial rates are lower than Counter rates. Choose "Counter" if you are not printing your own labels.',$this->domain);
+		
 		return <<<EOF
 			<table>
 				<tr>
@@ -253,6 +262,16 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 				</td>
 				<td><span id="unpackaged_info"><small>{$unpackaged_info}</small></span></td>
 			</tr>
+			<tr>
+				<th>$quote_type:</th>
+				<td>
+					<select name="{$po}[$this->my_options_name][quote_type]">
+						$quote_type_options
+					</select>
+				</td>
+				<td><span id="quote_type_info"><small>{$quote_type_info}</small></span></td>
+			</tr>
+			
 		</table>
 		
 		
@@ -471,14 +490,25 @@ EOF;
 		
 		if ($opts['unpackaged'] && $opts['unpackaged'] == 'true')
 		{
-			$unpackaged = "<unpackaged>{$opts['unpackaged']}</unpackaged>";
+			$unpackaged = "<unpackaged>{$opts[unpackaged]}</unpackaged>";
+		}
+		
+		// Handle quote_type/customer_number options (no CN if QT is COUNTER)
+		if ($opts['quote_type'] && $opts['quote_type'] === 'counter')
+		{
+			$quote_type = "<quote-type>{$opts[quote_type]}</quote-type>";
+		}
+		else
+		{
+			$customer_number = "<customer-number>{$mailed_by}</customer-number>"; 
 		}
 		
 		
 		$out['data'] =<<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
 			<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate">
-			  <customer-number>{$mailed_by}</customer-number>
+			  $customer_number
+			  $quote_type
 			  <parcel-characteristics>
 			    <weight>{$weight}</weight>
 			    $dimensions
@@ -518,6 +548,7 @@ XML;
 		libxml_use_internal_errors(true);
 		$out = array(success => false);
 		$xml = simplexml_load_string('<root>' . preg_replace('/<\?xml.*\?>/','',$response) . '</root>');
+		$opts = $this->get_options();
 		
 		if (!$xml) 
 		{
@@ -558,15 +589,18 @@ XML;
 					
 					// Adjust automation discount. People aren't getting that discount at the post office
 					$adjustment = 0;
-					foreach  ($priceQuote->{'price-details'}->adjustments->children() as $aj)
+					if (isset($opts['quote_type']) && $opts['quote_type'] === 'commercial')
 					{
-						if ((string)$aj->{'adjustment-code'} == 'AUTDISC')
+						foreach  ($priceQuote->{'price-details'}->adjustments->children() as $aj)
 						{
-							$adjustment = (float)$aj->{'adjustment-cost'} * -1;
+							if ((string)$aj->{'adjustment-code'} == 'AUTDISC')
+							{
+								$adjustment = (float)$aj->{'adjustment-cost'} * -1;
+							}
 						}
 					}
 					
-					$price = $due + $adjustment;
+					$price = number_format($due + $adjustment,2,'.',',');
 					$service_price[$service_name] = $price;
 					$out['data'][$service_name]['price'] = $price;
 					
