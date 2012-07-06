@@ -496,7 +496,7 @@ XML;
 			$dom = new DOMDocument('1.0');
 			$dom->preserveWhiteSpace = false;
 			$dom->formatOutput       = true;
-			$dom->loadXML($out['data']);
+			$dom->loadXML(preg_replace('|<customer-number>[^<]+</customer-number>|', '<customer-number>***REMOVED***</customer-number>', $out['data']));
 			$dom->save($this->debug_request_file);
 		}
 									
@@ -553,9 +553,22 @@ XML;
 				{
 					// Need to cast as string or we get objects back
 					$service_name = (string)$priceQuote->{'service-name'};
-					$out['data'][$service_name]['price'] = (string)$priceQuote->{'price-details'}->{'due'};
 					
-					$service_price[$service_name] = (string)$priceQuote->{'price-details'}->{'due'};
+					$due = (string)$priceQuote->{'price-details'}->{'due'};
+					
+					// Adjust automation discount. People aren't getting that discount at the post office
+					$adjustment = 0;
+					foreach  ($priceQuote->{'price-details'}->adjustments->children() as $aj)
+					{
+						if ((string)$aj->{'adjustment-code'} == 'AUTDISC')
+						{
+							$adjustment = (float)$aj->{'adjustment-cost'} * -1;
+						}
+					}
+					
+					$price = $due + $adjustment;
+					$service_price[$service_name] = $price;
+					$out['data'][$service_name]['price'] = $price;
 					
 					$details = array();
 					foreach ($priceQuote->{'service-standard'}->children() as $det)
