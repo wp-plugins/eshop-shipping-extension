@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eshop-shipping-extension\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-05 22:19-0500\n"
-"PO-Revision-Date: 2012-07-05 22:38-0500\n"
+"POT-Creation-Date: 2012-07-06 10:49-0500\n"
+"PO-Revision-Date: 2012-07-06 11:06-0500\n"
 "Last-Translator: \n"
 "Language-Team: UseStrict Consulting <vinny@usestrict.net>\n"
 "MIME-Version: 1.0\n"
@@ -112,19 +112,19 @@ msgstr "Mode de Débogage"
 
 #: ../admin.php:279
 #: ../modules/canada-post-module/USC_eShop_Canada_Post.php:188
-#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:666
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:701
 #: ../../includes/admin.php:279
 #: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:188
-#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:666
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:701
 msgid "No"
 msgstr "Non"
 
 #: ../admin.php:280
 #: ../modules/canada-post-module/USC_eShop_Canada_Post.php:187
-#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:665
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:700
 #: ../../includes/admin.php:280
 #: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:187
-#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:665
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:700
 msgid "Yes"
 msgstr "Oui"
 
@@ -653,52 +653,72 @@ msgstr "«Oui» indique que le paquet n'est pas emballé (pneus, par exemple)."
 msgid "<p>Although Canada Post does not require dimensions for their API calls (no errors occur if not passed),  the size of the package may influence the price of the quote (e.g., if the volumetric weight is larger than the actual weight).  We recommend entering the dimensions of  the largest box according to your products or adjusting product prices to absorb any differences. <a href=\"http://www.canadapost.ca/tools/pg/manual/PGabcmail_web_business-e.asp#1378832\" target=\"_new\">Read more here.</a></p><p><em>Note: All dimensions are in centimeters.</em></p>"
 msgstr "<p>Bien que Postes Canada ne vous obligent pas à ajouter des dimensions à leurs appels à l'API, la taille des paquets peut influencer le prix de la citation (par exemple, si le poids volumétrique est supérieur au poids réel) . Nous recommandons d'entrer les dimensions de la plus grande boîte en conformité avec leurs produits, ou d'ajuster les prix pour absorber toute la différence. <a href=\"#1378832\">http://www.canadapost.ca/tools/pg/manual/PGabcmail_web_business-e.asp#1378832\" target=\"_new\"> Lire la suite ici. </a> </p> Remarque:. Toutes les dimensions sont en centimètres</p>"
 
-#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:302
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:197
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:197
+msgid "Quote Type"
+msgstr "Type de Quotation"
+
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:198
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:198
+msgid "Counter"
+msgstr "Guichet"
+
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:198
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:198
+msgid "Commercial"
+msgstr "Commercial"
+
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:203
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:203
+msgid "Commercial rates are lower than Counter rates. Choose \"Counter\" if you are not printing your own labels."
+msgstr "Les taux commerciaux sont inférieurs aux taux de comptoir. Choisissez \"Counter\" si vous ne faites pas l'impression de vos propres étiquettes."
+
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:320
 #: ../../eshop-shipping-extension.php:245
-#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:302
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:320
 msgid "Please Choose Shipping"
 msgstr "S'il vous plaît choisissez la livraison"
 
-#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:304
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:322
 #: ../../eshop-shipping-extension.php:272
 #: ../../eshop-shipping-extension.php:492
-#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:304
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:322
 msgid "Update Shipping Options"
 msgstr "Mettre à jour les options d'expédition"
 
-#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:525
-#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:525
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:544
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:544
 msgid "Failed loading XML"
 msgstr "Échec de chargement XML"
 
-#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:592
-#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:592
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:627
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:627
 msgid "No shipping plans were found for your options!"
 msgstr "Aucun plans d'expédition a été trouvé pour vos options!"
 
-#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:638
-#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:638
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:673
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:673
 #, php-format
 msgid "Required field '%s' is missing!"
 msgstr "Champs obligatoire '%s'  est manquant!"
 
-#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:661
-#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:661
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:696
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:696
 msgid "Zip/Postal code is required for US/Canada postage"
 msgstr "Code postale obligatoire pour US/Canada postage"
 
-#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:662
-#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:662
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:697
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:697
 msgid "Invalid weight"
 msgstr "Poids non valide"
 
-#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:663
-#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:663
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:698
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:698
 msgid "Expected Delivery Date"
 msgstr "Date de livraison prévue"
 
-#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:664
-#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:664
+#: ../modules/canada-post-module/USC_eShop_Canada_Post.php:699
+#: ../../includes/modules/canada-post-module/USC_eShop_Canada_Post.php:699
 msgid "Guaranteed Delivery"
 msgstr "Livraison garantie"
 
