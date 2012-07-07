@@ -106,9 +106,12 @@ jQuery(document).ready(function($){
 			
 			eShopShippingModule.details[key] = value['details']; //Populate details object
 			
+			var attrs = (typeof ajax_response.selected_service !== 'undefined' &&
+				     ajax_response.selected_service == key) ? {selected : "selected", value : key} : {value : key};
+			
 			// Create dropdown options
 			$('#usc_shipping_services')
-		          .append($('<option>', { value : key })
+		          .append($('<option>', attrs)
 		          .text(key + ' (CAD$ ' + value['price'] + ')')); 
 		});
 		
