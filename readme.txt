@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: eShop, Canada Post, USPS, United States Postal Service, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
 Tested up to: 3.4.1
-Stable tag: 1.2.4
+Stable tag: 1.2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,8 +41,11 @@ Correios (Brazil), Fedex, DHL and UPS modules will be made available soon at [Us
 
 == Changelog ==
 
+= 1.2.5 =
+* Fixed issue where order field showed "Extra: ()" when no extra was selected
+
 = 1.2.4 =
-* Fixed a bug where the reloaded user details form showed undefined as shipping prices and did not reselect the appropriate shipping option.
+* Fixed a bug where the reloaded user details form showed undefined as shipping prices and did not reselect the appropriate shipping option
 
 = 1.2.3 =
 * Added option for Commercial or Counter rates in Canada Post
