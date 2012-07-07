@@ -573,7 +573,7 @@ XML;
 		}
 		
 		
-		$service_price = array();
+		$service_info = array();
 		// Make the call to Canada Post
 		if ($xml->{'price-quotes'} ) 
 		{
@@ -601,8 +601,7 @@ XML;
 					}
 					
 					$price = number_format($due + $adjustment,2,'.',',');
-					$service_price[$service_name] = $price;
-					$out['data'][$service_name]['price'] = $price;
+					$service_info[$service_name]['price'] = $price;
 					
 					$details = array();
 					foreach ($priceQuote->{'service-standard'}->children() as $det)
@@ -612,16 +611,11 @@ XML;
 						if ($name == 'am-delivery' || $name == 'expected-transit-time') continue;
 						
 						$details[$name] = (string)$det;
-
-						$out['data'][$service_name]['details'] = $details;
+						$service_info[$service_name]['details'] = $details;
 					}
 				}
 			}
 		}
-		
-		// Save values in session to keep visitor from tampering
-		// with the prices
-		$_SESSION['usc_3rd_party_shipping'.$blog_id] = $service_price;
 		
 		if ($xml->{'messages'} ) 
 		{
@@ -632,19 +626,27 @@ XML;
 			}
 		}
 		
-		if (count($out['data']) == 0)
-		{
-			if (count($out['msgs']) == 0)
-			{
-				$out['msgs'][] = __('No shipping plans were found for your options!', $this->domain);
-			}
-		}
-		else
-		{
-			$out['success'] = true;
-		}
-		
-		return $out;
+	    // Save values in session to keep visitor from tampering
+        // with the prices
+        if (count($service_info))
+        {
+            $out['data'] = $service_info;
+            $_SESSION['usc_3rd_party_shipping'.$blog_id] = $service_info;
+        }
+        
+        if (count($out['data']) == 0)
+        {
+            if (count($out['msgs']) == 0)
+            {
+                $out['msgs'][] = __('No shipping plans were found for your options!',$this->domain);
+            }
+        }
+        else
+        {
+            $out['success'] = true;
+        }
+        
+        return $out;
 	}
 	
 	
