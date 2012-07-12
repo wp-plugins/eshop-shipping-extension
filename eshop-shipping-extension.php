@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post and USPS. USPS module can be purchased at http://wp.me/pnX9W-lH
-* Version:       1.2.5
+* Version:       1.2.6
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.2.5');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.2.6');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -435,7 +435,9 @@ class USC_eShop_Shipping_Extension
 		$plugins_dir = ESHOP_SHIPPING_EXTENSION_ABSPATH . '../';
 		$dir_str     = $plugins_dir . $this->domain . '-*/modules/*/*';
 		$files       = glob($dir_str);
+		$cert_files  = glob($plugins_dir . $this->domain . '-*/includes/third-party/cert/*');
 
+		
 		foreach ($files as $file)
 		{
 			// Get file names
@@ -443,7 +445,7 @@ class USC_eShop_Shipping_Extension
 
 			if ($matches[0])
 			{
-				$plugin    = $matches[1] . '/' .  $matches[1] . '.php';
+				$plugin    = $matches[1] . '/' .  $matches[1] . '.php'; // this is the module plugin file
 				$vendor_id = $matches[2];
 				$to_dir    = ESHOP_SHIPPING_EXTENSION_ABSPATH . 'includes/modules/' . $vendor_id;
 
@@ -467,6 +469,23 @@ class USC_eShop_Shipping_Extension
 					$e = error_get_last();
 					$this->set_notice(__('Failed to install module file: ', $this->domain) . $filepath . sprintf(' (%s)', $e['message']), true);
 				}
+			}
+		}
+		
+		// Install cert file
+		// eshop-shipping-extension-*/includes/third-party/cert/*
+		foreach ($cert_files as $file)
+		{
+			preg_match('!(.+?/includes/third-party/cert/(.+))$!', $file, $matches);
+
+			$from      = $matches[1];
+			$file_name = $matches[2];
+			$to        = ESHOP_SHIPPING_EXTENSION_ABSPATH . 'includes/third-party/cert/' . $file_name;
+
+			if (! @copy($from, $to))
+			{
+				$e = error_get_last();
+				$this->set_notice(__('Failed to install module file: ', $this->domain) . $file_name . sprintf(' (%s)', $e['message']), true);
 			}
 		}
 	}
