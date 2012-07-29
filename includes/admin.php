@@ -321,9 +321,11 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 									<?php endif;?>
 									
 									
+									<div id="usc_global_zip_code">
 									<p><strong><?php _e('Zip/Postal Code of origin?',$this->domain); ?></strong><br />
 									<input type="text" id="from_zip" name="<?php echo $this->options_name?>[from_zip]" 
 										      value="<?php echo $opts['from_zip']; ?>" /> </p>
+									</div>
 									
 									<p><strong><?php _e('Select which interface (if any) you want to use:',$this->domain); ?></strong><br />
 									<select id="third_party_select" name="<?php echo $this->options_name; ?>[third_party]">

@@ -49,15 +49,22 @@ class USC_eShop_Shipping_Extension
 	var $debug_request_file  = ESHOP_SHIPPING_EXTENSION_DBG_REQUEST;
 	var $debug_response_file = ESHOP_SHIPPING_EXTENSION_DBG_RESPONSE;
 	
+	var $helper;
+	
 	function __construct()
 	{
-		require_once( ABSPATH . 'wp-admin/includes/plugin.php' ); # needed for is plugin active
-		
+		require_once( ABSPATH . 'wp-admin/includes/plugin.php' ); # needed for "is plugin active"
 		
 		$this->eshop_is_installed = file_exists(ABSPATH . 'wp-content/plugins/eshop/eshop.php') ? TRUE : FALSE;
 		$this->eshop_is_active    = is_plugin_active('eshop/eshop.php') ? TRUE : FALSE;
 		$this->eshop_options      = $this->get_eshop_options();
 		$mod                      = $this->init_active_module();
+		
+		$this->helper = new USC_eShop_Shipping_Extension_helper();
+		
+		// Add common JS script always.
+		wp_enqueue_script( $this->domain, ESHOP_SHIPPING_EXTENSION_MODULES_URL . '/../eshop_shipping_extension.js', array( 'jquery' ),  ESHOP_SHIPPING_EXTENSION_VERSION);
+		
 		
 		// Add the filter to update the cart form with the shipping fields
 		add_filter('usc_add_shipping_fields', array(&$this,'add_shipping_fields'), 10, 2);
@@ -85,6 +92,13 @@ class USC_eShop_Shipping_Extension
 			// Add ajax capability for logged-in people, even though it's not really
 			// the admin interface.
 			add_action('wp_ajax_' . $this->domain . '-get-rates', array(&$this,'get_rates'));
+			
+			// Add ajax capability to refresh state list when changing the country.
+			add_action('wp_ajax_' . $this->domain . '-refresh-states', array(&$this,'refresh_states'));
+			
+			// declare the URL to the file that handles the AJAX request (wp-admin/admin-ajax.php)
+			wp_localize_script( $this->domain . '-refresh-states', 'eShopShippingModule', array( ) );
+			
 		}
 		else
 		{
@@ -119,6 +133,53 @@ class USC_eShop_Shipping_Extension
 		
 	}
 
+	
+	/**
+	 * Method: get_states_for_country()
+	 * @param string $country_code
+	 * Description: Wrapper around helper _get_states_for_country so it can be accessible from children
+	 */
+	function get_states_for_country($country_code,$active_module=null)
+	{
+		if (!$active_module) $active_module = $this;
+		
+		if (! $this->helper)
+		{
+			$this->helper = new USC_eShop_Shipping_Extension_helper();
+		}
+		
+		return $this->helper->_get_states_for_country($country_code,$active_module);
+	}
+
+	
+	
+	/**
+	 * Method: refresh_states()
+	 * @param string $country_code
+	 * Description: Ajax interface for refreshing the state list when country changes
+	 */
+	function refresh_states()
+	{
+		$country_code = $_REQUEST['country_code'];
+		$force_module = $_REQUEST['force_module'];
+		
+		if ($force_module)
+		{
+			$this->active_module = new $force_module();
+		}
+		
+		$states = $this->get_states_for_country($country_code,$this->active_module);
+		header("Content-type: application/json");
+
+		$out['success'] = true;
+        $out['data']    = $states;
+
+        error_log(__LINE__ . ' ' . print_r($out,1));
+        
+        echo json_encode($out);
+        exit; // WP requirement for ajax-related methods
+	}
+	
 	
 	/**
 	 * Method: debug_mode()
@@ -591,6 +652,52 @@ class USC_eShop_Shipping_Extension
 		}
 		
 		return $output;
+	}
+}
+
+
+// Class for common helper functions
+class USC_eShop_Shipping_Extension_helper extends USC_eShop_Shipping_Extension 
+{
+	private $opts;
+	
+	function __construct()
+	{
+		$this->opts = $this->get_options();
+	}
+	
+	
+	function _get_states_for_country($country_code,$active_module=NULL)
+	{
+		if (!$active_module) $active_module = $this;
+		
+		if (method_exists($active_module,'_child_get_states_for_country'))
+		{
+			return $active_module->_child_get_states_for_country($country_code);
+		}	
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . "eshop_states";
+			 
+		$sql =<<<EOF
+	SELECT stateName as state_name, code as state_code
+	FROM $table_name
+	where list = %s
+	order by state_name
+EOF;
+			 
+		$sql  = $wpdb->prepare($sql, $country_code);
+		$rows = $wpdb->get_results($sql,ARRAY_A);
+			 
+		$results = array();
+		foreach ($rows as $row)
+		{
+// 			$name           = htmlentities($row['state_name'], NULL, 'UTF-8');
+			$name           = $row['state_name'];
+			$results[$name] = $row['state_code'];
+		}
+			 
+		return $results;
 	}
 }
 
