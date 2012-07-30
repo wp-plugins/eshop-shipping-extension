@@ -254,7 +254,7 @@ jQuery(document).ready(function($){
 	}
 	else {
 		$("#usc_shipping_services").live('change',  function() {
-					eShopShippingModule.create_details_html();
+			eShopShippingModule.create_details_html();
 		});
 	}
 		
