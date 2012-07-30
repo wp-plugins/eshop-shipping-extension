@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post and USPS. USPS module can be purchased at http://wp.me/pnX9W-lH
-* Version:       1.3
+* Version:       1.3.1
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
