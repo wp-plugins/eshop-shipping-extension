@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: eShop, Canada Post, USPS, United States Postal Service, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
 Tested up to: 3.4.1
-Stable tag: 1.3
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ Correios (Brazil), Fedex, and DHL modules will be made available soon at [UseStr
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+= 1.3.1 =
+* Fixed bad call to jQuery.live() for users with jQuery version < 1.7
+
 = 1.3 =
 * A few changes to support UPS module
 
