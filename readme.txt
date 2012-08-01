@@ -1,14 +1,14 @@
 === Plugin Name ===
 Contributors: useStrict
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VLQU2MMXKB6S2
-Tags: eShop, Canada Post, USPS, United States Postal Service, Shipping Extension, Third Party Shipping, Shipping Quotes
+Tags: eShop, Canada Post, USPS, United States Postal Service, UPS, United Parcel Service, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
 Tested up to: 3.4.1
 Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Replace eShop's default shipping methods with live calls to Canada Post and USPS.
+Replace eShop's default shipping methods with live calls to Canada Post, UPS, and USPS.
 
 == Description ==
 
