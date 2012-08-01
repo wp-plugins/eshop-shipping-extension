@@ -12,7 +12,7 @@ Replace eShop's default shipping methods with live calls to Canada Post, UPS, an
 
 == Description ==
 
-eShop Shipping Extension framework overrides eShop's default shipping methods, interacting directly with Canada Post and USPS for real-time shipping rates and services.
+eShop Shipping Extension framework overrides eShop's default shipping methods, interacting directly with Canada Post, UPS, and USPS for real-time shipping rates and services.
 
 This framework includes the Canada Post module for free. [Click here to purchase the USPS module](http://usestrict.net/2012/07/usps-module-for-wordpress-eshop-shipping-extension/)
 or [here for the UPS module](http://usestrict.net/2012/07/ups-module-for-wordpress-eshop-shipping-extension/). 
