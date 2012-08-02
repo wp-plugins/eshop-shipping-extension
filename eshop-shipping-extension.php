@@ -2,8 +2,8 @@
 /*
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
-* Description:   eShop extension to use third-party shipping services. Currently supports Canada Post and USPS. USPS module can be purchased at http://wp.me/pnX9W-lH
-* Version:       1.3.1
+* Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS and USPS. UPS and USPS modules can be purchased at http://goo.gl/rkmu0
+* Version:       1.3.2
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.3.1');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.3.2');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
