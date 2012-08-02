@@ -106,9 +106,12 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 			add_settings_error('third_party','third_party',__('Invalid option selected!'), 'error');
 		}
 		
-		if (!isset($input['from_zip']) || trim($input['from_zip']) === '' )
+		if ($input['third_party'] !== 'USC_eShop_UPS') 
 		{
-			add_settings_error('from_zip','from_zip',__('Zip/Postal Code is required!'), 'error');
+			if (!isset($input['from_zip']) || trim($input['from_zip']) === '' )
+			{
+				add_settings_error('from_zip','from_zip',__('Zip/Postal Code is required!'), 'error');
+			}
 		}
 		
 		foreach($this->modules as $module)
