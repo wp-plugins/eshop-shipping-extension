@@ -95,11 +95,11 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 	 */
 	function validate_input($input)
 	{
-		$clean = array();
-		
 		// Accepted third-party values
 		$third_party = array_keys($this->modules);
 		$third_party[] = 'none';
+		
+		$this->do_recursive($input,'trim');
 		
 		if (! in_array($input['third_party'], $third_party))
 		{
@@ -108,12 +108,108 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 		
 		if ($input['third_party'] !== 'USC_eShop_UPS') 
 		{
-			if (!isset($input['from_zip']) || trim($input['from_zip']) === '' )
+			if (!isset($input['from_zip']) || $input['from_zip'] === '' )
 			{
 				add_settings_error('from_zip','from_zip',__('Zip/Postal Code is required!'), 'error');
 			}
 		}
 		
+		// Massage Package Classes
+		# Iterate through all fields to get the right order
+		# since people can mess up rel numbers by adding/deleting rows
+		$count = 1;
+		$package_classes = array();
+		foreach ($input['package_class_elements'] as $p)
+		{
+			// Skip empty rows
+			if (!$p['name'] && ! $p['width'] && !$p['height'] && !$p['length'] && !$p['girth'])
+			{
+				continue;
+			}
+			
+			$has_error = false;
+			foreach(array_keys($p) as $key)
+			{
+				switch($key)
+				{
+					case 'name':
+						! $p[$key] && add_settings_error("package_class_elements",
+														 "package_class_elements",sprintf(__('Package Class Row %d: "Name" is required!'),$count), 'error')
+						&& $has_error = true;
+						break;
+					case 'length':
+						if (!$p[$key])
+						{
+							add_settings_error("package_class_elements",
+							"package_class_elements",sprintf(__('Package Class Row %d: "Length" is required and must be greater than 0!'),$count), 'error')
+							&& $has_error = true;
+						}
+						else
+						{
+							! is_numeric($p[$key]) && add_settings_error("package_class_elements",
+													  "package_class_elements",sprintf(__('Package Class Row %d: "Length" must be a number!'),$count), 'error')
+							&& $has_error = true;
+						}
+						break; 
+					case 'width':
+						if (!$p[$key])
+						{
+							add_settings_error("package_class_elements",
+									"package_class_elements",sprintf(__('Package Class Row %d: "Width" is required and must be greater than 0!'),$count), 'error')
+							&& $has_error = true;
+						}
+						else
+						{
+							! is_numeric($p[$key]) && add_settings_error("package_class_elements",
+									"package_class_elements",sprintf(__('Package Class Row %d: "Width" must be a number!'),$count), 'error')
+							&& $has_error = true;
+						}
+						break;
+					case 'height':
+						if (!$p[$key])
+						{
+							add_settings_error("package_class_elements",
+									"package_class_elements",sprintf(__('Package Class Row %d: "Height" is required and must be greater than 0!'),$count), 'error')
+							&& $has_error = true;
+						}
+						else
+						{
+							! is_numeric($p[$key]) && add_settings_error("package_class_elements",
+									"package_class_elements",sprintf(__('Package Class Row %d: "Height" must be a number!'),$count), 'error')
+							&& $has_error = true;
+						}
+						break;
+					case 'girth':
+						$p[$key] && ! is_numeric($p[$key]) && ($has_error = 1) && 
+							add_settings_error("package_class_elements",
+							"package_class_elements",sprintf(__('Package Class Row %d: "Girth", if set, must be a number!'),$count), 'error')
+							&& $has_error = true;
+						break;
+					default:
+						break;
+				}
+				
+			}
+
+			if ($has_error === false)
+			{
+				if ( $p['length'] < $p['height'] || 
+					 $p['length'] < $p['width']  ||
+				    ($p['girth'] && $p['length'] < $p['girth']) )
+				{
+					add_settings_error("package_class_elements",
+							"package_class_elements",sprintf(__('Package Class Row %d: "Length", must be the largest dimension!'),$count), 'error');
+					$has_error = true;
+				}
+			}
+
+			$package_classes[$count++] = $p;
+		}
+		
+		$input['package_class_elements'] = $package_classes;
+		
+		
+		// Run module-specific validation
 		foreach($this->modules as $module)
 		{
 			if (method_exists($module,'validate_input'))
@@ -169,6 +265,18 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 			$opts['package_class_elements'][] = $dummy;
 			$opts['package_class_elements'][] = $dummy;
 		}
+		
+		// Ensure a minumum of 3 rows
+		$size = count($opts['package_class_elements']);
+		if ($size < 3)
+		{
+			while ($size < 3)
+			{
+				$opts['package_class_elements'][] = $dummy;
+				$size++;
+			}
+		}
+		
 		
 		if (isset($opts['css']))
 		{
@@ -379,9 +487,10 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 											<h4><?php _e('Package Options',$this->domain);?></h4>
 											<table class="package_class">
 												<tr class="first">
-													<td width="25" style="text-align:center"><input type="radio" class="pack_radio" name="<?php echo $this->options_name; ?>[package_class]" 
+													<td width="25" style="text-align:center"><input type="radio" id="global_radio" class="pack_radio" name="<?php echo $this->options_name; ?>[package_class]" 
 																	value="global" <?php checked('global',$opts['package_class']);?>/></td>
-													<td width="150" style="font-weight:bold"><?php _e('Global',$this->domain);?></td>
+													<td width="150" style="font-weight:bold">
+													<label for="global_radio"><?php _e('Global',$this->domain);?></label></td>
 													<td>
 														<?php _e('Specifies a single dimension set for the whole store. ' . 
 																 'This was the only available option prior to version 1.4. <strong>It is appropriate for stores where ' . 
@@ -389,9 +498,10 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 												</tr>
 												
 												<tr>
-													<td style="text-align:center"><input type="radio" class="pack_radio" name="<?php echo $this->options_name; ?>[package_class]" 
+													<td style="text-align:center"><input type="radio" id="package_radio" class="pack_radio" name="<?php echo $this->options_name; ?>[package_class]" 
 														value="package" <?php checked('package',$opts['package_class']);?>/></td>
-													<td style="font-weight:bold"><?php _e('Per Product',$this->domain);?></td>
+													<td style="font-weight:bold">
+													<label for="package_radio"><?php _e('Per Product',$this->domain);?></label></td>
 													<td>
 														<?php _e('Assign packages at the product level. You will have to set the package class for every single product, ' . 
 																 'depending on its size. <strong>It best suits stores that have a single option per product or where the product options do not ' . 
@@ -400,9 +510,10 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 												</tr>
 												
 												<tr>
-													<td style="text-align:center"><input type="radio" class="pack_radio" name="<?php echo $this->options_name; ?>[package_class]" 
+													<td style="text-align:center"><input type="radio" id="po_radio" class="pack_radio" name="<?php echo $this->options_name; ?>[package_class]" 
 														value="package_option" <?php checked('package_option',$opts['package_class']);?> /></td>
-													<td style="font-weight:bold"><?php _e('Per Product Option',$this->domain);?></td>
+													<td style="font-weight:bold">
+													<label for="po_radio"><?php _e('Per Product Option',$this->domain);?></label></td>
 													<td>
 														<?php _e('Different Product Options get assigned a package class. <strong>This works for stores that offer small/medium/large ' .
 																 'products as part of the Options of a Product.</strong>',$this->domain); ?>
@@ -440,7 +551,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 													});
 
 													// Handle bulk checkbox when others are clicked
-													$(".pack_child").click(function(){
+													$(".pack_child").live('click',function(){
 														var init = $(this).attr('checked'),
 														    all_same = true;
 														   
@@ -466,7 +577,6 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 														var rowid = $(this).attr('rel');
 														$("#package_classes tr[rel="+rowid+"]").remove();
 
-														console.debug($("input.pack_child").length);
 														if ($("input.pack_child").length == 0) {
 															$("#usc_pack_select").css('visibility','hidden');
 														}
@@ -511,16 +621,17 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 
 														data = $("<tr/>",{rel: new_rel, 'class': 'pack_data'})
 															.append($('<td><input type="checkbox" class="pack_child" rel="'+new_rel+'" /></td>'))
-															.append($('<td><input type="text" name="<?php echo $this->options_name; ?>[package_class]['+new_rel+'][name]" size="20"/></td>'))
-															.append($('<td><input type="text" name="<?php echo $this->options_name; ?>[package_class]['+new_rel+'][length]" value="" size="8" /></td>'))
-															.append($('<td><input type="text" name="<?php echo $this->options_name; ?>[package_class]['+new_rel+'][width]" value="" size="8" /></td>'))
-															.append($('<td><input type="text" name="<?php echo $this->options_name; ?>[package_class]['+new_rel+'][height]" value="" size="8" /></td>'))
-															.append($('<td><input type="text" name="<?php echo $this->options_name; ?>[package_class]['+new_rel+'][girth]" value="" size="8" /></td>'))
+															.append($('<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name; ?>[package_class_elements]['+new_rel+'][name]" size="20"/></td>'))
+															.append($('<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name; ?>[package_class_elements]['+new_rel+'][length]" value="" size="8" /></td>'))
+															.append($('<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name; ?>[package_class_elements]['+new_rel+'][width]" value="" size="8" /></td>'))
+															.append($('<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name; ?>[package_class_elements]['+new_rel+'][height]" value="" size="8" /></td>'))
+															.append($('<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name; ?>[package_class_elements]['+new_rel+'][girth]" value="" size="8" /></td>'))
 															.append($('<td><a href="#" class="del_pack_row" rel="'+new_rel+'" style="color:red"><?php _e('Delete',$this->domain);?></a></td>'));
 
 														last_row.after(data);
 														$("#pack_class_div").scrollTop($("#pack_class_div").height());
 													});
+													
 												});
 
 												
@@ -538,18 +649,18 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 														<th style="text-align:center"><?php _e('Girth',$this->domain); ?></th>
 														<th>&nbsp;</th>
 													</tr>
-													<?php $count=0; foreach ($opts['package_class_elements'] as $pe) : $count++;?>
+													<?php $count=0; foreach ($opts['package_class_elements'] as $pe) : $count++; ?>
 													<tr rel="<?php echo $count ?>" class="pack_data">
 														<td>
 														<?php if ($count != 1) :?>
 															<input type="checkbox" class="pack_child" rel="<?php echo $count; ?>" />
 														<?php endif;?>
 														</td>
-														<td><input type="text" name="<?php echo $this->options_name . "[package_class][$count][name]"; ?>" value="<?php $pe['name']; ?>" size="20"/></td>
-														<td><input type="text" name="<?php echo $this->options_name . "[package_class][$count][length]"; ?>" value="<?php $pe['length']; ?>" size="8" /></td>
-														<td><input type="text" name="<?php echo $this->options_name . "[package_class][$count][width]"; ?>" value="<?php $pe['width']; ?>" size="8" /></td>
-														<td><input type="text" name="<?php echo $this->options_name . "[package_class][$count][height]"; ?>" value="<?php $pe['height']; ?>" size="8" /></td>
-														<td><input type="text" name="<?php echo $this->options_name . "[package_class][$count][girth]"; ?>" value="<?php $pe['girth']; ?>" size="8" /></td>
+														<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name . "[package_class_elements][$count][name]"; ?>" value="<?php echo $pe['name']; ?>" size="20"/></td>
+														<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name . "[package_class_elements][$count][length]"; ?>" value="<?php echo $pe['length']; ?>" size="8" /></td>
+														<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name . "[package_class_elements][$count][width]"; ?>" value="<?php echo $pe['width']; ?>" size="8" /></td>
+														<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name . "[package_class_elements][$count][height]"; ?>" value="<?php echo $pe['height']; ?>" size="8" /></td>
+														<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name . "[package_class_elements][$count][girth]"; ?>" value="<?php echo $pe['girth']; ?>" size="8" /></td>
 														<td style="color:red">
 														<?php if ($count != 1) :?>
 															<a href="#" class="del_pack_row" rel="<?php echo $count; ?>" style="color:red"><?php _e('Delete',$this->domain);?></a>

@@ -42,6 +42,13 @@ Correios (Brazil), Fedex, and DHL modules will be made available soon at [UseStr
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+= 1.4 =
+* Better packaging options (product, and product-option level)
+* Minor data massaging bug
+
+= 1.3.2 =
+* Fixed "ZipCode Required" error for UPS users
+
 = 1.3.1 =
 * Fixed bad call to jQuery.live() for users with jQuery version < 1.7
 

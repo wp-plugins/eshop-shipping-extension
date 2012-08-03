@@ -429,12 +429,12 @@ class USC_eShop_Shipping_Extension
 		{
 			foreach ($var as $k => $v)
 			{
-				$this->do_recursive($v,$func);
+				$this->do_recursive($var[$k],$func);
 			}
 		}
 		elseif (is_callable($func))
 		{
-				$func($var);
+			$var = $func($var);
 		}
 	}
 	

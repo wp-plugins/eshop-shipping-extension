@@ -55,6 +55,8 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 			$this->options               = $options[$this->my_options_name];
 			$this->options['from_zip']   = $options['from_zip'];
 			$this->options['debug_mode'] = $options['debug_mode'];
+			$this->options['package_class']          = $options['package_class'];
+			$this->options['package_class_elements'] = $options['package_class_elements'];
 		}
 		else
 		{
@@ -89,15 +91,17 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 			{
 				if ($key === 'width' || $key === 'length' || $key === 'height')
 				{
+					if ($input['package_class'] !== 'global') continue;
+					
 					if ($input[$this->my_options_name]['unpackaged'] == 'false')
 					{
 						if (!$val)
 						{
-							add_settings_error($key,$key, sprintf(__('%s is required when Unpackaged = No!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
+							add_settings_error($key,$key, sprintf(__('Canada Post: %s is required when Unpackaged = No!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
 						}
-						elseif (!is_numeric($val) || $val > 999.9 || $val < 0)
+						elseif (!is_numeric($val) || (int)$val > 999.9 || (int)$val < 0)
 						{
-							add_settings_error($key,$key, sprintf(__('%s has an invalid value. Must be > 0 and < 999.9', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
+							add_settings_error($key,$key, sprintf(__('Canada Post: %s has an invalid value. Must be between 0 and 999.9', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
 						}
 					}
 					
@@ -105,7 +109,7 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 				}
 				else
 				{
-					add_settings_error($key,$key, sprintf(__('%s is a required value!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
+					add_settings_error($key,$key, sprintf(__('Canada Post: %s is a required value!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
 				}
 			}
 			elseif (is_array($val)) // Handles test/live credentials
@@ -114,20 +118,25 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 				{
 					if (! isset($v) || $v === '')
 					{
-						add_settings_error($k,$k, sprintf(__('%s %s is a required value!',$this->domain), ucwords($key), ucwords($k)), 'error');
+						add_settings_error($k,$k, sprintf(__('Canada Post:  %s %s is a required value!',$this->domain), ucwords($key), ucwords($k)), 'error');
 					}
 					elseif (! preg_match('/^[a-zA-Z0-9]+$/',$v))
 					{
-						add_settings_error($k,$k, sprintf(__('%s %s does not contain a valid string',$this->domain), ucwords($key), ucwords($k)), 'error');
+						add_settings_error($k,$k, sprintf(__('Canada Post: %s %s does not contain a valid string',$this->domain), ucwords($key), ucwords($k)), 'error');
 					}
 					
 				}
+			}
+			
+			if ($input['package_class'] == 'global' && ($key === 'height' || $key === 'width') && $val > $input[$this->my_options_name]['length'])
+			{
+				add_settings_error($key,$key, sprintf(__('Canada Post: %s cannot be larger than Length!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
 			}
 		}
 		
 		if (! preg_match('/^[0-9]+$/',$input[$this->my_options_name]['customer_number']))
 		{
-			add_settings_error('customer_number','customer_number', __('Customer Number must be a number!', $this->domain), 'error');
+			add_settings_error('customer_number','customer_number', __('Canada Post: Customer Number must be a number!', $this->domain), 'error');
 		}
 		
 		return $input;
@@ -179,11 +188,12 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 		$unpackaged_info   = __('Yes indicates that the parcel will be unpackaged (e.g. tires).',$this->domain);
 		
 		
-		$dimensions_text = __('<p>Although Canada Post does not require dimensions for their API calls (no errors occur if not passed), ' .
+		$dimensions_text = __('<p class="cp_dimension">Although Canada Post does not require dimensions for their API calls (no errors occur if not passed), ' .
 				' the size of the package may influence the price of the quote (e.g., if the volumetric weight is larger than the actual weight). '.
 				' We recommend entering the dimensions of ' .
 				' the largest box according to your products or adjusting product prices to absorb any differences. '.
-				'<a href="http://www.canadapost.ca/tools/pg/manual/PGabcmail_web_business-e.asp#1378832" target="_new">Read more here.</a></p><p><em>Note: All dimensions are in centimeters.</em></p>', $this->domain);
+				'<a href="http://www.canadapost.ca/tools/pg/manual/PGabcmail_web_business-e.asp#1378832" target="_new">Read more here.</a></p>'.
+				'<p class="cp_dimension"><em>Note: All dimensions are in centimeters.</em></p>', $this->domain);
 		
 		$yes = __('Yes', $this->domain);
 		$no  = __('No', $this->domain);
@@ -203,7 +213,31 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 		} 
 		$quote_type_info = __('Commercial rates are lower than Counter rates. Choose "Counter" if you are not printing your own labels.',$this->domain);
 		
+		$packaging_options_text = __('Packaging Options',$this->domain);
+		
 		return <<<EOF
+			<script type="text/javascript">
+				jQuery(document).ready(function($){
+					// Show/Hide Global Dimensions
+					$("input.pack_radio").click(function(){
+						if ($(this).val() == 'global') {
+							$(".cp_dimension").show();
+						}
+						else {
+							$(".cp_dimension").hide();
+						}
+					});
+					
+					// Show/Hide on load
+					if ('global' == '{$opts[package_class]}') {
+						$(".cp_dimension").show();
+					}
+					else {
+						$(".cp_dimension").hide();
+					}
+				});
+			</script>
+			
 			<table>
 				<tr>
 					<th>$customer_number:</th>
@@ -227,19 +261,20 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 				</tr>
 			</table>
 		<hr />
+		<h4>{$packaging_options_text}</h4>
 		{$dimensions_text}
 		<table>
-			<tr>
+			<tr class="cp_dimension">
 				<th width="100">$length:</th>
 				<td><input type="text" name="{$po}[$this->my_options_name][length]" value="{$opts[length]}" size="5" maxlength="5"/></td>
 				<td><span id="length_info"><small>{$length_info}</small></span></td>
 			</tr>
-			<tr>
+			<tr class="cp_dimension">
 				<th>$width:</th>
 				<td><input type="text" name="{$po}[$this->my_options_name][width]" value="{$opts[width]}" size="5" maxlength="5"/></td>
 				<td><span id="width_info"><small>{$width_info}</small></span></td>
 			</tr>
-			<tr>
+			<tr class="cp_dimension">
 				<th>$height:</th>
 				<td><input type="text" name="{$po}[$this->my_options_name][height]" value="{$opts[height]}" size="5" maxlength="5"/></td>
 				<td><span id="height_info"><small>{$height_info}</small></span></td>
