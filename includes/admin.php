@@ -26,10 +26,60 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 		
 		add_action('admin_menu', array(&$this, 'add_options_page'));
 		add_action('admin_init', array(&$this, 'register_options'));
+		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'), 10, 1);
+		
 		
 		
 		// Initialize any Shipping modules
 		$this->initialize_modules();
+	}
+	
+	
+	/**
+	 * Method: enqueue_scripts
+	 * Description: enqueues any JS scripts required in the admin screen
+	 */
+	function enqueue_scripts($hook)
+	{
+		global $post;
+		
+		if ( $hook == 'post-new.php' || $hook == 'post.php' ) 
+		{
+			$eshop_post_types = apply_filters('eshop_post_types',NULL);
+			if (in_array($post->post_type, $eshop_post_types))
+			{
+				// Do nothing if we're not using global options
+				$opts = $this->get_options();
+				if ($opts['package_class'] === 'global') return;
+				
+				// Continue if not global
+				$prod_meta = maybe_unserialize(get_post_meta($post->ID, '_eshop_product', true)); 
+				
+				$prod_opt_array = array();
+				foreach ($prod_meta['products'] as $key => $val)
+				{
+					$prod_opt_array[$key] = $val['package_class'];
+				}
+				
+				foreach ($opts['package_class_elements'] as $key => $val)
+				{
+					 $pc_elements[$key] = $val['name'];
+				}
+				
+				wp_enqueue_script( 'usc_package_classes',  ESHOP_SHIPPING_EXTENSION_MODULES_URL . '/../usc_package_classes.js', array( 'jquery' ),  ESHOP_SHIPPING_EXTENSION_VERSION);
+				// declare the URL to the file that handles the AJAX request (wp-admin/admin-ajax.php)
+				wp_localize_script( 'usc_package_classes', 'eShopShippingModule_packages', 
+									array('package_class'      => $opts['package_class'],
+										  'pc_elements'        => $pc_elements,
+										  'sel_prod_level'     => $prod_meta['package_class'],
+										  'sel_prod_opt_level' => $prod_opt_array,
+										  'lang'               => array('select' => __('Select',$this->domain),
+										  								'package_class' => __('Package Class', $this->domain),
+																  )
+									)
+								);
+			}
+		}
 	}
 	
 	/**
@@ -498,10 +548,10 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 												</tr>
 												
 												<tr>
-													<td style="text-align:center"><input type="radio" id="package_radio" class="pack_radio" name="<?php echo $this->options_name; ?>[package_class]" 
-														value="package" <?php checked('package',$opts['package_class']);?>/></td>
+													<td style="text-align:center"><input type="radio" id="product_radio" class="pack_radio" name="<?php echo $this->options_name; ?>[package_class]" 
+														value="product" <?php checked('product',$opts['package_class']);?>/></td>
 													<td style="font-weight:bold">
-													<label for="package_radio"><?php _e('Per Product',$this->domain);?></label></td>
+													<label for="product_radio"><?php _e('Per Product',$this->domain);?></label></td>
 													<td>
 														<?php _e('Assign packages at the product level. You will have to set the package class for every single product, ' . 
 																 'depending on its size. <strong>It best suits stores that have a single option per product or where the product options do not ' . 
@@ -511,7 +561,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 												
 												<tr>
 													<td style="text-align:center"><input type="radio" id="po_radio" class="pack_radio" name="<?php echo $this->options_name; ?>[package_class]" 
-														value="package_option" <?php checked('package_option',$opts['package_class']);?> /></td>
+														value="product_option" <?php checked('product_option',$opts['package_class']);?> /></td>
 													<td style="font-weight:bold">
 													<label for="po_radio"><?php _e('Per Product Option',$this->domain);?></label></td>
 													<td>
