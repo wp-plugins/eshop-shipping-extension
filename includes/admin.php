@@ -27,6 +27,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 		add_action('admin_menu', array(&$this, 'add_options_page'));
 		add_action('admin_init', array(&$this, 'register_options'));
 		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'), 10, 1);
+		add_action('save_post', array(&$this,'save_product_package_class'),20,2);
 		
 		
 		
@@ -56,9 +57,12 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 				$prod_meta = maybe_unserialize(get_post_meta($post->ID, '_eshop_product', true)); 
 				
 				$prod_opt_array = array();
-				foreach ($prod_meta['products'] as $key => $val)
+				if (is_array($prod_meta))
 				{
-					$prod_opt_array[$key] = $val['package_class'];
+					foreach ($prod_meta['products'] as $key => $val)
+					{
+						$prod_opt_array[$key] = $val['sel_package_class'];
+					}
 				}
 				
 				foreach ($opts['package_class_elements'] as $key => $val)
@@ -71,7 +75,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 				wp_localize_script( 'usc_package_classes', 'eShopShippingModule_packages', 
 									array('package_class'      => $opts['package_class'],
 										  'pc_elements'        => $pc_elements,
-										  'sel_prod_level'     => $prod_meta['package_class'],
+										  'sel_prod_level'     => $prod_meta['sel_package_class'],
 										  'sel_prod_opt_level' => $prod_opt_array,
 										  'lang'               => array('select' => __('Select',$this->domain),
 										  								'package_class' => __('Package Class', $this->domain),
@@ -80,6 +84,55 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 								);
 			}
 		}
+	}
+	
+	/**
+	 * Method: save_product_package_class
+	 * Description: Attaches the selected package_class_element onto the product 
+	 */
+	function save_product_package_class($post_ID)
+	{
+		$opts = $this->get_options();
+
+		if ($opts['package_class'] == 'global') return;
+		
+		$prod_meta = maybe_unserialize(get_post_meta($post_ID, '_eshop_product', true));
+
+		if (! $prod_meta) return; // WP saves everything twice, once with a weird post_id, then lastly with the correct one.
+		
+		if ($opts['package_class'] == 'product')
+		{
+			// Package class is mandatory!
+			if (! $_POST['eshop_product_package_class'])
+			{
+				delete_post_meta( $post_ID, '_eshop_stock');
+				add_filter('redirect_post_location','eshop_error');
+			}
+			else
+			{
+				$pack_class_name = $_POST['eshop_product_package_class'];
+				$prod_meta['sel_package_class']	= $pack_class_name;
+			}
+		}
+		else 
+		{
+			foreach ($prod_meta['products'] as $key => $val)
+			{
+				if (! $prod_meta['products'][$key]['option']) continue;
+				
+				$prod_meta['products'][$key]['sel_package_class'] = $_POST['eshop_opt_package_class_'.$key];
+				
+				// If option description is set, then package class is mandatory!
+				if (! $prod_meta['products'][$key]['sel_package_class'])
+				{
+					delete_post_meta( $post_ID, '_eshop_stock');
+					add_filter('redirect_post_location','eshop_error');
+				}
+			}
+			
+		}
+		
+		update_post_meta($post_ID,'_eshop_product',$prod_meta);
 	}
 	
 	/**
@@ -416,8 +469,18 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 		
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
 
+			<form method="post" action="options.php">
+			<?php settings_fields($this->options_name); ?>
 			<div id="side-info-column" class="inner-sidebar">
 				<div class="meta-box-sortables">
+					<div id="save_shortcut" class="postbox">
+						<h3><?php _e('Save Settings', $this->domain); ?></h3>
+						<div class="inside">
+							<p class="submit">
+								<input type="submit" class="button-primary" value="<?php _e('Save Preferences',$this->domain); ?>" />
+							</p>
+						</div>
+					</div>
 					<div id="about" class="postbox">
 						<h3 id="about-sidebar"><?php _e('About the Author:', $this->domain); ?></h3>
 						<div class="inside">
@@ -433,21 +496,22 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 								<p><strong><?php _e('Donate', $this->domain); ?>:</strong><br />
 								<?php _e('Writing and maintaining a plugin takes time and coffee - a lot of it. If you enjoy this plugin, ' . 
 										 'please consider making a donation towards my next all-nighter ;-). <strong>Thank You!</strong>', $this->domain ); ?>
+
 								</p>
-								<?php _e('<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-												<input type="hidden" name="cmd" value="_s-xclick">
-												<input type="hidden" name="hosted_button_id" value="VLQU2MMXKB6S2">
-												<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-												<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-												</form>',$this->domain);?>
+								<p>
+									<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&<?php _e('hosted_button_id=VLQU2MMXKB6S2',$this->domain); ?>" 
+									   target="_new">
+										<img src="<?php _e('https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif',$this->domain);?>" 
+											 border="0" alt="<?php _e('PayPal - The safer, easier way to pay online!', $this->domain);?>"
+											 title="<?php _e('PayPal - The safer, easier way to pay online!', $this->domain);?>" />
+									</a>
+								</p>
 							<?php endif;?>
 						</div>
 					</div>
 				</div>
 			</div> <!--  end of sidebar -->
 			
-			<form method="post" action="options.php">
-			<?php settings_fields($this->options_name); ?>
 			
 				<div id="post-body" class="has-sidebar">
 					<div id="post-body-content" class="has-sidebar-content">

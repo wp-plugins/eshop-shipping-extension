@@ -488,83 +488,82 @@ EOF;
 	private function _make_xml_request($input)
 	{
 		$opts = $this->get_options();
-
-		$mailed_by        = $opts['customer_number'];
+		
 		$from_postal_code = str_replace(' ','',strtoupper($input['from_zip']));
 		$conv             = $this->convert_to_kilos($input['weight']);
 		$out              = array('success' => true);
 		$to_zip           = str_replace(' ','',strtoupper($input['zip']));
+		$xml              = new SimpleXMLElement('<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate" />');
 		
-		if ($conv['success'] === false)
-		{
-			return $conv;
-		}
 		
-		$weight = $conv['data'];
+		if ($conv['success'] === false)	return $conv;
 
-		switch ($input['country']) 
-		{
-			case 'CA':
-				$destination = "<domestic><postal-code>{$to_zip}</postal-code></domestic>";
-				break;
-			case 'US':
-				$destination = "<united-states><zip-code>{$to_zip}</zip-code></united-states>";
-				break;
-			default:
-				$destination = "<international><country-code>{$input[country]}</country-code></international>";
-		}
-		
-		if ($opts['length'] && $opts['width'] && $opts['height'])
-		{
-			$dimensions .= "<dimensions>
-				    <length>{$opts[length]}</length>
-					<width>{$opts[width]}</width>
-					<height>{$opts[height]}</height>
-				</dimensions>";
-		}
-		
-		if ($opts['unpackaged'] && $opts['unpackaged'] == 'true')
-		{
-			$unpackaged = "<unpackaged>{$opts[unpackaged]}</unpackaged>";
-		}
-		
 		// Handle quote_type/customer_number options (no CN if QT is COUNTER)
 		if ($opts['quote_type'] && $opts['quote_type'] === 'counter')
 		{
-			$quote_type = "<quote-type>{$opts[quote_type]}</quote-type>";
+			$xml->addChild('quote-type', $opts['quote_type']);
 		}
 		else
 		{
-			$customer_number = "<customer-number>{$mailed_by}</customer-number>"; 
+			$xml->addChild('customer-number', $opts['customer_number']);
+		}
+		
+		$xml->addChild('parcel-characteristics')->addChild('weight',$conv['data']);
+		
+		if (! $opts['package_class'] || $opts['package_class'] == 'global')
+		{
+			if ($opts['length'] && $opts['width'] && $opts['height'])
+			{
+				$xml->{'parcel-characteristics'}->addChild('dimensions');
+				$xml->{'parcel-characteristics'}->dimensions->addChild('length',$opts['length']);
+				$xml->{'parcel-characteristics'}->dimensions->addChild('width',$opts['width']);
+				$xml->{'parcel-characteristics'}->dimensions->addChild('height',$opts['height']);
+			}
+		}
+		elseif ($opts['package_class'] == 'product')
+		{
+			// Get dim for product
+			$xml->{'parcel-characteristics'}->addChild('dimensions');
+		}
+		else
+		{
+			// Get dim for product option
+			$xml->{'parcel-characteristics'}->addChild('dimensions');
 		}
 		
 		
-		$out['data'] =<<<XML
-<?xml version="1.0" encoding="UTF-8" ?>
-			<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate">
-			  $customer_number
-			  $quote_type
-			  <parcel-characteristics>
-			    <weight>{$weight}</weight>
-			    $dimensions
-			    $unpackaged
-			  </parcel-characteristics>
-			  <origin-postal-code>{$from_postal_code}</origin-postal-code>
-			  <destination>
-					{$destination}
-			  </destination>
-			</mailing-scenario>
-XML;
+		
+		if ($opts['unpackaged'] && $opts['unpackaged'] == 'true')
+		{
+			$xml->{'parcel-characteristics'}->addChild('unpackaged',$opts['unpackaged']);
+		}
+		
+		$xml->addChild('origin-postal-code',$from_postal_code);
+
+		$xml->addChild('destination');
+		switch ($input['country'])
+		{
+			case 'CA':
+				$xml->destination->addChild('domestic')->addChild('postal-code',$to_zip);
+				break;
+			case 'US':
+				$xml->destination->addChild('united-states')->addChild('zip-code',$to_zip);
+				break;
+			default:
+				$xml->destination->addChild('international')->addChild('country-code',$input['country']);
+		}
+		
 			  
 		if ($this->debug_mode())
 		{
 			$dom = new DOMDocument('1.0');
 			$dom->preserveWhiteSpace = false;
 			$dom->formatOutput       = true;
-			$dom->loadXML(preg_replace('|<customer-number>[^<]+</customer-number>|', '<customer-number>***REMOVED***</customer-number>', $out['data']));
+			$dom->loadXML(preg_replace('|<customer-number>[^<]+</customer-number>|', '<customer-number>***REMOVED***</customer-number>', $xml->asXML()));
 			$dom->save($this->debug_request_file);
 		}
-									
+
+		$out['data'] = $xml->asXML();
 		return $out;
 	}
 	

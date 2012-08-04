@@ -43,8 +43,9 @@ Correios (Brazil), Fedex, and DHL modules will be made available soon at [UseStr
 
 == Changelog ==
 = 1.4 =
-* Better packaging options (product, and product-option level)
+* Better packaging options (added product, and product-option level)
 * Minor data massaging bug
+* Replace hardcoded XML with SimpleXML
 
 = 1.3.2 =
 * Fixed "ZipCode Required" error for UPS users
