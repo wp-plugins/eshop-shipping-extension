@@ -653,6 +653,23 @@ class USC_eShop_Shipping_Extension
 		
 		return $output;
 	}
+	
+	
+	/**
+	 * Method: get_package_class_by_name()
+	 * Desc: Wrapper function for helper to get package class dimensions using its name
+	 * Returns: array
+	 */
+	function get_package_class_by_name($name)
+	{
+		if (! $this->helper)
+		{
+			$this->helper = new USC_eShop_Shipping_Extension_helper();
+		}
+
+		return $this->helper->_get_package_class_by_name($name);
+	}
+	
 }
 
 
@@ -660,6 +677,7 @@ class USC_eShop_Shipping_Extension
 class USC_eShop_Shipping_Extension_helper extends USC_eShop_Shipping_Extension 
 {
 	private $opts;
+	private $pack_classes = array();
 	
 	function __construct()
 	{
@@ -698,6 +716,23 @@ EOF;
 		}
 			 
 		return $results;
+	}
+	
+	
+	function _get_package_class_by_name($name)
+	{
+		if (! $this->pack_classes[$name]) 
+		{
+			foreach ($this->opts['package_class_elements'] as $val)
+			{
+				$this->pack_classes[$val['name']] = array('length' => $val['length'],
+														  'width'  => $val['width'],
+														  'height' => $val['height']
+														  );
+			}
+		}
+		
+		return $this->pack_classes[$name];
 	}
 }
 

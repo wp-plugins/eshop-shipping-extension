@@ -487,6 +487,8 @@ EOF;
 	 */
 	private function _make_xml_request($input)
 	{
+		global $blog_id;
+		
 		$opts = $this->get_options();
 		
 		$from_postal_code = str_replace(' ','',strtoupper($input['from_zip']));
@@ -510,27 +512,95 @@ EOF;
 		
 		$xml->addChild('parcel-characteristics')->addChild('weight',$conv['data']);
 		
-		if (! $opts['package_class'] || $opts['package_class'] == 'global')
+		if (! $opts['package_class']) $opts['package_class'] = '';
+		
+		switch($opts['package_class'])
 		{
-			if ($opts['length'] && $opts['width'] && $opts['height'])
-			{
-				$xml->{'parcel-characteristics'}->addChild('dimensions');
-				$xml->{'parcel-characteristics'}->dimensions->addChild('length',$opts['length']);
-				$xml->{'parcel-characteristics'}->dimensions->addChild('width',$opts['width']);
-				$xml->{'parcel-characteristics'}->dimensions->addChild('height',$opts['height']);
-			}
-		}
-		elseif ($opts['package_class'] == 'product')
-		{
-			// Get dim for product
-			$xml->{'parcel-characteristics'}->addChild('dimensions');
-		}
-		else
-		{
-			// Get dim for product option
-			$xml->{'parcel-characteristics'}->addChild('dimensions');
+			case 'global':
+				if ($opts['length'] && $opts['width'] && $opts['height'])
+				{
+					$dim['width']  = $opts['width'];
+					$dim['height'] = $opts['height'];
+					$dim['length'] = $opts['length'];
+				}
+				break;
+			case 'product':
+					foreach ($_SESSION['eshopcart'.$blog_id] as $key => $val)
+					{
+						// Each key is a product
+						$post_id = $val['postid'];
+						$qty     = $val['qty']; 
+						
+						$prod_meta = get_post_meta($post_id,'_eshop_product', TRUE);
+						
+						if (! $prod_meta['sel_package_class'])
+						{
+							// If at least one product doesn't have its own dimensions,
+							// fall back to global dimensions
+							if ($opts['length'] && $opts['width'] && $opts['height'])
+							{
+								$dim['width']  = $opts['width'];
+								$dim['height'] = $opts['height'];
+								$dim['length'] = $opts['length'];
+							}
+		
+							break;
+						}
+						else 
+						{
+							// Get pack class and add up the dimensions times qty
+							$pack_class = $this->get_package_class_by_name($prod_meta['sel_package_class']);
+		
+							$dim['width']  = $pack_class['width']  *= $qty;
+							$dim['length'] = $pack_class['length'] *= $qty;
+							$dim['height'] = $pack_class['height'] *= $qty;
+						}
+					}
+				break;
+			case 'product_option':
+				foreach ($_SESSION['eshopcart'.$blog_id] as $key => $val)
+				{
+					// Each key is a product
+					$post_id = $val['postid'];
+					$qty     = $val['qty'];
+				
+					$prod_meta = get_post_meta($post_id,'_eshop_product', TRUE);
+				
+					if (! $prod_meta['products'][$val['option']]['sel_package_class'])
+					{
+						// If at least one product doesn't have its own dimensions,
+						// fall back to global dimensions
+						if ($opts['length'] && $opts['width'] && $opts['height'])
+						{
+							$dim['width']  = $opts['width'];
+							$dim['height'] = $opts['height'];
+							$dim['length'] = $opts['length'];
+						}
+				
+						break;
+					}
+					else
+					{
+						// Get pack class and add up the dimensions times qty
+						$pack_class = $this->get_package_class_by_name($prod_meta['products'][$val['option']]['sel_package_class']);
+				
+						$dim['width']  = $pack_class['width']  *= $qty;
+						$dim['length'] = $pack_class['length'] *= $qty;
+						$dim['height'] = $pack_class['height'] *= $qty;
+					}
+				}
+				break;
+			default:
+				break;
 		}
 		
+		if ($dim)
+		{
+			$xml->{'parcel-characteristics'}->addChild('dimensions');
+			$xml->{'parcel-characteristics'}->dimensions->addChild('length',$dim['length']);
+			$xml->{'parcel-characteristics'}->dimensions->addChild('width', $dim['width']);
+			$xml->{'parcel-characteristics'}->dimensions->addChild('height',$dim['height']);
+		}
 		
 		
 		if ($opts['unpackaged'] && $opts['unpackaged'] == 'true')
@@ -566,7 +636,7 @@ EOF;
 		$out['data'] = $xml->asXML();
 		return $out;
 	}
-	
+
 	
 	/**
 	 * @package USC_eShop_Canada_Post
