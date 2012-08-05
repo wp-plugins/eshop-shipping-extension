@@ -45,6 +45,16 @@ jQuery(document).ready(function($){
 	    	.after(jQuery("<p/>").html('<strong>'+eShopShippingModule_packages.lang.package_class+'</strong> ')
 	    						 .append(sel_node)
 	    );
+		
+		// Add hidden inputs to save product_option values and not lose them between switches
+		for (i in eShopShippingModule_packages.sel_prod_opt_level) {
+			var input = $("<input />",{name:'eshop_opt_package_class_'+i,
+									   value: eShopShippingModule_packages.sel_prod_opt_level[i],
+									   type: 'hidden'});
+			$("input#eshop_stock_available").after(input);
+		}
+			
+		
 	}
 	else if (eShopShippingModule_packages.package_class == 'product_option') {
 		
@@ -61,6 +71,25 @@ jQuery(document).ready(function($){
 			
 			count = count+1;
 		});
+		
+		// Add hidden inputs to save product values and not lose them between switches
+		var input = $("<input />", {type: 'hidden', name: 'eshop_product_package_class', value: eShopShippingModule_packages.sel_prod_level});
+		$("table.eshoppopt").after(input);
+	}
+	else {
+		// Global options, make everything a hidden field
+		
+		// Add hidden inputs to save product_option values and not lose them between switches
+		for (i in eShopShippingModule_packages.sel_prod_opt_level) {
+			var input = $("<input />",{name:'eshop_opt_package_class_'+i,
+									   value: eShopShippingModule_packages.sel_prod_opt_level[i],
+									   type: 'hidden'});
+			$("input#eshop_stock_available").after(input);
+		}
+		
+		// Add hidden inputs to save product values and not lose them between switches
+		var input = $("<input />", {type: 'hidden', name: 'eshop_product_package_class', value: eShopShippingModule_packages.sel_prod_level});
+		$("input#eshop_stock_available").after(input);
 	}
 	
 });

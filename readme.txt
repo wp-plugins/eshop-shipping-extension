@@ -46,6 +46,7 @@ Correios (Brazil), Fedex, and DHL modules will be made available soon at [UseStr
 * Better packaging options (added product, and product-option level)
 * Minor data massaging bug
 * Replace hardcoded XML with SimpleXML
+* Fixed total weight bug - jQuery did not always pass the correct weight to the rating API
 
 = 1.3.2 =
 * Fixed "ZipCode Required" error for UPS users

@@ -51,9 +51,11 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 			{
 				// Do nothing if we're not using global options
 				$opts = $this->get_options();
-				if ($opts['package_class'] === 'global') return;
 				
-				// Continue if not global
+				// Stopped returning if it's global, because we want to keep any saved data 
+				// when switching between package_class modes.
+// 				if ($opts['package_class'] === 'global') return;
+				
 				$prod_meta = maybe_unserialize(get_post_meta($post->ID, '_eshop_product', true)); 
 				
 				$prod_opt_array = array();
@@ -94,27 +96,19 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 	{
 		$opts = $this->get_options();
 
-		if ($opts['package_class'] == 'global') return;
+		// Commented this out because we want to always run it so we don't lose data
+// 		if ($opts['package_class'] == 'global') return;
 		
 		$prod_meta = maybe_unserialize(get_post_meta($post_ID, '_eshop_product', true));
 
 		if (! $prod_meta) return; // WP saves everything twice, once with a weird post_id, then lastly with the correct one.
 		
-		if ($opts['package_class'] == 'product')
+		if ($opts['package_class'] == 'product' && ! $_POST['eshop_product_package_class'])
 		{
-			// Package class is mandatory!
-			if (! $_POST['eshop_product_package_class'])
-			{
-				delete_post_meta( $post_ID, '_eshop_stock');
-				add_filter('redirect_post_location','eshop_error');
-			}
-			else
-			{
-				$pack_class_name = $_POST['eshop_product_package_class'];
-				$prod_meta['sel_package_class']	= $pack_class_name;
-			}
+			delete_post_meta( $post_ID, '_eshop_stock');
+			add_filter('redirect_post_location','eshop_error');
 		}
-		else 
+		else
 		{
 			foreach ($prod_meta['products'] as $key => $val)
 			{
@@ -131,6 +125,10 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 			}
 			
 		}
+		
+		// Always save the package class (it may be hidden or not)
+		$pack_class_name = $_POST['eshop_product_package_class'];
+		$prod_meta['sel_package_class']	= $pack_class_name;
 		
 		update_post_meta($post_ID,'_eshop_product',$prod_meta);
 	}
@@ -595,7 +593,8 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 										<div class="inside">
 											<p><?php _e('Select your package preferences below and create Package Classes to assign to your products.' .
 													    'The plugin will then fetch the shipping rates based on the total dimensions of your products, ' .
-													    'as if they were all in one box.',$this->domain);?></p>
+													    'as if they were all in one box. Also, make sure to always set the fallback dimensions in the ' . 
+													    'Courier Settings Boxes in case a product is missing a Package Class.',$this->domain);?></p>
 											<hr />
 											
 											<h4><?php _e('Package Options',$this->domain);?></h4>

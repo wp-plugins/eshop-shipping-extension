@@ -216,28 +216,6 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 		$packaging_options_text = __('Packaging Options',$this->domain);
 		
 		return <<<EOF
-			<script type="text/javascript">
-				jQuery(document).ready(function($){
-					// Show/Hide Global Dimensions
-					$("input.pack_radio").click(function(){
-						if ($(this).val() == 'global') {
-							$(".cp_dimension").show();
-						}
-						else {
-							$(".cp_dimension").hide();
-						}
-					});
-					
-					// Show/Hide on load
-					if ('global' == '{$opts[package_class]}') {
-						$(".cp_dimension").show();
-					}
-					else {
-						$(".cp_dimension").hide();
-					}
-				});
-			</script>
-			
 			<table>
 				<tr>
 					<th>$customer_number:</th>
@@ -491,8 +469,11 @@ EOF;
 		
 		$opts = $this->get_options();
 		
+		// Get total weight from cart session, as jQuery was not always passing the right value
+		$total_weight = $_SESSION['eshop_totalweight'.$blog_id]['totalweight'];
+		
 		$from_postal_code = str_replace(' ','',strtoupper($input['from_zip']));
-		$conv             = $this->convert_to_kilos($input['weight']);
+		$conv             = $this->convert_to_kilos($total_weight);
 		$out              = array('success' => true);
 		$to_zip           = str_replace(' ','',strtoupper($input['zip']));
 		$xml              = new SimpleXMLElement('<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate" />');
@@ -531,7 +512,7 @@ EOF;
 						$post_id = $val['postid'];
 						$qty     = $val['qty']; 
 						
-						$prod_meta = get_post_meta($post_id,'_eshop_product', TRUE);
+						$prod_meta = maybe_unserialize(get_post_meta($post_id,'_eshop_product', TRUE));
 						
 						if (! $prod_meta['sel_package_class'])
 						{
@@ -551,9 +532,9 @@ EOF;
 							// Get pack class and add up the dimensions times qty
 							$pack_class = $this->get_package_class_by_name($prod_meta['sel_package_class']);
 		
-							$dim['width']  = $pack_class['width']  *= $qty;
-							$dim['length'] = $pack_class['length'] *= $qty;
-							$dim['height'] = $pack_class['height'] *= $qty;
+							$dim['width']  += ($pack_class['width']  *= $qty);
+							$dim['length'] += ($pack_class['length'] *= $qty);
+							$dim['height'] += ($pack_class['height'] *= $qty);
 						}
 					}
 				break;
@@ -564,7 +545,7 @@ EOF;
 					$post_id = $val['postid'];
 					$qty     = $val['qty'];
 				
-					$prod_meta = get_post_meta($post_id,'_eshop_product', TRUE);
+					$prod_meta = maybe_unserialize(get_post_meta($post_id,'_eshop_product', TRUE));
 				
 					if (! $prod_meta['products'][$val['option']]['sel_package_class'])
 					{
@@ -584,9 +565,9 @@ EOF;
 						// Get pack class and add up the dimensions times qty
 						$pack_class = $this->get_package_class_by_name($prod_meta['products'][$val['option']]['sel_package_class']);
 				
-						$dim['width']  = $pack_class['width']  *= $qty;
-						$dim['length'] = $pack_class['length'] *= $qty;
-						$dim['height'] = $pack_class['height'] *= $qty;
+						$dim['width']  += ($pack_class['width']  *= $qty);
+						$dim['length'] += ($pack_class['length'] *= $qty);
+						$dim['height'] += ($pack_class['height'] *= $qty);
 					}
 				}
 				break;
