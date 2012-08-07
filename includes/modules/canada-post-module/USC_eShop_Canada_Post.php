@@ -55,8 +55,7 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 			$this->options               = $options[$this->my_options_name];
 			$this->options['from_zip']   = $options['from_zip'];
 			$this->options['debug_mode'] = $options['debug_mode'];
-			$this->options['package_class']          = $options['package_class'];
-			$this->options['package_class_elements'] = $options['package_class_elements'];
+			$this->options['package_class'] = $options['package_class'];
 		}
 		else
 		{

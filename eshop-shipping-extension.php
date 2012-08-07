@@ -670,6 +670,22 @@ class USC_eShop_Shipping_Extension
 		return $this->helper->_get_package_class_by_name($name);
 	}
 	
+	
+	/**
+	 * Method: mergeXML()
+	 * Desc: Wrapper function for helper to insert child XML objects into a parent XML
+	 * Returns: array
+	 */
+	function mergeXML(&$xml, $child)
+	{
+		if (! $this->helper)
+		{
+			$this->helper = new USC_eShop_Shipping_Extension_helper();
+		}
+	
+		return $this->helper->_mergeXML(&$xml, $child);
+	}
+	
 }
 
 
@@ -733,6 +749,31 @@ EOF;
 		}
 		
 		return $this->pack_classes[$name];
+	}
+	
+	
+	function _mergeXML(&$base, $add)
+	{
+		if ( $add->count() != 0 )
+		{
+			$new = $base->addChild($add->getName());
+		}
+		else 
+		{
+			$new = $base->addChild($add->getName(), $add);
+		}
+		
+		foreach ($add->attributes() as $a => $b)
+		{
+			$new->addAttribute($a, $b);
+		}
+		if ( $add->count() != 0 )
+		{
+			foreach ($add->children() as $child)
+			{
+				$this->mergeXML($new, $child);
+			}
+		}
 	}
 }
 
