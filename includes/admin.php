@@ -47,7 +47,6 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 		if ( $hook == 'post-new.php' || $hook == 'post.php' ) 
 		{
 			$eshop_post_types = apply_filters('eshop_post_types',array('post','page'));
-			error_log(__LINE__ . ' ' . print_r($eshop_post_types,1));
 			
 			if (in_array($post->post_type, $eshop_post_types))
 			{
