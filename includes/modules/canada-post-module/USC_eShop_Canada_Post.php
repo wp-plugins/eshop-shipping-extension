@@ -505,6 +505,8 @@ EOF;
 				}
 				break;
 			case 'product':
+					$dim_for_avg = array();
+					$total_dim   = 0;
 					foreach ($_SESSION['eshopcart'.$blog_id] as $key => $val)
 					{
 						// Each key is a product
@@ -531,13 +533,36 @@ EOF;
 							// Get pack class and add up the dimensions times qty
 							$pack_class = $this->get_package_class_by_name($prod_meta['sel_package_class']);
 		
-							$dim['width']  += ($pack_class['width']  *= $qty);
-							$dim['length'] += ($pack_class['length'] *= $qty);
-							$dim['height'] += ($pack_class['height'] *= $qty);
+							while ($qty)
+							{
+								$dim_for_avg[] = $pack_class['width'];
+								$dim_for_avg[] = $pack_class['length'];
+								$dim_for_avg[] = $pack_class['height'];
+								
+								$total_dim += $pack_class['width'];
+								$total_dim += $pack_class['length'];
+								$total_dim += $pack_class['height']; 
+								
+								$qty--;
+							}
+							
 						}
 					}
+					
+					$avg_count = count($dim_for_avg);
+					if ($avg_count)
+					{
+						$num_items = $avg_count / 3;
+						$avg = $total_dim / $avg_count;
+						
+						$dim = $this->_make_bundle($avg,$num_items);
+					}
+					
 				break;
 			case 'product_option':
+				
+				$dim_for_avg = array();
+				$total_dim   = 0;
 				foreach ($_SESSION['eshopcart'.$blog_id] as $key => $val)
 				{
 					// Each key is a product
@@ -564,10 +589,28 @@ EOF;
 						// Get pack class and add up the dimensions times qty
 						$pack_class = $this->get_package_class_by_name($prod_meta['products'][$val['option']]['sel_package_class']);
 				
-						$dim['width']  += ($pack_class['width']  *= $qty);
-						$dim['length'] += ($pack_class['length'] *= $qty);
-						$dim['height'] += ($pack_class['height'] *= $qty);
+						while ($qty)
+						{
+							$dim_for_avg[] = $pack_class['width'];
+							$dim_for_avg[] = $pack_class['length'];
+							$dim_for_avg[] = $pack_class['height'];
+								
+							$total_dim += $pack_class['width'];
+							$total_dim += $pack_class['length'];
+							$total_dim += $pack_class['height']; 
+								
+							$qty--;
+						}
 					}
+				}
+				
+				$avg_count = count($dim_for_avg);
+				if ($avg_count)
+				{
+					$num_items = $avg_count / 3;
+					$avg       = $total_dim / $avg_count;
+				
+					$dim = $this->_make_bundle($avg,$num_items);
 				}
 				break;
 			default:
@@ -617,6 +660,66 @@ EOF;
 		return $out;
 	}
 
+	
+	/**
+	 * @package USC_eShop_Canada_Post
+	 * @method  _make_bundle()
+	 * @desc    Simulates the packing of the objects, given average dimensions
+	 * @param   $average_side, $num_items
+	 * @return  array $total_dimensions
+	 */
+	private function _make_bundle($avg,$num_items)
+	{
+		$base  = array('row' => 1, 'col' => 1, 'lev' => 1);
+		$count = 0;
+		
+		while ($count < $num_items)
+		{
+			$capacity = $base['row'] * $base['col'] * $base['lev'];
+		
+			$sorted = $base;
+		
+			arsort($sorted);
+			$highest_dim = array_shift($sorted);
+// 			$cur_width = $highest_dim * $avg;
+// 			$cur_girth = $highest_dim + (2 * array_shift($sorted) + 2 * array_shift($sorted));
+		
+// 			if ( $cur_width >= $max_width ||
+// 				 $cur_girth >= $max_girth)
+// 			{
+// 				break;
+// 			}
+		
+			if ($count == $capacity)
+			{
+				if ($base['lev'] == $base['row'] &&
+						$base['row'] == $base['col'])
+				{
+					$base['col']++;
+				}
+				elseif ($base['row'] < $base['col'])
+				{
+					$base['row']++;
+				}
+				elseif ($base['lev'] < $base['row'])
+				{
+					$base['lev']++;
+				}
+			}
+		
+			$count++;
+		}
+		
+		$dim = array();
+		arsort($base);
+		
+		$dim['length'] = number_format((array_shift($base) * $avg),1);
+		$dim['width']  = number_format((array_shift($base) * $avg),1);
+		$dim['height'] = number_format((array_shift($base) * $avg),1);
+		
+		return $dim;
+	}
+	
 	
 	/**
 	 * @package USC_eShop_Canada_Post
