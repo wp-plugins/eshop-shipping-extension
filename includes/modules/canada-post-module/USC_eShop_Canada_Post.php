@@ -505,64 +505,54 @@ EOF;
 				}
 				break;
 			case 'product':
-					$dim_for_avg = array();
-					$total_dim   = 0;
-					foreach ($_SESSION['eshopcart'.$blog_id] as $key => $val)
+				
+				$prod_avg = array();
+				foreach ($_SESSION['eshopcart'.$blog_id] as $key => $val)
+				{
+					// Each key is a product
+					$post_id = $val['postid'];
+					$qty     = $val['qty']; 
+					
+					$prod_meta = maybe_unserialize(get_post_meta($post_id,'_eshop_product', TRUE));
+					
+					if (! $prod_meta['sel_package_class'])
 					{
-						// Each key is a product
-						$post_id = $val['postid'];
-						$qty     = $val['qty']; 
-						
-						$prod_meta = maybe_unserialize(get_post_meta($post_id,'_eshop_product', TRUE));
-						
-						if (! $prod_meta['sel_package_class'])
+						// If at least one product doesn't have its own dimensions,
+						// fall back to global dimensions
+						if ($opts['length'] && $opts['width'] && $opts['height'])
 						{
-							// If at least one product doesn't have its own dimensions,
-							// fall back to global dimensions
-							if ($opts['length'] && $opts['width'] && $opts['height'])
-							{
-								$dim['width']  = $opts['width'];
-								$dim['height'] = $opts['height'];
-								$dim['length'] = $opts['length'];
-							}
-		
-							break;
+							$dim['width']  = $opts['width'];
+							$dim['height'] = $opts['height'];
+							$dim['length'] = $opts['length'];
 						}
-						else 
-						{
-							// Get pack class and add up the dimensions times qty
-							$pack_class = $this->get_package_class_by_name($prod_meta['sel_package_class']);
-		
-							while ($qty)
-							{
-								$dim_for_avg[] = $pack_class['width'];
-								$dim_for_avg[] = $pack_class['length'];
-								$dim_for_avg[] = $pack_class['height'];
-								
-								$total_dim += $pack_class['width'];
-								$total_dim += $pack_class['length'];
-								$total_dim += $pack_class['height']; 
-								
-								$qty--;
-							}
-							
-						}
+						
+						break;
+					}
+					else 
+					{
+						// Get pack class and add up the dimensions times qty
+						$pack_class = $this->get_package_class_by_name($prod_meta['sel_package_class']);
+						$prod_avg[] = ($pack_class['width'] + $pack_class['length'] + $pack_class['height']) / 3;
+						$num_items += $qty;
+					}
+				}
+				
+				if (count($prod_avg))
+				{
+					$sum = 0;
+					foreach ($prod_avg as $pa)
+					{
+						$sum += $pa; 
 					}
 					
-					$avg_count = count($dim_for_avg);
-					if ($avg_count)
-					{
-						$num_items = $avg_count / 3;
-						$avg = $total_dim / $avg_count;
-						
-						$dim = $this->_make_bundle($avg,$num_items);
-					}
+					$avg = $sum / count($prod_avg);
+					$dim = $this->_make_bundle($avg,$num_items);
+				}
 					
 				break;
 			case 'product_option':
 				
-				$dim_for_avg = array();
-				$total_dim   = 0;
+				$prod_avg = array();
 				foreach ($_SESSION['eshopcart'.$blog_id] as $key => $val)
 				{
 					// Each key is a product
@@ -588,28 +578,22 @@ EOF;
 					{
 						// Get pack class and add up the dimensions times qty
 						$pack_class = $this->get_package_class_by_name($prod_meta['products'][$val['option']]['sel_package_class']);
-				
-						while ($qty)
-						{
-							$dim_for_avg[] = $pack_class['width'];
-							$dim_for_avg[] = $pack_class['length'];
-							$dim_for_avg[] = $pack_class['height'];
-								
-							$total_dim += $pack_class['width'];
-							$total_dim += $pack_class['length'];
-							$total_dim += $pack_class['height']; 
-								
-							$qty--;
-						}
+						$prod_avg[] = ($pack_class['width'] + $pack_class['length'] + $pack_class['height']) / 3;
+						$num_items += $qty;
 					}
 				}
 				
-				$avg_count = count($dim_for_avg);
-				if ($avg_count)
+				if (count($prod_avg))
 				{
-					$num_items = $avg_count / 3;
-					$avg       = $total_dim / $avg_count;
-				
+					// Do yet another average to make sure everything fits snugly in the
+					// end cube.
+					$sum = 0;
+					foreach ($prod_avg as $pa)
+					{
+						$sum += $pa; 
+					}
+					
+					$avg = $sum / count($prod_avg);
 					$dim = $this->_make_bundle($avg,$num_items);
 				}
 				break;
