@@ -118,13 +118,12 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 				$prod_meta['products'][$key]['sel_package_class'] = $_POST['eshop_opt_package_class_'.$key];
 				
 				// If option description is set, then package class is mandatory!
-				if (! $prod_meta['products'][$key]['sel_package_class'])
+				if (! $prod_meta['products'][$key]['sel_package_class'] && $opts['package_class'] != 'global')
 				{
 					delete_post_meta( $post_ID, '_eshop_stock');
 					add_filter('redirect_post_location','eshop_error');
 				}
 			}
-			
 		}
 		
 		// Always save the package class (it may be hidden or not)
