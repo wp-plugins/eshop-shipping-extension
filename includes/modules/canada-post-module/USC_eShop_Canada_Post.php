@@ -55,6 +55,7 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 			$this->options               = $options[$this->my_options_name];
 			$this->options['from_zip']   = $options['from_zip'];
 			$this->options['debug_mode'] = $options['debug_mode'];
+			$this->options['package_class'] = $options['package_class'];
 		}
 		else
 		{
@@ -89,15 +90,17 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 			{
 				if ($key === 'width' || $key === 'length' || $key === 'height')
 				{
+					if ($input['package_class'] !== 'global') continue;
+					
 					if ($input[$this->my_options_name]['unpackaged'] == 'false')
 					{
 						if (!$val)
 						{
-							add_settings_error($key,$key, sprintf(__('%s is required when Unpackaged = No!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
+							add_settings_error($key,$key, sprintf(__('Canada Post: %s is required when Unpackaged = No!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
 						}
-						elseif (!is_numeric($val) || $val > 999.9 || $val < 0)
+						elseif (!is_numeric($val) || (int)$val > 999.9 || (int)$val < 0)
 						{
-							add_settings_error($key,$key, sprintf(__('%s has an invalid value. Must be > 0 and < 999.9', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
+							add_settings_error($key,$key, sprintf(__('Canada Post: %s has an invalid value. Must be between 0 and 999.9', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
 						}
 					}
 					
@@ -105,7 +108,7 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 				}
 				else
 				{
-					add_settings_error($key,$key, sprintf(__('%s is a required value!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
+					add_settings_error($key,$key, sprintf(__('Canada Post: %s is a required value!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
 				}
 			}
 			elseif (is_array($val)) // Handles test/live credentials
@@ -114,20 +117,25 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 				{
 					if (! isset($v) || $v === '')
 					{
-						add_settings_error($k,$k, sprintf(__('%s %s is a required value!',$this->domain), ucwords($key), ucwords($k)), 'error');
+						add_settings_error($k,$k, sprintf(__('Canada Post:  %s %s is a required value!',$this->domain), ucwords($key), ucwords($k)), 'error');
 					}
 					elseif (! preg_match('/^[a-zA-Z0-9]+$/',$v))
 					{
-						add_settings_error($k,$k, sprintf(__('%s %s does not contain a valid string',$this->domain), ucwords($key), ucwords($k)), 'error');
+						add_settings_error($k,$k, sprintf(__('Canada Post: %s %s does not contain a valid string',$this->domain), ucwords($key), ucwords($k)), 'error');
 					}
 					
 				}
+			}
+			
+			if ($input['package_class'] == 'global' && ($key === 'height' || $key === 'width') && $val > $input[$this->my_options_name]['length'])
+			{
+				add_settings_error($key,$key, sprintf(__('Canada Post: %s cannot be larger than Length!', $this->domain), ucwords(str_replace('_', ' ',$key))), 'error');
 			}
 		}
 		
 		if (! preg_match('/^[0-9]+$/',$input[$this->my_options_name]['customer_number']))
 		{
-			add_settings_error('customer_number','customer_number', __('Customer Number must be a number!', $this->domain), 'error');
+			add_settings_error('customer_number','customer_number', __('Canada Post: Customer Number must be a number!', $this->domain), 'error');
 		}
 		
 		return $input;
@@ -179,11 +187,12 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 		$unpackaged_info   = __('Yes indicates that the parcel will be unpackaged (e.g. tires).',$this->domain);
 		
 		
-		$dimensions_text = __('<p>Although Canada Post does not require dimensions for their API calls (no errors occur if not passed), ' .
+		$dimensions_text = __('<p class="cp_dimension">Although Canada Post does not require dimensions for their API calls (no errors occur if not passed), ' .
 				' the size of the package may influence the price of the quote (e.g., if the volumetric weight is larger than the actual weight). '.
 				' We recommend entering the dimensions of ' .
 				' the largest box according to your products or adjusting product prices to absorb any differences. '.
-				'<a href="http://www.canadapost.ca/tools/pg/manual/PGabcmail_web_business-e.asp#1378832" target="_new">Read more here.</a></p><p><em>Note: All dimensions are in centimeters.</em></p>', $this->domain);
+				'<a href="http://www.canadapost.ca/tools/pg/manual/PGabcmail_web_business-e.asp#1378832" target="_new">Read more here.</a></p>'.
+				'<p class="cp_dimension"><em>Note: All dimensions are in centimeters.</em></p>', $this->domain);
 		
 		$yes = __('Yes', $this->domain);
 		$no  = __('No', $this->domain);
@@ -202,6 +211,8 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 			$quote_type_options .= '<option value="'.$val.'" '.selected($val,$opts['quote_type'],false).'>'.$key.'</option>';
 		} 
 		$quote_type_info = __('Commercial rates are lower than Counter rates. Choose "Counter" if you are not printing your own labels.',$this->domain);
+		
+		$packaging_options_text = __('Packaging Options',$this->domain);
 		
 		return <<<EOF
 			<table>
@@ -227,19 +238,20 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 				</tr>
 			</table>
 		<hr />
+		<h4>{$packaging_options_text}</h4>
 		{$dimensions_text}
 		<table>
-			<tr>
+			<tr class="cp_dimension">
 				<th width="100">$length:</th>
 				<td><input type="text" name="{$po}[$this->my_options_name][length]" value="{$opts[length]}" size="5" maxlength="5"/></td>
 				<td><span id="length_info"><small>{$length_info}</small></span></td>
 			</tr>
-			<tr>
+			<tr class="cp_dimension">
 				<th>$width:</th>
 				<td><input type="text" name="{$po}[$this->my_options_name][width]" value="{$opts[width]}" size="5" maxlength="5"/></td>
 				<td><span id="width_info"><small>{$width_info}</small></span></td>
 			</tr>
-			<tr>
+			<tr class="cp_dimension">
 				<th>$height:</th>
 				<td><input type="text" name="{$po}[$this->my_options_name][height]" value="{$opts[height]}" size="5" maxlength="5"/></td>
 				<td><span id="height_info"><small>{$height_info}</small></span></td>
@@ -452,85 +464,244 @@ EOF;
 	 */
 	private function _make_xml_request($input)
 	{
+		global $blog_id;
+		
 		$opts = $this->get_options();
-
-		$mailed_by        = $opts['customer_number'];
+		
+		// Get total weight from cart session, as jQuery was not always passing the right value
+		$total_weight = $_SESSION['eshop_totalweight'.$blog_id]['totalweight'];
+		
 		$from_postal_code = str_replace(' ','',strtoupper($input['from_zip']));
-		$conv             = $this->convert_to_kilos($input['weight']);
+		$conv             = $this->convert_to_kilos($total_weight);
 		$out              = array('success' => true);
 		$to_zip           = str_replace(' ','',strtoupper($input['zip']));
+		$xml              = new SimpleXMLElement('<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate" />');
 		
-		if ($conv['success'] === false)
-		{
-			return $conv;
-		}
 		
-		$weight = $conv['data'];
+		if ($conv['success'] === false)	return $conv;
 
-		switch ($input['country']) 
-		{
-			case 'CA':
-				$destination = "<domestic><postal-code>{$to_zip}</postal-code></domestic>";
-				break;
-			case 'US':
-				$destination = "<united-states><zip-code>{$to_zip}</zip-code></united-states>";
-				break;
-			default:
-				$destination = "<international><country-code>{$input[country]}</country-code></international>";
-		}
-		
-		if ($opts['length'] && $opts['width'] && $opts['height'])
-		{
-			$dimensions .= "<dimensions>
-				    <length>{$opts[length]}</length>
-					<width>{$opts[width]}</width>
-					<height>{$opts[height]}</height>
-				</dimensions>";
-		}
-		
-		if ($opts['unpackaged'] && $opts['unpackaged'] == 'true')
-		{
-			$unpackaged = "<unpackaged>{$opts[unpackaged]}</unpackaged>";
-		}
-		
 		// Handle quote_type/customer_number options (no CN if QT is COUNTER)
 		if ($opts['quote_type'] && $opts['quote_type'] === 'counter')
 		{
-			$quote_type = "<quote-type>{$opts[quote_type]}</quote-type>";
+			$xml->addChild('quote-type', $opts['quote_type']);
 		}
 		else
 		{
-			$customer_number = "<customer-number>{$mailed_by}</customer-number>"; 
+			$xml->addChild('customer-number', $opts['customer_number']);
+		}
+		
+		$xml->addChild('parcel-characteristics')->addChild('weight',$conv['data']);
+		
+		if (! $opts['package_class']) $opts['package_class'] = '';
+		
+		switch($opts['package_class'])
+		{
+			case 'global':
+				if ($opts['length'] && $opts['width'] && $opts['height'])
+				{
+					$dim['width']  = $opts['width'];
+					$dim['height'] = $opts['height'];
+					$dim['length'] = $opts['length'];
+				}
+				break;
+			case 'product':
+				
+				$prod_avg = array();
+				foreach ($_SESSION['eshopcart'.$blog_id] as $key => $val)
+				{
+					// Each key is a product
+					$post_id = $val['postid'];
+					$qty     = $val['qty']; 
+					
+					$prod_meta = maybe_unserialize(get_post_meta($post_id,'_eshop_product', TRUE));
+					
+					if (! $prod_meta['sel_package_class'])
+					{
+						// If at least one product doesn't have its own dimensions,
+						// fall back to global dimensions
+						if ($opts['length'] && $opts['width'] && $opts['height'])
+						{
+							$dim['width']  = $opts['width'];
+							$dim['height'] = $opts['height'];
+							$dim['length'] = $opts['length'];
+						}
+						
+						break;
+					}
+					else 
+					{
+						// Get pack class and add up the dimensions times qty
+						$pack_class = $this->get_package_class_by_name($prod_meta['sel_package_class']);
+						$prod_avg[] = ($pack_class['width'] + $pack_class['length'] + $pack_class['height']) / 3;
+						$num_items += $qty;
+					}
+				}
+				
+				if (count($prod_avg))
+				{
+					$sum = 0;
+					foreach ($prod_avg as $pa)
+					{
+						$sum += $pa; 
+					}
+					
+					$avg = $sum / count($prod_avg);
+					$dim = $this->_make_bundle($avg,$num_items);
+				}
+					
+				break;
+			case 'product_option':
+				
+				$prod_avg = array();
+				foreach ($_SESSION['eshopcart'.$blog_id] as $key => $val)
+				{
+					// Each key is a product
+					$post_id = $val['postid'];
+					$qty     = $val['qty'];
+				
+					$prod_meta = maybe_unserialize(get_post_meta($post_id,'_eshop_product', TRUE));
+				
+					if (! $prod_meta['products'][$val['option']]['sel_package_class'])
+					{
+						// If at least one product doesn't have its own dimensions,
+						// fall back to global dimensions
+						if ($opts['length'] && $opts['width'] && $opts['height'])
+						{
+							$dim['width']  = $opts['width'];
+							$dim['height'] = $opts['height'];
+							$dim['length'] = $opts['length'];
+						}
+				
+						break;
+					}
+					else
+					{
+						// Get pack class and add up the dimensions times qty
+						$pack_class = $this->get_package_class_by_name($prod_meta['products'][$val['option']]['sel_package_class']);
+						$prod_avg[] = ($pack_class['width'] + $pack_class['length'] + $pack_class['height']) / 3;
+						$num_items += $qty;
+					}
+				}
+				
+				if (count($prod_avg))
+				{
+					// Do yet another average to make sure everything fits snugly in the
+					// end cube.
+					$sum = 0;
+					foreach ($prod_avg as $pa)
+					{
+						$sum += $pa; 
+					}
+					
+					$avg = $sum / count($prod_avg);
+					$dim = $this->_make_bundle($avg,$num_items);
+				}
+				break;
+			default:
+				break;
+		}
+		
+		if ($dim)
+		{
+			$xml->{'parcel-characteristics'}->addChild('dimensions');
+			$xml->{'parcel-characteristics'}->dimensions->addChild('length',$dim['length']);
+			$xml->{'parcel-characteristics'}->dimensions->addChild('width', $dim['width']);
+			$xml->{'parcel-characteristics'}->dimensions->addChild('height',$dim['height']);
 		}
 		
 		
-		$out['data'] =<<<XML
-<?xml version="1.0" encoding="UTF-8" ?>
-			<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate">
-			  $customer_number
-			  $quote_type
-			  <parcel-characteristics>
-			    <weight>{$weight}</weight>
-			    $dimensions
-			    $unpackaged
-			  </parcel-characteristics>
-			  <origin-postal-code>{$from_postal_code}</origin-postal-code>
-			  <destination>
-					{$destination}
-			  </destination>
-			</mailing-scenario>
-XML;
+		if ($opts['unpackaged'] && $opts['unpackaged'] == 'true')
+		{
+			$xml->{'parcel-characteristics'}->addChild('unpackaged',$opts['unpackaged']);
+		}
+		
+		$xml->addChild('origin-postal-code',$from_postal_code);
+
+		$xml->addChild('destination');
+		switch ($input['country'])
+		{
+			case 'CA':
+				$xml->destination->addChild('domestic')->addChild('postal-code',$to_zip);
+				break;
+			case 'US':
+				$xml->destination->addChild('united-states')->addChild('zip-code',$to_zip);
+				break;
+			default:
+				$xml->destination->addChild('international')->addChild('country-code',$input['country']);
+		}
+		
 			  
 		if ($this->debug_mode())
 		{
 			$dom = new DOMDocument('1.0');
 			$dom->preserveWhiteSpace = false;
 			$dom->formatOutput       = true;
-			$dom->loadXML(preg_replace('|<customer-number>[^<]+</customer-number>|', '<customer-number>***REMOVED***</customer-number>', $out['data']));
+			$dom->loadXML(preg_replace('|<customer-number>[^<]+</customer-number>|', '<customer-number>***REMOVED***</customer-number>', $xml->asXML()));
 			$dom->save($this->debug_request_file);
 		}
-									
+
+		$out['data'] = $xml->asXML();
 		return $out;
+	}
+
+	
+	/**
+	 * @package USC_eShop_Canada_Post
+	 * @method  _make_bundle()
+	 * @desc    Simulates the packing of the objects, given average dimensions
+	 * @param   $average_side, $num_items
+	 * @return  array $total_dimensions
+	 */
+	private function _make_bundle($avg,$num_items)
+	{
+		$base  = array('row' => 1, 'col' => 1, 'lev' => 1);
+		$count = 0;
+		
+		while ($count < $num_items)
+		{
+			$capacity = $base['row'] * $base['col'] * $base['lev'];
+		
+			$sorted = $base;
+		
+			arsort($sorted);
+			$highest_dim = array_shift($sorted);
+// 			$cur_width = $highest_dim * $avg;
+// 			$cur_girth = $highest_dim + (2 * array_shift($sorted) + 2 * array_shift($sorted));
+		
+// 			if ( $cur_width >= $max_width ||
+// 				 $cur_girth >= $max_girth)
+// 			{
+// 				break;
+// 			}
+		
+			if ($count == $capacity)
+			{
+				if ($base['lev'] == $base['row'] &&
+						$base['row'] == $base['col'])
+				{
+					$base['col']++;
+				}
+				elseif ($base['row'] < $base['col'])
+				{
+					$base['row']++;
+				}
+				elseif ($base['lev'] < $base['row'])
+				{
+					$base['lev']++;
+				}
+			}
+		
+			$count++;
+		}
+		
+		$dim = array();
+		arsort($base);
+		
+		$dim['length'] = number_format((array_shift($base) * $avg),1);
+		$dim['width']  = number_format((array_shift($base) * $avg),1);
+		$dim['height'] = number_format((array_shift($base) * $avg),1);
+		
+		return $dim;
 	}
 	
 	

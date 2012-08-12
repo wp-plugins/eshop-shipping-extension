@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS and USPS. UPS and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       1.3.2
+* Version:       1.4
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.3.2');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.4');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -429,12 +429,12 @@ class USC_eShop_Shipping_Extension
 		{
 			foreach ($var as $k => $v)
 			{
-				$this->do_recursive($v,$func);
+				$this->do_recursive($var[$k],$func);
 			}
 		}
 		elseif (is_callable($func))
 		{
-				$func($var);
+			$var = $func($var);
 		}
 	}
 	
@@ -653,6 +653,39 @@ class USC_eShop_Shipping_Extension
 		
 		return $output;
 	}
+	
+	
+	/**
+	 * Method: get_package_class_by_name()
+	 * Desc: Wrapper function for helper to get package class dimensions using its name
+	 * Returns: array
+	 */
+	function get_package_class_by_name($name)
+	{
+		if (! $this->helper)
+		{
+			$this->helper = new USC_eShop_Shipping_Extension_helper();
+		}
+
+		return $this->helper->_get_package_class_by_name($name);
+	}
+	
+	
+	/**
+	 * Method: mergeXML()
+	 * Desc: Wrapper function for helper to insert child XML objects into a parent XML
+	 * Returns: array
+	 */
+	function mergeXML(&$xml, $child)
+	{
+		if (! $this->helper)
+		{
+			$this->helper = new USC_eShop_Shipping_Extension_helper();
+		}
+	
+		return $this->helper->_mergeXML(&$xml, $child);
+	}
+	
 }
 
 
@@ -660,6 +693,7 @@ class USC_eShop_Shipping_Extension
 class USC_eShop_Shipping_Extension_helper extends USC_eShop_Shipping_Extension 
 {
 	private $opts;
+	private $pack_classes = array();
 	
 	function __construct()
 	{
@@ -698,6 +732,48 @@ EOF;
 		}
 			 
 		return $results;
+	}
+	
+	
+	function _get_package_class_by_name($name)
+	{
+		if (! $this->pack_classes[$name]) 
+		{
+			foreach ($this->opts['package_class_elements'] as $val)
+			{
+				$this->pack_classes[$val['name']] = array('length' => $val['length'],
+														  'width'  => $val['width'],
+														  'height' => $val['height']
+														  );
+			}
+		}
+		
+		return $this->pack_classes[$name];
+	}
+	
+	
+	function _mergeXML(&$base, $add)
+	{
+		if ( $add->count() != 0 )
+		{
+			$new = $base->addChild($add->getName());
+		}
+		else 
+		{
+			$new = $base->addChild($add->getName(), $add);
+		}
+		
+		foreach ($add->attributes() as $a => $b)
+		{
+			$new->addAttribute($a, $b);
+		}
+		if ( $add->count() != 0 )
+		{
+			foreach ($add->children() as $child)
+			{
+				$this->mergeXML($new, $child);
+			}
+		}
 	}
 }
 
