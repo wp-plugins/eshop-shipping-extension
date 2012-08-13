@@ -50,8 +50,13 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 			
 			if (in_array($post->post_type, $eshop_post_types))
 			{
-				// Do nothing if we're not using global options
 				$opts = $this->get_options();
+				
+				// Force global form if no package_class_elements have been created				
+				if (! isset($opts['package_class_elements']) || ! is_array($opts['package_class_elements']))
+				{
+					$opts['package_class'] = 'global';
+				}
 				
 				// Stopped returning if it's global, because we want to keep any saved data 
 				// when switching between package_class modes.
@@ -68,9 +73,13 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 					}
 				}
 				
-				foreach ($opts['package_class_elements'] as $key => $val)
+				$pc_elements = array();
+				if ($opts['package_class_elements'] && is_array($opts['package_class_elements']))
 				{
-					 $pc_elements[$key] = $val['name'];
+					foreach ($opts['package_class_elements'] as $key => $val)
+					{
+						 $pc_elements[$key] = $val['name'];
+					}
 				}
 				
 				wp_enqueue_script( 'usc_package_classes',  ESHOP_SHIPPING_EXTENSION_MODULES_URL . '/../usc_package_classes.js', array( 'jquery' ),  ESHOP_SHIPPING_EXTENSION_VERSION);
