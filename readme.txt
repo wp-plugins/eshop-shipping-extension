@@ -1,10 +1,10 @@
 === Plugin Name ===
 Contributors: useStrict
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VLQU2MMXKB6S2
-Tags: eShop, Canada Post, USPS, United States Postal Service, UPS, United Parcel Service, Shipping Extension, Third Party Shipping, Shipping Quotes
+Tags: eShop, Canada Post, USPS, United States Postal Service, UPS, United Parcel Service, Correios, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
 Tested up to: 3.4.1
-Stable tag: 1.4.4
+Stable tag: 1.4.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,12 +12,17 @@ Replace eShop's default shipping methods with live calls to Canada Post, UPS, an
 
 == Description ==
 
-eShop Shipping Extension framework overrides eShop's default shipping methods, interacting directly with Canada Post, UPS, and USPS for real-time shipping rates and services.
+eShop Shipping Extension framework overrides eShop's default shipping methods, interacting directly with Canada Post, UPS, USPS, and Correios for real-time shipping rates and services.
 
-This framework includes the Canada Post module for free. [Click here to purchase the USPS module](http://usestrict.net/2012/07/usps-module-for-wordpress-eshop-shipping-extension/)
-or [here for the UPS module](http://usestrict.net/2012/07/ups-module-for-wordpress-eshop-shipping-extension/). 
+This framework includes the Canada Post module for free. 
 
-Correios (Brazil), Fedex, and DHL modules will be made available soon at [UseStrict Consulting](http://usestrict.net)
+= Related Modules (click to buy): = 
+
+* [USPS extension](http://usestrict.net/2012/07/usps-module-for-wordpress-eshop-shipping-extension/),
+* [UPS extension](http://usestrict.net/2012/07/ups-module-for-wordpress-eshop-shipping-extension/),
+* [Correios (Brazil) extension](http://usestrict.net/2012/08/modulo-correios-brasil-para-o-eshop-shipping-extension/) 
+
+Fedex, and DHL modules will be made available soon at [UseStrict Consulting](http://usestrict.net)
 
 == Installation ==
 
@@ -33,7 +38,9 @@ Correios (Brazil), Fedex, and DHL modules will be made available soon at [UseStr
 
 * USPS module is available for purchase [here](http://usestrict.net/2012/07/usps-module-for-wordpress-eshop-shipping-extension/).
 * UPS module is available for purchase [here](http://usestrict.net/2012/07/ups-module-for-wordpress-eshop-shipping-extension/).
+* Correios module is available for purchase [here](http://usestrict.net/2012/08/modulo-correios-brasil-para-o-eshop-shipping-extension/).
 * Other modules will be available soon at [UseStrict Consulting](http://usestrict.net)
+
 
 == Screenshots ==
 
@@ -42,6 +49,9 @@ Correios (Brazil), Fedex, and DHL modules will be made available soon at [UseStr
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+= 1.4.5 =
+* Added link in readme.txt to Correios module
+
 = 1.4.4 =
 * Changed SimpleXMLElement->count() to core count() for people using PHP < 5.3
 
@@ -118,4 +128,4 @@ Correios (Brazil), Fedex, and DHL modules will be made available soon at [UseStr
 * Initial release
 
 == Upgrade Notice ==
-UPS module requires the use of an SSL certificate file, like Canada Post. This update handles the installation of such file for UPS and any future modules that may require a .pem. 
+No need to upgrade at this time
