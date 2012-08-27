@@ -8,7 +8,7 @@ Stable tag: 1.4.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Replace eShop's default shipping methods with live calls to Canada Post, UPS, and USPS.
+Replace eShop's default shipping methods with live calls to Canada Post, Correios, UPS, and USPS.
 
 == Description ==
 
