@@ -735,12 +735,16 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 														// Find last data row
 														var highest_rel = 0, new_rel, last_row, data;
 														$("#usc_pack_select").css('visibility','visible');
-														
+
 														$("#package_classes tr.pack_data").each(function(){
-															if ($(this).attr('rel') > highest_rel) highest_rel = $(this).attr('rel');
+															
+															var this_rel = parseInt($(this).attr('rel'),10);
+																														
+															if (this_rel > highest_rel) highest_rel = this_rel;
 														});
 
-														new_rel = (parseInt(highest_rel,10) + 1);
+														new_rel = highest_rel + 1;
+														
 														last_row = $("#package_classes tr.pack_data").filter(':last');
 
 														data = $("<tr/>",{rel: new_rel, 'class': 'pack_data'})
