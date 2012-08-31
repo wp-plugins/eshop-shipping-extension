@@ -31,3 +31,13 @@ dl.usc_shipping_details
     border-top: 0px solid #999;
     text-align: right;
 }
+
+div#usc_pickup_text
+{
+    float: left;
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
+    margin: 1em 0;
+    width: 90%;
+    font-size: 12px;
+}
