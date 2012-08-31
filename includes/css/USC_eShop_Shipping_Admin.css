@@ -43,6 +43,13 @@ textarea#general_css {
 	height:200px;
 }
 
+textarea#in-store-pickup-text {
+	width: 90%;
+	height: 50px;
+}
+
+
+
 #debug_contents {display: none}
 
 .debug_xml {width: 90%; height:300px}

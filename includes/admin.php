@@ -463,6 +463,17 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 					$(".debug_xml").focus(function(){
 						$(this).select();
 					});
+
+					// In-store pickup show/hide
+					$("#in-store-pickup").click(function(){
+						if ($(this).is(':checked')) {
+							$("#in-store-pickup-text").show();
+						}
+						else {
+							$("#in-store-pickup-text").hide();
+						}
+							
+					});
 				});
 			</script>
 			
@@ -597,6 +608,15 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 									<textarea id="general_css" name="<?php echo $this->options_name; ?>[css]"><?php echo $css_contents;?></textarea>
 									</p>
 									
+									<p><strong><?php _e('In-Store Pickup:', $this->domain); ?></strong><br />
+									<input type="checkbox" id="in-store-pickup" name="<?php echo $this->options_name; ?>[in_store_pickup]"
+										<?php echo $opts['in_store_pickup'] ? 'checked="checked"' : ''; ?>
+									 />
+									<label for="in-store-pickup"><?php _e('Enable in-store pickup',$this->domain); ?></label> - 
+									<em><?php _e('Allow your clients to pick up their purchase in the store.', $this->domain); ?>.
+									<?php _e('Style it using <b>div#usc_pickup_text<b>', $this->domain); ?></em>
+									</p>
+									<textarea style="display:<?php echo $opts['in_store_pickup'] ? 'block' : 'none'; ?>" id="in-store-pickup-text" name="<?php echo $this->options_name; ?>[in_store_pickup_text]"><?php echo $opts['in_store_pickup_text']; ?></textarea>
 									<hr />
 									
 									<div class="postbox">
