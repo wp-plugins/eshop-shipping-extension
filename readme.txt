@@ -52,7 +52,7 @@ Fedex, and DHL modules will be made available soon at [UseStrict Consulting](htt
 = 1.5.1 =
 * Small typo in previous commit which made much of eSE Admin's text bold.
 
-= 1.5 -
+= 1.5 =
 * Added in-store pickup option.
 
 = 1.4.7 =
