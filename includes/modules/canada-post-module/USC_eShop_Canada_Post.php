@@ -56,6 +56,8 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 			$this->options['from_zip']   = $options['from_zip'];
 			$this->options['debug_mode'] = $options['debug_mode'];
 			$this->options['package_class'] = $options['package_class'];
+			$this->options['in_store_pickup'] = $options['in_store_pickup'];
+			$this->options['in_store_pickup_text'] = $options['in_store_pickup_text'];
 		}
 		else
 		{
@@ -745,6 +747,15 @@ EOF;
 		
 		
 		$service_info = array();
+		
+		if ($opts['in_store_pickup'])
+		{
+			$service_name = __('In-Store Pickup',$this->domain);
+			$service_info[$service_name]['price'] = '0.00';
+			$service_info[$service_name]['details']['usc_pickup'] = $opts['in_store_pickup_text'];
+		}
+		
+		
 		// Make the call to Canada Post
 		if ($xml->{'price-quotes'} ) 
 		{

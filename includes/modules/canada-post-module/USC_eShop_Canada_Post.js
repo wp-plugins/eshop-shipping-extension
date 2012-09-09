@@ -130,6 +130,7 @@ jQuery(document).ready(function($){
 		
 		var sel_option = $("#usc_shipping_services :selected").val();
 		var dl = $("<dl>",{class: 'usc_shipping_details'});
+		var pickup;
 		
 		// Reset the HTML div
 //		$("#usc_shipping_details").slideUp();
@@ -138,13 +139,24 @@ jQuery(document).ready(function($){
 		
 		$.each(eShopShippingModule.details[sel_option], function(key,value){
 
+			var ktransl = eShopShippingModule.lang[key];
 			var transl = value.match(/\d+-\d+-\d+/) ? eShopShippingModule.format_date(value) : eShopShippingModule.lang[value];
-			
-			dl.append('<dt>'+eShopShippingModule.lang[key]+'</dt>')
-			  .append('<dd>'+transl+'</dd>');
+
+			if (key == 'usc_pickup') {
+				pickup = value;
+			}
+			else {
+				dl.append('<dt>'+ktransl+'</dt>')
+				  .append('<dd>'+transl+'</dd>');
+			}
 		});
 
-		$("#usc_shipping_details").append(dl);
+		if (pickup) {
+			$("#usc_shipping_details").html('<div id="usc_pickup_text">'+pickup+'</div>');
+		}
+		else {
+			$("#usc_shipping_details").append(dl);
+		}
 //		$("#usc_shipping_details").slideDown();
 		
 	}
