@@ -419,4 +419,19 @@ jQuery(document).ready(function($){
 		  }
 	});
 	
+	// Handle the additional_services upon submission
+	$("#submitit").closest('form').submit(function(){
+		var as_input = $('<input>',{type: 'hidden', name : 'additional_shipping_services'});
+		
+		var vals = [];
+		$("input[name=additional_shipping_service]:checked").each(function(){
+			vals.push($(this).val());
+		});
+		
+		if (vals.length) {
+			as_input.val(vals.join('; '));
+			$(this).append(as_input);
+		}
+	});
+	
 });
