@@ -12,6 +12,7 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 	public  $options         = array();
 	private $live_url        = 'https://soa-gw.canadapost.ca/rs/ship/price';
 	private $test_url        = 'https://ct.soa-gw.canadapost.ca/rs/ship/price';
+	public $is_postal     = true; // Controls with which other modules this can be used. Canada Post/USPS/Correios are mutually exclusive.
 	
 	function __construct()
 	{
@@ -748,14 +749,6 @@ EOF;
 		
 		$service_info = array();
 		
-		if ($opts['in_store_pickup'])
-		{
-			$service_name = __('In-Store Pickup',$this->domain);
-			$service_info[$service_name]['price'] = '0.00';
-			$service_info[$service_name]['details']['usc_pickup'] = $opts['in_store_pickup_text'];
-		}
-		
-		
 		// Make the call to Canada Post
 		if ($xml->{'price-quotes'} ) 
 		{
@@ -765,7 +758,7 @@ EOF;
 				foreach ( $priceQuotes as $priceQuote ) 
 				{
 					// Need to cast as string or we get objects back
-					$service_name = (string)$priceQuote->{'service-name'};
+					$service_name = "Canada Post - " . (string)$priceQuote->{'service-name'};
 					
 					$due = (string)$priceQuote->{'price-details'}->{'due'};
 					
@@ -782,7 +775,7 @@ EOF;
 						}
 					}
 					
-					$price = number_format($due + $adjustment,2,'.',',');
+					$price = $this->convert_currency('CAD', number_format($due + $adjustment,2,'.',','));
 					$service_info[$service_name]['price'] = $price;
 					
 					$details = array();
@@ -813,7 +806,7 @@ EOF;
         if (count($service_info))
         {
             $out['data'] = $service_info;
-            $_SESSION['usc_3rd_party_shipping'.$blog_id] = $service_info;
+            $_SESSION['usc_3rd_party_shipping'.$blog_id] = $_SESSION['usc_3rd_party_shipping'.$blog_id] + $service_info;
         }
         
         if (count($out['data']) == 0)

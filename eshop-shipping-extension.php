@@ -2,8 +2,8 @@
 /*
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
-* Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS and USPS. UPS and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       1.5.1
+* Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS, USPS, and Correios. Correios, UPS, and USPS modules can be purchased at http://goo.gl/rkmu0
+* Version:       2.0
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '1.5.1');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.0');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -41,10 +41,10 @@ class USC_eShop_Shipping_Extension
 	var $eshop_is_active;
 	var $eshop_is_installed;
 
-	var $domain        = ESHOP_SHIPPING_EXTENSION_DOMAIN;
-	var $options_name  = 'eshop-shipping-extension';
-	var $active_module = 'none';
-	var $css_filename  = 'USC_eShop_Shipping.css';
+	var $domain         = ESHOP_SHIPPING_EXTENSION_DOMAIN;
+	var $options_name   = 'eshop-shipping-extension';
+	var $active_modules = array();
+	var $css_filename   = 'USC_eShop_Shipping.css';
 
 	var $debug_request_file  = ESHOP_SHIPPING_EXTENSION_DBG_REQUEST;
 	var $debug_response_file = ESHOP_SHIPPING_EXTENSION_DBG_RESPONSE;
@@ -58,11 +58,11 @@ class USC_eShop_Shipping_Extension
 		$this->eshop_is_installed = file_exists(ABSPATH . 'wp-content/plugins/eshop/eshop.php') ? TRUE : FALSE;
 		$this->eshop_is_active    = is_plugin_active('eshop/eshop.php') ? TRUE : FALSE;
 		$this->eshop_options      = $this->get_eshop_options();
-		$mod                      = $this->init_active_module();
+		$this->active_modules     = $this->init_active_modules();
 		
 		$this->helper = new USC_eShop_Shipping_Extension_helper();
 		
-		// Add common JS script always.
+		// Add common JS script always - this gets localized if it's not Admin (see below).
 		wp_enqueue_script( $this->domain, ESHOP_SHIPPING_EXTENSION_MODULES_URL . '/../eshop_shipping_extension.js', array( 'jquery' ),  ESHOP_SHIPPING_EXTENSION_VERSION);
 		
 		
@@ -108,22 +108,19 @@ class USC_eShop_Shipping_Extension
 			{
 				return;
 			}
-			elseif (!is_object($mod))
+			elseif (sizeof($this->active_modules) == 0)
 			{
 				return;
 			}
 
 			require_once( ABSPATH . 'wp-includes/pluggable.php'); // imports is_user_logged_in()
 			
-			// embed the javascript file that makes the AJAX request
-			wp_enqueue_script( $this->domain . '-get-rates', ESHOP_SHIPPING_EXTENSION_MODULES_URL . '/' . $mod->my_options_name . '/' . get_class($mod) . '.js', array( 'jquery' ),  ESHOP_SHIPPING_EXTENSION_VERSION);
-			
-			
 			// declare the URL to the file that handles the AJAX request (wp-admin/admin-ajax.php)
-			wp_localize_script( $this->domain . '-get-rates', 'eShopShippingModule', array( 'ajaxurl'    => admin_url( 'admin-ajax.php' ),
-																							'ajaxaction' => $this->domain . '-get-rates',
-																							'method'     => (is_user_logged_in()?'GET':'POST'),
-																							'lang'       => $this->js_msgs() ) );
+			wp_localize_script( $this->domain, 'eShopShippingModule', array( 'currency'   => $this->eshop_options['currency_symbol'],
+																			 'ajaxurl'    => admin_url( 'admin-ajax.php' ),
+																			 'ajaxaction' => $this->domain . '-get-rates',
+																			 'method'     => (is_user_logged_in()?'GET':'POST'),
+																			 'lang'       => $this->js_msgs() ) );
 
 			// Add CSS file
 			wp_enqueue_style( $this->domain . '-style', ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL . '/' . $this->css_filename, 
@@ -174,8 +171,6 @@ class USC_eShop_Shipping_Extension
 		$out['success'] = true;
         $out['data']    = $states;
 
-        error_log(__LINE__ . ' ' . print_r($out,1));
-        
         echo json_encode($out);
         exit; // WP requirement for ajax-related methods
 	}
@@ -196,9 +191,9 @@ class USC_eShop_Shipping_Extension
 	 * Description: Gets/caches eshop options
 	 * @param bool $force
 	 */
-	function get_eshop_options($force=false)
+	function get_eshop_options($force_reload=false)
 	{
-		if (! $this->eshop_options || $force === true)
+		if (! $this->eshop_options || $force_reload === true)
 		{
 			$this->eshop_options = get_option('eshop_plugin_settings');
 		}
@@ -207,28 +202,27 @@ class USC_eShop_Shipping_Extension
 	}
 	
 	/**
-	 * Method: init_active_module()
-	 * Description: Sets and returns the shipping module currently selected
+	 * Method: init_active_modules()
+	 * Description: Sets and returns the shipping modules currently selected
 	 */
-	function init_active_module()
+	function init_active_modules()
 	{
 		$opts   = $this->get_options();
-		$active = $opts['third_party'];
 		$path   = ESHOP_SHIPPING_EXTENSION_MODULES;
 		
-		if (isset($active) && $active !== 'none')
-		{
+		foreach ((array)$opts['third_party'] as $active)
+		{		
 			$files = glob($path . '/*/' . $active . '.php');
 			$file  = $files[0];
 			
 			if (file_exists($file))
 			{
 				require_once($file);
-				$this->active_module = new $active(); 
+				$this->active_modules[] = new $active(); 
 			}
 		}
 
-		return $this->active_module;
+		return $this->active_modules;
 	}
 	
 	
@@ -238,10 +232,13 @@ class USC_eShop_Shipping_Extension
 	 */
 	function get_rates()
 	{
-		$mod = $this->active_module;
+		global $blog_id;
+		
+		$opts = $this->get_options();
+		
 		header("Content-type: application/json");
 		
-		if (! is_object($mod))
+		if (! count($this->active_modules))
 		{
 			$out['success'] = false;
 			$out['msgs'][] = __('No shipping module is currently active!', $this->domain);
@@ -250,8 +247,35 @@ class USC_eShop_Shipping_Extension
 			exit; // WP requirement for ajax-related methods
 		}
 		
-		$out = $mod->get_rates($_REQUEST);
-
+		
+		if ($opts['in_store_pickup'])
+		{
+			$service_info = array();
+			$service_name = __('In-Store Pickup',$this->domain);
+			$service_info[$service_name]['price'] = '0.00';
+			$service_info[$service_name]['details']['usc_pickup'] = $opts['in_store_pickup_text'];
+			
+			$out['data'] = $service_info;
+			
+			$_SESSION['usc_3rd_party_shipping'.$blog_id] = $_SESSION['usc_3rd_party_shipping'.$blog_id] + $service_info;
+		}
+		
+		foreach ($this->active_modules as $mod)
+		{
+			$temp = array();
+			$temp = $mod->get_rates($_REQUEST);
+		
+			if ($temp['success'] === true)
+			{
+// 				$out['data'] = array_merge((array)$out['data'],$temp['data']);
+				$out['data'] = (array)$out['data'] + $temp['data'];
+			}
+			else
+			{
+				error_log("Error getting rates for " . get_class($mod) . ": " . print_r($temp,1));
+			}
+		}
+		
 		echo json_encode($out);
 		exit; // WP requirement for ajax-related methods
 	}
@@ -271,7 +295,7 @@ class USC_eShop_Shipping_Extension
 		}
 	
 		$default = array();
-		$default[$this->options_name]['third_party'] = 'none';
+		$default[$this->options_name]['third_party'] = array(); 
 		$default[$this->options_name]['debug_mode']  = 0;
 	
 		$this->options = get_option($this->options_name, $default);
@@ -282,6 +306,12 @@ class USC_eShop_Shipping_Extension
 		if (! isset($this->options['in_store_pickup_text']))
 		{
 			$this->options['in_store_pickup_text'] = __('Enter a text for your customer, such as the address where to pick up the package.',$this->domain);
+		}
+		
+		// Backwards compatibility
+		if (! is_array($this->options['third_party']))
+		{
+			$this->options['third_party'] = array($this->options['third_party']);
 		}
 		
 		return $this->options;
@@ -298,16 +328,16 @@ class USC_eShop_Shipping_Extension
 	{
 		global $blog_id;
 		
-		if (is_object($this->active_module))
-		{
+// 		if (is_object($this->active_module))
+// 		{
 			// Note: method_exists() returns true for child against add_shipping_fields (inherited). 
 			// Changed the child name to child_add_shipping_fields.
-			if (method_exists($this->active_module, 'child_add_shipping_fields'))
-			{
-				$form_html = $this->active_module->child_add_shipping_fields($form_html,$reqdarray);
-			}
-			else 
-			{
+// 			if (method_exists($this->active_module, 'child_add_shipping_fields'))
+// 			{
+// 				$form_html = $this->active_module->child_add_shipping_fields($form_html,$reqdarray);
+// 			}
+// 			else 
+// 			{
 				$out  = '<fieldset class="eshop fld0"><legend id="shiplegend">'. __('Please Choose Shipping','eshop').eshop_checkreqd($reqdarray,'shipping').'</legend>';
 				$out .= '<div id="usc_shipping_error_msgs"></div><div id="usc_shipping_options">';
 				
@@ -343,8 +373,8 @@ class USC_eShop_Shipping_Extension
 				$out .= "</fieldset>";
 				
 				$form_html .= $out;
-			}
-		}
+// 			}
+// 		}
 		
 		return $form_html;
 	}
@@ -566,17 +596,16 @@ class USC_eShop_Shipping_Extension
 		$msgs = array();
 		
 		// Child messages
-		if (is_object($this->active_module))
+		foreach ($this->active_modules as $mod)
 		{
-			if (method_exists($this->active_module, 'get_js_msgs'))
+			if (method_exists($mod, 'get_js_msgs'))
 			{
-				$msgs = $this->active_module->get_js_msgs(); 			
+				$msgs = $msgs + $mod->get_js_msgs();
 			}
 		}
 		
 		$msgs['update-shipping-options'] = __('Update Shipping Options', $this->domain);
 
-		
 		return $msgs;
 	}
 	
@@ -691,6 +720,38 @@ class USC_eShop_Shipping_Extension
 		return $this->helper->_mergeXML(&$xml, $child);
 	}
 	
+	
+	/**
+	 * Method: convert_currency()
+	 * Desc: Converts received currency into eShop currency if required
+	 * @param string $from_curr
+	 * @param float $from_value
+	 * Returns: decimal
+	 */
+	function convert_currency($from_curr, $from_value)
+	{
+		$eshop_opts = $this->get_eshop_options();
+		$to_curr    = str_replace('$','',$eshop_opts['currency_symbol']);
+		$from_value = str_replace(',', '.', $from_value);
+		
+		if ($from_value == '0.00') return $from_value;
+		
+		if (strtolower($from_curr) == strtolower($to_curr)) return $from_value;
+		
+		$url = "http://www.google.com/ig/calculator?hl=en&q=${from_value}${from_curr}%3D%3F${to_curr}";
+		
+		// Can't use json_decode here because of PHP bug with unquoted keys
+		$out = file_get_contents($url);
+		
+		preg_match('/rhs:\s*"([\d\.]+).*?"/',$out,$matches);
+		
+		if (! isset($matches[1])) return $from_value;
+		
+		$conv = number_format($matches[1],2);
+		
+		return $conv;
+	}
+	
 }
 
 
@@ -796,10 +857,10 @@ else
 {
 	$USC_eShop_Shipping_Extension = new USC_eShop_Shipping_Extension();
 	$eshop_opts = $USC_eShop_Shipping_Extension->get_eshop_options();
-	
+
 	if ( (! $_REQUEST['action'] || 
 			$_REQUEST['action'] !== $USC_eShop_Shipping_Extension->domain . '-get-rates') && # Only override anything if it's not a get-rates ajax call 
-		 is_object($USC_eShop_Shipping_Extension->active_module) &&                          # and there is an active shipping module
+		 sizeof($USC_eShop_Shipping_Extension->active_modules) &&                            # and there is an active shipping module
 		 (int)$eshop_opts['shipping'] === 4)                                                 # and the user selected weight mode
 	{
 		
