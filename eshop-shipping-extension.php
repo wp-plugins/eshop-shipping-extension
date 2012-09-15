@@ -234,6 +234,8 @@ class USC_eShop_Shipping_Extension
 	{
 		global $blog_id;
 		
+		$opts = $this->get_options();
+		
 		header("Content-type: application/json");
 		
 		if (! count($this->active_modules))
@@ -256,7 +258,6 @@ class USC_eShop_Shipping_Extension
 			$out['data'] = $service_info;
 			
 			$_SESSION['usc_3rd_party_shipping'.$blog_id] = $_SESSION['usc_3rd_party_shipping'.$blog_id] + $service_info;
-			
 		}
 		
 		foreach ($this->active_modules as $mod)
@@ -731,6 +732,9 @@ class USC_eShop_Shipping_Extension
 	{
 		$eshop_opts = $this->get_eshop_options();
 		$to_curr    = str_replace('$','',$eshop_opts['currency_symbol']);
+		$from_value = str_replace(',', '.', $from_value);
+		
+		if ($from_value == '0.00') return $from_value;
 		
 		if (strtolower($from_curr) == strtolower($to_curr)) return $from_value;
 		
