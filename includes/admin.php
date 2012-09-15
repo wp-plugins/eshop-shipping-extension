@@ -620,6 +620,18 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 									
 									<table>
 										<?php foreach ($this->modules as $k => $v) :
+											if ($v->is_postal !== true) continue; // Show mutually exclusive services first
+										
+											$checked = in_array($k,$opts['third_party']) ? 'checked="checked"' : ''; 
+										?>
+										<tr>
+											<th style="width: 150px"><label for="<?php echo "third_party_$k"?>"><?php echo $v->module_name; ?></label></th>
+											<td><input type="radio" class="third_party_chkbx" id="third_party_<?php echo $k?>" value="<?php echo $k; ?>" <?php echo $checked ?> name="<?php echo $this->options_name; ?>[third_party][]" /></td>
+										</tr>
+										<?php endforeach; ?>
+										
+										<?php foreach ($this->modules as $k => $v) :
+											if ($v->is_postal === true) continue; // Show services that play nicely with anyone
 											$checked = in_array($k,$opts['third_party']) ? 'checked="checked"' : ''; 
 										?>
 										<tr>
