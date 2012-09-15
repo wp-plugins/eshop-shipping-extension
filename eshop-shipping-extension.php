@@ -275,8 +275,6 @@ class USC_eShop_Shipping_Extension
 			}
 		}
 		
-		error_log(__LINE__ . ' ' . print_r($_SESSION['usc_3rd_party_shipping'.$blog_id],1));
-
 		echo json_encode($out);
 		exit; // WP requirement for ajax-related methods
 	}
