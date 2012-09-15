@@ -209,14 +209,8 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 	{
 		// Accepted third-party values
 		$third_party = array_keys($this->modules);
-		$third_party[] = 'none';
 		
 		$this->do_recursive($input,'trim');
-		
-		if (! in_array($input['third_party'], $third_party))
-		{
-			add_settings_error('third_party','third_party',__('Invalid option selected!'), 'error');
-		}
 		
 		if ($input['third_party'] !== 'USC_eShop_UPS') 
 		{
@@ -416,21 +410,46 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 					// Shows the selected div - used by onchange and onload
 					show_selected_div = function(){
 
-						var val = $("#third_party_select").val();
+						var val = [], hash = {};
 						
-						if (val == 'none') {
+						$("input.third_party_chkbx:checked").each(function(){
+							val.push($(this).val());
+							hash[$(this).val()] = 1;
+						});
+
+						if (! val.length) {
 							
 							$("div.modules").slideUp();
 						}
 						else {
-							mod_div = $("div."+val);
-							// Hide all modules except active one
-							$("div.modules").not(mod_div).hide();
+							$.each(val,function(i,val){
 
-							if (mod_div.is(':hidden')){
-								mod_div.slideDown();
-							}
+								mod_div = $("div."+val);
+	
+								if (mod_div.is(':hidden')){
+									mod_div.slideDown();
+								}
+
+							});
 						}
+
+						// Hide any non-active divs
+						$("div.modules").each(function(){
+							var classname = $(this).attr('class'), matches = 0;
+							$.each(hash,function(key,val){
+								var re = new RegExp(key);
+								if (classname.match(re))
+								{
+									matches = 1;
+								}
+							});
+
+							if (! matches)
+							{
+								$(this).hide();
+							}
+						});
+						
 					};
 
 					// On click...
@@ -438,8 +457,8 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 						$(this).next().slideToggle();
 					});
 
-					// On change...
-					$("#third_party_select").change(function(){
+					// On click for checkboxes...
+					$(".third_party_chkbx").click(function(){
 						show_selected_div();
 					});
 
@@ -589,25 +608,33 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 									</div>
 									<?php endif;?>
 									
-									
+									<hr />
 									<div id="usc_global_zip_code">
 									<p><strong><?php _e('Zip/Postal Code of origin?',$this->domain); ?></strong><br />
 									<input type="text" id="from_zip" name="<?php echo $this->options_name?>[from_zip]" 
 										      value="<?php echo $opts['from_zip']; ?>" /> </p>
 									</div>
+									<hr />
+									<p><strong><?php _e('Select which interfaces (if any) you want to use:',$this->domain); ?></strong><br />
+									<em><?php _e('None checked reverts to eShop\'s default settings.',$this->domain); ?></em></p>
 									
-									<p><strong><?php _e('Select which interface (if any) you want to use:',$this->domain); ?></strong><br />
-									<select id="third_party_select" name="<?php echo $this->options_name; ?>[third_party]">
-										<option value="none" <?php selected($opts['third_party'],'none');?>><?php _e('None',$this->domain); ?></option>
-										<?php foreach ($this->modules as $k => $v) :?>
-										<option value="<?php echo $k; ?>" <?php selected($opts['third_party'],$k);?>><?php echo $v->module_name; ?></option>
-										<?php endforeach;?>
-									</select> <em><?php _e('"None" means eShop\'s default settings.',$this->domain); ?></em></p>
+									<table>
+										<?php foreach ($this->modules as $k => $v) :
+											$checked = in_array($k,$opts['third_party']) ? 'checked="checked"' : ''; 
+										?>
+										<tr>
+											<th style="width: 150px"><label for="<?php echo "third_party_$k"?>"><?php echo $v->module_name; ?></label></th>
+											<td><input type="checkbox" class="third_party_chkbx" id="third_party_<?php echo $k?>" value="<?php echo $k; ?>" <?php echo $checked ?> name="<?php echo $this->options_name; ?>[third_party][]" /></td>
+										</tr>
+										<?php endforeach; ?>
+									</table>
+									<br />
+									<hr />									
 									<p><strong><?php _e('Shipping Details CSS Styles:',$this->domain); ?></strong><br />
 									
 									<textarea id="general_css" name="<?php echo $this->options_name; ?>[css]"><?php echo $css_contents;?></textarea>
 									</p>
-									
+									<hr />
 									<p><strong><?php _e('In-Store Pickup:', $this->domain); ?></strong><br />
 									<input type="checkbox" id="in-store-pickup" name="<?php echo $this->options_name; ?>[in_store_pickup]"
 										<?php echo $opts['in_store_pickup'] ? 'checked="checked"' : ''; ?>
