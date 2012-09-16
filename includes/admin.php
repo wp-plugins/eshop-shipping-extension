@@ -491,8 +491,21 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 						else {
 							$("#in-store-pickup-text").hide();
 						}
-							
 					});
+
+					// Deselect all selected third party when none is selected
+					$("#third_party_none").click(function(){
+						$(".third_party_chkbx").each(function(){
+							$(this).attr('checked',false);
+							$(".modules").hide();
+						});
+					});
+
+					$("input.third_party_chkbx[type=checkbox]").click(function(){
+						if($(this).is(':checked')) {
+							$("#third_party_none").attr('checked',false);
+						}
+					})
 				});
 			</script>
 			
@@ -619,6 +632,12 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 									<em><?php _e('None checked reverts to eShop\'s default settings.',$this->domain); ?></em></p>
 									
 									<table>
+										<?php $checked = (count($opts['third_party']) == 1 && $opts['third_party'][0] == 'on') ? 'checked="checked"' : ''; ?>
+										<tr>
+											<th><?php _e('None',$this->domain);?></th>
+											<td><input type="radio" id="third_party_none" <?php echo $checked; ?> name="<?php echo $this->options_name; ?>[third_party][]" /></td>
+										</tr>
+										
 										<?php foreach ($this->modules as $k => $v) :
 											if ($v->is_postal !== true) continue; // Show mutually exclusive services first
 										
