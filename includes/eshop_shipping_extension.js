@@ -91,30 +91,62 @@ jQuery(document).ready(function($){
 	 */
 	eShopShippingModule.create_shipping_html = function(ajax_response) {
 		
-		// Handle/show errors
-		if (eShopShippingModule.has_errors(ajax_response) === true) {
-			return false;
-		}
+		var count = 0, 
+			is_multi_carrier = false;
 		
 		eShopShippingModule.details  = {}; // Reset details
 		eShopShippingModule.services = {}; // Reset services
-
+console.debug(ajax_response);		
+		for (i in ajax_response) {
+			if (ajax_response.hasOwnProperty(i)) count++;
+		}
+console.debug(ajax_response);		
+		if (count > 1) is_multi_carrier = true; // There's more than one carrier, set up
+console.debug(ajax_response);		
+		// Set up the select object
 		$("#usc_shipping_options").html("<select id=\"usc_shipping_services\" name=\"eshop_shiptype\"></select>");
-		
-		$.each(ajax_response.data, function(key, value) {
+console.debug(ajax_response);		
+		$.each(ajax_response,function(key,val) {
+			var el;
+			// Set up optgroup if necessary
+			if (is_multi_carrier) {
+				el = $('<optgroup/>',{label: key});
+			}
+			else {
+				el = $("#usc_shipping_services");
+			}
+console.debug(ajax_response);
+			if (val.success === false) {
+				// Has errors - show them
+				el.append($('<option/>',{value: '', disabled: 'disabled'}).text(val.msgs.join("\n")) );
+console.debug(ajax_response);				
+			}
+			else {
+console.debug(key, val, val.data);				
+				$.each(val.data,function(svc,data){
+					var re = new RegExp(key + ' - ');
+					
+					if (is_multi_carrier) {
+						svc = svc.replace(re, '');
+					}
+console.debug(svc,data);					
+					eShopShippingModule.details[svc]  = data['details'];  // Populate details object
+					eShopShippingModule.services[svc] = data['services']; // Populate services object
+console.debug(svc,data);
+console.debug(ajax_response);
+					
+					var attrs = (typeof ajax_response.selected_service !== 'undefined' &&
+								        ajax_response.selected_service == svc) ? {selected : "selected", value : svc} : {value : svc};
+					
+					el.append($('<option/>',{value: svc}).text(svc + ' ('+eShopShippingModule.currency+' ' + data['price'] + ')'));
+				});
+console.debug(ajax_response);				
+			}
 			
-			eShopShippingModule.details[key]  = value['details'];  // Populate details object
-			eShopShippingModule.services[key] = value['services']; // Populate services object
-			
-			var attrs = (typeof ajax_response.selected_service !== 'undefined' &&
-				     ajax_response.selected_service == key) ? {selected : "selected", value : key} : {value : key};
-			
-			// Create dropdown options
-			$('#usc_shipping_services')
-		          .append($('<option>', attrs)
-		          .text(key + ' ('+eShopShippingModule.currency+' ' + value['price'] + ')')); 
+			if (is_multi_carrier) {
+				$("#usc_shipping_services").append(el);
+			}
 		});
-		
 		
 		// Create details HTML for the selected option
 		eShopShippingModule.create_details_html();
@@ -243,16 +275,6 @@ jQuery(document).ready(function($){
 		fields.last_name  = typeof fields.last_name != 'undefined' ? fields.last_name : '';
 		name = fields.first_name + ' ' + fields.last_name;
 	}
-	
-	
-	// Canada and US require zip/postal_code
-	// Others don't
-//	if (country === 'US' || country === 'CA') {
-//
-//		if (! zip) {
-//			errors.push(eShopShippingModuleUPS.lang.missing_zip);
-//		}
-//	}
 	
 	if (fields.weight != parseFloat(fields.weight)) {
 			errors.push(eShopShippingModuleUPS.lang.invalid_weight + ' "' + fields.weight + '"');
