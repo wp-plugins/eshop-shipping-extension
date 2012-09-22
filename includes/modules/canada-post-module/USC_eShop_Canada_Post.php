@@ -806,7 +806,7 @@ EOF;
         if (count($service_info))
         {
             $out['data'] = $service_info;
-            $_SESSION['usc_3rd_party_shipping'.$blog_id] = $_SESSION['usc_3rd_party_shipping'.$blog_id] + $service_info;
+            $_SESSION['usc_3rd_party_shipping'.$blog_id] = (array)$_SESSION['usc_3rd_party_shipping'.$blog_id] + $service_info;
         }
         
         if (count($out['data']) == 0)
