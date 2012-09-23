@@ -96,16 +96,16 @@ jQuery(document).ready(function($){
 		
 		eShopShippingModule.details  = {}; // Reset details
 		eShopShippingModule.services = {}; // Reset services
-console.debug(ajax_response);		
+		
 		for (i in ajax_response) {
 			if (ajax_response.hasOwnProperty(i)) count++;
 		}
-console.debug(ajax_response);		
+		
 		if (count > 1) is_multi_carrier = true; // There's more than one carrier, set up
-console.debug(ajax_response);		
+		
 		// Set up the select object
 		$("#usc_shipping_options").html("<select id=\"usc_shipping_services\" name=\"eshop_shiptype\"></select>");
-console.debug(ajax_response);		
+		
 		$.each(ajax_response,function(key,val) {
 			var el;
 			// Set up optgroup if necessary
@@ -115,32 +115,30 @@ console.debug(ajax_response);
 			else {
 				el = $("#usc_shipping_services");
 			}
-console.debug(ajax_response);
+
 			if (val.success === false) {
 				// Has errors - show them
-				el.append($('<option/>',{value: '', disabled: 'disabled'}).text(val.msgs.join("\n")) );
-console.debug(ajax_response);				
+				el.append($('<option/>',{value: '', disabled: 'disabled'}).text(val.msgs.join("; ")) );
+				
 			}
 			else {
-console.debug(key, val, val.data);				
+				
 				$.each(val.data,function(svc,data){
 					var re = new RegExp(key + ' - ');
 					
 					if (is_multi_carrier) {
 						svc = svc.replace(re, '');
 					}
-console.debug(svc,data);					
+					
 					eShopShippingModule.details[svc]  = data['details'];  // Populate details object
 					eShopShippingModule.services[svc] = data['services']; // Populate services object
-console.debug(svc,data);
-console.debug(ajax_response);
 					
 					var attrs = (typeof ajax_response.selected_service !== 'undefined' &&
 								        ajax_response.selected_service == svc) ? {selected : "selected", value : svc} : {value : svc};
 					
 					el.append($('<option/>',{value: svc}).text(svc + ' ('+eShopShippingModule.currency+' ' + data['price'] + ')'));
 				});
-console.debug(ajax_response);				
+				
 			}
 			
 			if (is_multi_carrier) {
