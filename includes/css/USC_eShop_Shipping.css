@@ -41,3 +41,7 @@ div#usc_pickup_text
     width: 90%;
     font-size: 12px;
 }
+
+#usc_update_shipping_options {
+    clear:both;
+}

@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS, USPS, and Correios. Correios, UPS, and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       2.0.6
+* Version:       2.0.7
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.0.6');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.0.7');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -61,10 +61,9 @@ class USC_eShop_Shipping_Extension
 		$this->active_modules     = $this->init_active_modules();
 		
 		$this->helper = new USC_eShop_Shipping_Extension_helper();
-		
+				
 		// Add common JS script always - this gets localized if it's not Admin (see below).
 		wp_enqueue_script( $this->domain, ESHOP_SHIPPING_EXTENSION_MODULES_URL . '/../eshop_shipping_extension.js', array( 'jquery' ),  ESHOP_SHIPPING_EXTENSION_VERSION);
-		
 		
 		// Add the filter to update the cart form with the shipping fields
 		add_filter('usc_add_shipping_fields', array(&$this,'add_shipping_fields'), 10, 2);
@@ -729,7 +728,7 @@ class USC_eShop_Shipping_Extension
 	function convert_currency($from_curr, $from_value)
 	{
 		$eshop_opts = $this->get_eshop_options();
-		$to_curr    = str_replace('$','',$eshop_opts['currency_symbol']);
+		$to_curr    = $eshop_opts['currency'];
 		$from_value = str_replace(',', '.', $from_value);
 		
 		if ($from_value == '0.00') return $from_value;
