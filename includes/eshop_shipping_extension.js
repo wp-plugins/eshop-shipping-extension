@@ -90,7 +90,7 @@ jQuery(document).ready(function($){
 	 * @param    object ajax_response
 	 */
 	eShopShippingModule.create_shipping_html = function(ajax_response) {
-		
+console.debug(ajax_response);		
 		var count = 0, 
 			is_multi_carrier = false;
 		
@@ -100,7 +100,7 @@ jQuery(document).ready(function($){
 		for (i in ajax_response) {
 			if (ajax_response.hasOwnProperty(i)) count++;
 		}
-		
+
 		if (count > 1) is_multi_carrier = true; // There's more than one carrier, set up
 		
 		// Set up the select object
@@ -109,6 +109,7 @@ jQuery(document).ready(function($){
 		$.each(ajax_response,function(key,val) {
 			var el;
 			// Set up optgroup if necessary
+
 			if (is_multi_carrier) {
 				el = $('<optgroup/>',{label: key});
 			}
@@ -138,7 +139,6 @@ jQuery(document).ready(function($){
 					
 					el.append($('<option/>',{value: svc}).text(svc + ' ('+eShopShippingModule.currency+' ' + data['price'] + ')'));
 				});
-				
 			}
 			
 			if (is_multi_carrier) {

@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS, USPS, and Correios. Correios, UPS, and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       2.0.7
+* Version:       2.0.8
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.0.7');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.0.8');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -254,10 +254,11 @@ class USC_eShop_Shipping_Extension
 		{
 			$service_info = array();
 			$service_name = __('In-Store Pickup',$this->domain);
-			$service_info[$service_name]['price'] = '0.00';
-			$service_info[$service_name]['details']['usc_pickup'] = $opts['in_store_pickup_text'];
+			$service_info[$service_name]['success'] = true;
+			$service_info[$service_name]['data'][$service_name]['price'] = '0.00';
+			$service_info[$service_name]['data'][$service_name]['details']['usc_pickup'] = $opts['in_store_pickup_text'];
 			
-			$out['data'] = $service_info;
+			$out = $service_info;
 			
 			$_SESSION['usc_3rd_party_shipping'.$blog_id] = (array)$_SESSION['usc_3rd_party_shipping'.$blog_id] + $service_info;
 		}
