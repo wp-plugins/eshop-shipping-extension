@@ -417,27 +417,27 @@ console.debug(ajax_response);
 	}
 	
 	
-	$("#country,#shipcountry").change(function(){
-		eShopShippingModule.call_get_rates();
-	});
+//	$("#country,#shipcountry").change(function(){
+//		eShopShippingModule.call_get_rates();
+//	});
 	
 	$("#usc_update_shipping_options").click(function(e){
 		eShopShippingModule.call_get_rates();
 		e.preventDefault();
 	});
 	
-	$("#state, #zip, #country, #shipcountry" +
-	  "#ship_state, #ship_altstate, #ship_postcode").blur(function(){
-		  
-		  // Check that we have a state/zip/country before calling get_rates
-		  var state   = ($.trim($("#ship_state").val()) || $.trim($("#ship_altstate").val()) || $.trim($("#state").val()) || $.trim($("#altstate").val())),
-		      country = ($.trim($("#country").val())    || $.trim($("#shipcountry").val())),
-		      zip     = ($.trim($("#zip").val())        || $.trim($("#ship_postcode").val()));
-		  
-		  if (state && country && zip) {
-			  eShopShippingModule.call_get_rates();
-		  }
-	});
+//	$("#state, #zip, #country, #shipcountry" +
+//	  "#ship_state, #ship_altstate, #ship_postcode").blur(function(){
+//		  
+//		  // Check that we have a state/zip/country before calling get_rates
+//		  var state   = ($.trim($("#ship_state").val()) || $.trim($("#ship_altstate").val()) || $.trim($("#state").val()) || $.trim($("#altstate").val())),
+//		      country = ($.trim($("#country").val())    || $.trim($("#shipcountry").val())),
+//		      zip     = ($.trim($("#zip").val())        || $.trim($("#ship_postcode").val()));
+//		  
+//		  if (state && country && zip) {
+//			  eShopShippingModule.call_get_rates();
+//		  }
+//	});
 	
 	// Handle the additional_services upon submission
 	$("#submitit").closest('form').submit(function(){
