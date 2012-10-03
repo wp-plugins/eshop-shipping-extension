@@ -168,7 +168,7 @@ console.debug(ajax_response);
 	if (typeof eShopShippingModule.services !== 'undefined' && 
 		typeof eShopShippingModule.services[sel_option] !== 'undefined') {
 		
-		dls = $("<dl>",{class: 'usc_shipping_details'});
+		dls = $("<dl>",{'class': 'usc_shipping_details'});
 	
 		$.each(eShopShippingModule.services[sel_option], function(key,value){
 			
@@ -186,13 +186,13 @@ console.debug(ajax_response);
 			   .append('<dd><label for="item_'+id+'">'+curr+' '+value+'</label></dd>');
 		});
 		
-		$("#usc_shipping_details").append($("<span>",{class : 'usc_details_headline'}).html(eShopShippingModule.translate('Extra Services'))).append(dls);
+		$("#usc_shipping_details").append($("<span>",{'class': 'usc_details_headline'}).html(eShopShippingModule.translate('Extra Services'))).append(dls);
 		$("#usc_shipping_details").append($("<div>",{style : 'clear:both'}));
 	}
 	
 	if (typeof eShopShippingModule.details[sel_option] !== 'undefined') {
 	
-	    dld = $("<dl>",{class: 'usc_shipping_details'});
+	    dld = $("<dl>",{'class': 'usc_shipping_details'});
 		
 		$.each(eShopShippingModule.details[sel_option], function(key,value){
 			
@@ -212,7 +212,7 @@ console.debug(ajax_response);
 			$("#usc_shipping_details").html('<div id="usc_pickup_text">'+pickup+'</div>');
 		}
 		else {
-			$("#usc_shipping_details").append($("<span>",{class : 'usc_details_headline'}).html(eShopShippingModule.translate('Service Details'))).append(dld);
+			$("#usc_shipping_details").append($("<span>",{'class' : 'usc_details_headline'}).html(eShopShippingModule.translate('Service Details'))).append(dld);
 		}
 	}
 		
