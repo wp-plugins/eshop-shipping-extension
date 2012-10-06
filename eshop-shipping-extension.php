@@ -88,6 +88,8 @@ class USC_eShop_Shipping_Extension
 		
 		if (is_admin())
 		{
+			$this->sync_modules();
+			
 			// Add ajax capability for logged-in people, even though it's not really
 			// the admin interface.
 			add_action('wp_ajax_' . $this->domain . '-get-rates', array(&$this,'get_rates'));
@@ -129,6 +131,19 @@ class USC_eShop_Shipping_Extension
 		
 	}
 
+	
+	/**
+	 * Method: sync_modules
+	 * Description: a workaround for Automated updates that don't trigger register_activation_hooks
+	 */
+	function sync_modules()
+	{
+		$version = get_option('eshop-shipping-extension-version');
+		if (! $version || $version !== ESHOP_SHIPPING_EXTENSION_VERSION)
+		{
+			$this->install_extra_modules();
+		}
+	}
 	
 	/**
 	 * Method: get_states_for_country()
@@ -582,6 +597,9 @@ class USC_eShop_Shipping_Extension
 				$this->set_notice(__('Failed to install module file: ', $this->domain) . $file_name . sprintf(' (%s)', $e['message']), true);
 			}
 		}
+		
+		// Set the correct version in the DB
+		update_option('eshop-shipping-extension-version',ESHOP_SHIPPING_EXTENSION_VERSION);
 	}
 	
 	
