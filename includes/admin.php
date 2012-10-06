@@ -87,7 +87,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 				wp_localize_script( 'usc_package_classes', 'eShopShippingModule_packages', 
 									array('package_class'      => $opts['package_class'],
 										  'pc_elements'        => $pc_elements,
-										  'sel_prod_level'     => $prod_meta['sel_package_class'],
+										  'sel_prod_level'     => (isset($prod_meta['sel_package_class']) ? $prod_meta['sel_package_class'] : ''),
 										  'sel_prod_opt_level' => $prod_opt_array,
 										  'lang'               => array('select' => __('Select',$this->domain),
 										  								'package_class' => __('Package Class', $this->domain),
