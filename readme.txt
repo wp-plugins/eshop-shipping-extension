@@ -52,6 +52,7 @@ Fedex, and DHL modules will be made available soon at [UseStrict Consulting](htt
 = 2.0.11 = 
 * Small glitch (PHP Warning) when adding a new product after renaming package classes.
 * Improved package bundling logic.
+* Fixed WP update issue - deactivate/reactivate no longer required for people who purchased UPS/USPS/Correios
 
 = 2.0.10 =
 * Quoting class attribute in javascript so it won't break IE < 9. 
