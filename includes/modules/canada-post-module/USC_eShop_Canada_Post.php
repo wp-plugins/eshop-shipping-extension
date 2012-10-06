@@ -535,7 +535,7 @@ EOF;
 					{
 						// Get pack class and add up the dimensions times qty
 						$pack_class = $this->get_package_class_by_name($prod_meta['sel_package_class']);
-						$prod_avg[] = ($pack_class['width'] + $pack_class['length'] + $pack_class['height']) / 3;
+						$prod_avg[] = pow($pack_class['width'] * $pack_class['length'] * $pack_class['height'], 1/3);
 						$num_items += $qty;
 					}
 				}
@@ -581,7 +581,7 @@ EOF;
 					{
 						// Get pack class and add up the dimensions times qty
 						$pack_class = $this->get_package_class_by_name($prod_meta['products'][$val['option']]['sel_package_class']);
-						$prod_avg[] = ($pack_class['width'] + $pack_class['length'] + $pack_class['height']) / 3;
+						$prod_avg[] = pow($pack_class['width'] * $pack_class['length'] * $pack_class['height'], 1/3);
 						$num_items += $qty;
 					}
 				}
@@ -633,7 +633,7 @@ EOF;
 				$xml->destination->addChild('international')->addChild('country-code',$input['country']);
 		}
 		
-			  
+		
 		if ($this->debug_mode())
 		{
 			$dom = new DOMDocument('1.0');

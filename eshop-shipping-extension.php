@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS, USPS, and Correios. Correios, UPS, and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       2.0.10
+* Version:       2.0.11
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.0.10');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.0.11');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -88,6 +88,8 @@ class USC_eShop_Shipping_Extension
 		
 		if (is_admin())
 		{
+			$this->sync_modules();
+			
 			// Add ajax capability for logged-in people, even though it's not really
 			// the admin interface.
 			add_action('wp_ajax_' . $this->domain . '-get-rates', array(&$this,'get_rates'));
@@ -129,6 +131,19 @@ class USC_eShop_Shipping_Extension
 		
 	}
 
+	
+	/**
+	 * Method: sync_modules
+	 * Description: a workaround for Automated updates that don't trigger register_activation_hooks
+	 */
+	function sync_modules()
+	{
+		$version = get_option('eshop-shipping-extension-version');
+		if (! $version || $version !== ESHOP_SHIPPING_EXTENSION_VERSION)
+		{
+			$this->install_extra_modules();
+		}
+	}
 	
 	/**
 	 * Method: get_states_for_country()
@@ -582,6 +597,9 @@ class USC_eShop_Shipping_Extension
 				$this->set_notice(__('Failed to install module file: ', $this->domain) . $file_name . sprintf(' (%s)', $e['message']), true);
 			}
 		}
+		
+		// Set the correct version in the DB
+		update_option('eshop-shipping-extension-version',ESHOP_SHIPPING_EXTENSION_VERSION);
 	}
 	
 	
