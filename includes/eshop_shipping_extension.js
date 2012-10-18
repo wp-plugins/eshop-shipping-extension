@@ -89,13 +89,22 @@ jQuery(document).ready(function($){
 	 * @desc     Creates the actual HTML for shipping
 	 * @param    object ajax_response
 	 */
-	eShopShippingModule.create_shipping_html = function(ajax_response) {
-console.debug(ajax_response);		
+	eShopShippingModule.create_shipping_html = function(data_to_process, reload) {
+
 		var count = 0, 
-			is_multi_carrier = false;
+			is_multi_carrier = false,
+			ajax_response, selected_service;
 		
 		eShopShippingModule.details  = {}; // Reset details
 		eShopShippingModule.services = {}; // Reset services
+
+		if (reload) {
+			ajax_response = data_to_process[1];
+			selected_service = data_to_process[0].selected_service;
+		}
+		else {
+			ajax_response = data_to_process;
+		}
 		
 		for (i in ajax_response) {
 			if (ajax_response.hasOwnProperty(i)) count++;
@@ -125,22 +134,23 @@ console.debug(ajax_response);
 			else {
 				
 				$.each(val.data,function(svc,data){
-					var re = new RegExp(key + ' - ');
+					var re = new RegExp(key + ' - '),
+					    untouched_svc = svc;
 					
 					if (is_multi_carrier) {
 						svc = svc.replace(re, '');
 					}
+
+					eShopShippingModule.details[untouched_svc]  = data['details'];  // Populate details object
+					eShopShippingModule.services[untouched_svc] = data['services']; // Populate services object
+
+					var attrs = (typeof selected_service !== 'undefined' &&
+								        selected_service == untouched_svc) ? {selected : "selected", value : untouched_svc} : {value : untouched_svc};
 					
-					eShopShippingModule.details[svc]  = data['details'];  // Populate details object
-					eShopShippingModule.services[svc] = data['services']; // Populate services object
-					
-					var attrs = (typeof ajax_response.selected_service !== 'undefined' &&
-								        ajax_response.selected_service == svc) ? {selected : "selected", value : svc} : {value : svc};
-					
-					el.append($('<option/>',{value: svc}).text(svc + ' ('+eShopShippingModule.currency+' ' + data['price'] + ')'));
+					el.append($('<option/>',attrs).text(svc + ' ('+eShopShippingModule.currency+' ' + data['price'] + ')'));
 				});
 			}
-			
+
 			if (is_multi_carrier) {
 				$("#usc_shipping_services").append(el);
 			}
@@ -177,7 +187,7 @@ console.debug(ajax_response);
 			// So we create individual ones and then use jQuery to merge them into CSVs to handle elsewhere.
 			var id = key.replace(/\s+/g,'_');
 			var checked = (typeof eShopShippingModule.startup_details !== 'undefined' &&
-						   typeof eShopShippingModule.startup_details.selected_services[key] !== 'undefined') ? ' checked="checked"' : '';
+						   typeof eShopShippingModule.startup_details[0].additional_services[key] !== 'undefined') ? ' checked="checked"' : '';
 			var input = '<input id="item_'+id+'" type="checkbox" name="additional_shipping_service" value="'+key+'" '+checked+'/>';
 			
 			var curr = value.match(/^\d+\.\d+$/) ? eShopShippingModule.currency : '';

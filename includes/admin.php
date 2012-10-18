@@ -644,7 +644,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 											$checked = in_array($k,$opts['third_party']) ? 'checked="checked"' : ''; 
 										?>
 										<tr>
-											<th style="width: 150px"><label for="<?php echo "third_party_$k"?>"><?php echo $v->module_name; ?></label></th>
+											<th style="width: 150px"><label for="<?php echo "third_party_$k"?>"><?php echo $v->module_name . ($v->version ? " (v$v->version)" : ''); ?></label></th>
 											<td><input type="radio" class="third_party_chkbx" id="third_party_<?php echo $k?>" value="<?php echo $k; ?>" <?php echo $checked ?> name="<?php echo $this->options_name; ?>[third_party][]" /></td>
 										</tr>
 										<?php endforeach; ?>
@@ -654,7 +654,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 											$checked = in_array($k,$opts['third_party']) ? 'checked="checked"' : ''; 
 										?>
 										<tr>
-											<th style="width: 150px"><label for="<?php echo "third_party_$k"?>"><?php echo $v->module_name; ?></label></th>
+											<th style="width: 150px"><label for="<?php echo "third_party_$k"?>"><?php echo $v->module_name . ($v->version ? " (v$v->version)" : ''); ?></label></th>
 											<td><input type="checkbox" class="third_party_chkbx" id="third_party_<?php echo $k?>" value="<?php echo $k; ?>" <?php echo $checked ?> name="<?php echo $this->options_name; ?>[third_party][]" /></td>
 										</tr>
 										<?php endforeach; ?>

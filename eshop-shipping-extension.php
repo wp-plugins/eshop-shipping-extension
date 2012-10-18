@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS, USPS, and Correios. Correios, UPS, and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       2.0.11
+* Version:       2.0.12
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.0.11');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.0.12');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -278,7 +278,6 @@ class USC_eShop_Shipping_Extension
 			$_SESSION['usc_3rd_party_shipping'.$blog_id] = (array)$_SESSION['usc_3rd_party_shipping'.$blog_id] + $service_info;
 		}
 		
-		$num_active_modules = count($this->active_modules);
 		foreach ($this->active_modules as $mod)
 		{
 			$out[$mod->module_name] = $mod->get_rates($_REQUEST);
@@ -358,19 +357,35 @@ class USC_eShop_Shipping_Extension
 				if (isset($_POST['eshop_shiptype']))
 				{
 					$out .= '<script type="text/javascript">' ."\n";
-					$out .= 'eShopShippingModule.startup_details = [{success: true, data:{}, selected_service:"'.$_POST['eshop_shiptype'].'", selected_services:{}}];' ."\n";
+					$out .= 'eShopShippingModule.startup_details = [{success: true, data:{}, selected_service:"'.$_POST['eshop_shiptype'].'", additional_services:{}}];' ."\n";
 					
 					if (isset($_POST['additional_shipping_services']))
 					{
 						$svc_array = explode('; ',$_POST['additional_shipping_services']);
 						foreach($svc_array as $svc)
 						{
-							$out .= 'eShopShippingModule.startup_details[0].selected_services["'.$svc.'"] = 1;' ."\n";
+							$out .= 'eShopShippingModule.startup_details[0].additional_services["'.$svc.'"] = 1;' ."\n";
+						}
+					}
+					
+					
+					$svc_groups = array();
+					foreach ($_SESSION['usc_3rd_party_shipping'.$blog_id] as $k => $v)
+					{
+						if ($k == __('In-Store Pickup',$this->domain))
+						{
+							$svc_groups[$k] = $v;
+						}
+						else
+						{
+							preg_match('/^([^-]+)/',$k,$grp_name);
+							$svc_groups[trim($grp_name[1])]['data'][$k] = $v;
+							$svc_groups[trim($grp_name[1])]['success'] = true;
 						}
 					}
 					
 					// Rebuild the shipping and details form from JS. Delete startup data after the first rendering
-					$out .= 'eShopShippingModule.startup_details[0].data = ' . json_encode($_SESSION['usc_3rd_party_shipping'.$blog_id]) . ';' . "\n";
+					$out .= 'eShopShippingModule.startup_details[1] = ' . json_encode($svc_groups) . ';' . "\n";
 					$out .= 'jQuery(document).ready(function(){
 								eShopShippingModule.create_shipping_html(eShopShippingModule.startup_details,true);
 								delete eShopShippingModule.startup_details;

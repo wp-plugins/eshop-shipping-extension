@@ -13,10 +13,11 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 	private $live_url        = 'https://soa-gw.canadapost.ca/rs/ship/price';
 	private $test_url        = 'https://ct.soa-gw.canadapost.ca/rs/ship/price';
 	public $is_postal     = true; // Controls with which other modules this can be used. Canada Post/USPS/Correios are mutually exclusive.
+	public $version;
 	
 	function __construct()
 	{
-		// NOOP
+		$this->version = '1.0F';
 	}
 	
 	function USC_eShop_Canada_Post()
@@ -895,5 +896,5 @@ EOF;
 }
 
 
-/* End of file eShop_Canada_Post.php */
-/* Location: eshop-shipping-extension/includes/third-party-services/eShop_Canada_Post.php */
+/* End of file USC_eShop_Canada_Post.php */
+/* Location: eshop-shipping-extension/includes/modules/canada-post-module/USC_eShop_Canada_Post.php */
