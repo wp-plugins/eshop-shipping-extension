@@ -23,7 +23,7 @@ This framework includes the Canada Post module for free.
 * [Fedex extension](http://usestrict.net/2012/10/fedex-module-for-eshop-shipping-extension/),
 * [Correios (Brazil) extension](http://usestrict.net/2012/08/modulo-correios-brasil-para-o-eshop-shipping-extension/) 
 
-Fedex, and DHL modules will be made available soon at [UseStrict Consulting](http://usestrict.net)
+Other modules will be made available soon at [UseStrict Consulting](http://usestrict.net)
 
 == Installation ==
 
