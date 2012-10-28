@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS, USPS, and Correios. Correios, UPS, and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       2.0.12
+* Version:       2.1
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.0.12');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -53,6 +53,8 @@ class USC_eShop_Shipping_Extension
 	
 	function __construct()
 	{
+		session_start();
+		
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' ); # needed for "is plugin active"
 		
 		$this->eshop_is_installed = file_exists(ABSPATH . 'wp-content/plugins/eshop/eshop.php') ? TRUE : FALSE;
@@ -311,7 +313,7 @@ class USC_eShop_Shipping_Extension
 		$default[$this->options_name]['debug_mode']  = 0;
 	
 		$this->options = get_option($this->options_name, $default);
-	
+
 		// Copy the from_zip value into the active module's opts array 
 		$this->options[$this->active_module]['from_zip'] = $this->options['from_zip'];
 		
@@ -340,69 +342,80 @@ class USC_eShop_Shipping_Extension
 	{
 		global $blog_id;
 		
-// 		if (is_object($this->active_module))
-// 		{
-			// Note: method_exists() returns true for child against add_shipping_fields (inherited). 
-			// Changed the child name to child_add_shipping_fields.
-// 			if (method_exists($this->active_module, 'child_add_shipping_fields'))
-// 			{
-// 				$form_html = $this->active_module->child_add_shipping_fields($form_html,$reqdarray);
-// 			}
-// 			else 
-// 			{
-				$out  = '<fieldset class="eshop fld0"><legend id="shiplegend">'. __('Please Choose Shipping','eshop').eshop_checkreqd($reqdarray,'shipping').'</legend>';
-				$out .= '<div id="usc_shipping_error_msgs"></div><div id="usc_shipping_options">';
-				
-				// Build select with options if the form is being re-displayed after an error
-				if (isset($_POST['eshop_shiptype']))
+		$free_shipping_applies = is_shipfree(calculate_total());
+		
+		if ($free_shipping_applies)
+		{
+			$required = '';
+			$shipping_title = __('Shipping', 'eshop');
+		}
+		else
+		{
+			$required = eshop_checkreqd($reqdarray,'shipping');
+			$shipping_title = __('Please Choose Shipping','eshop');
+		}
+		
+		$out  = '<fieldset class="eshop fld0"><legend id="shiplegend">'. $shipping_title .$required.'</legend>';
+		$out .= '<div id="usc_shipping_error_msgs"></div><div id="usc_shipping_options">';
+
+		if ($free_shipping_applies)
+		{
+			$out .= __('Your purchase is eligible for free shipping.',$this->domain);
+			$out .= "</div></fieldset>";
+			
+			return $form_html . $out;
+		}
+		
+		// Not free shipping, so continue
+		
+		// Build select with options if the form is being re-displayed after an error
+		if (isset($_POST['eshop_shiptype']))
+		{
+			$out .= '<script type="text/javascript">' ."\n";
+			$out .= 'eShopShippingModule.startup_details = [{success: true, data:{}, selected_service:"'.$_POST['eshop_shiptype'].'", additional_services:{}}];' ."\n";
+			
+			if (isset($_POST['additional_shipping_services']))
+			{
+				$svc_array = explode('; ',$_POST['additional_shipping_services']);
+				foreach($svc_array as $svc)
 				{
-					$out .= '<script type="text/javascript">' ."\n";
-					$out .= 'eShopShippingModule.startup_details = [{success: true, data:{}, selected_service:"'.$_POST['eshop_shiptype'].'", additional_services:{}}];' ."\n";
-					
-					if (isset($_POST['additional_shipping_services']))
-					{
-						$svc_array = explode('; ',$_POST['additional_shipping_services']);
-						foreach($svc_array as $svc)
-						{
-							$out .= 'eShopShippingModule.startup_details[0].additional_services["'.$svc.'"] = 1;' ."\n";
-						}
-					}
-					
-					
-					$svc_groups = array();
-					foreach ($_SESSION['usc_3rd_party_shipping'.$blog_id] as $k => $v)
-					{
-						if ($k == __('In-Store Pickup',$this->domain))
-						{
-							$svc_groups[$k] = $v;
-						}
-						else
-						{
-							preg_match('/^([^-]+)/',$k,$grp_name);
-							$svc_groups[trim($grp_name[1])]['data'][$k] = $v;
-							$svc_groups[trim($grp_name[1])]['success'] = true;
-						}
-					}
-					
-					// Rebuild the shipping and details form from JS. Delete startup data after the first rendering
-					$out .= 'eShopShippingModule.startup_details[1] = ' . json_encode($svc_groups) . ';' . "\n";
-					$out .= 'jQuery(document).ready(function(){
-								eShopShippingModule.create_shipping_html(eShopShippingModule.startup_details,true);
-								delete eShopShippingModule.startup_details;
-						     });';
-					$out .= '</script>' ."\n";
+					$out .= 'eShopShippingModule.startup_details[0].additional_services["'.$svc.'"] = 1;' ."\n";
 				}
-				
-				$view_update = isset($_POST['eshop_shiptype']) ?  __('Update Shipping Options', $this->domain) : __('View Shipping Options', $this->domain);
-				
-				$out .= '</div><div id="usc_shipping_details"></div>';
-				$out .= '<a id="usc_update_shipping_options" href="#">' . $view_update . '</a>';
-				$out .= '<img style="display:none" id="usc_shipping_throbber" class="usc_shipping_throbber" src="' . plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/images/arrows-throbber.gif') . '" />';
-				$out .= "</fieldset>";
-				
-				$form_html .= $out;
-// 			}
-// 		}
+			}
+			
+			
+			$svc_groups = array();
+			foreach ($_SESSION['usc_3rd_party_shipping'.$blog_id] as $k => $v)
+			{
+				if ($k == __('In-Store Pickup',$this->domain))
+				{
+					$svc_groups[$k] = $v;
+				}
+				else
+				{
+					preg_match('/^([^-]+)/',$k,$grp_name);
+					$svc_groups[trim($grp_name[1])]['data'][$k] = $v;
+					$svc_groups[trim($grp_name[1])]['success'] = true;
+				}
+			}
+			
+			// Rebuild the shipping and details form from JS. Delete startup data after the first rendering
+			$out .= 'eShopShippingModule.startup_details[1] = ' . json_encode($svc_groups) . ';' . "\n";
+			$out .= 'jQuery(document).ready(function(){
+						eShopShippingModule.create_shipping_html(eShopShippingModule.startup_details,true);
+						delete eShopShippingModule.startup_details;
+				     });';
+			$out .= '</script>' ."\n";
+		}
+		
+		$view_update = isset($_POST['eshop_shiptype']) ?  __('Update Shipping Options', $this->domain) : __('View Shipping Options', $this->domain);
+		
+		$out .= '</div><div id="usc_shipping_details"></div>';
+		$out .= '<a id="usc_update_shipping_options" href="#">' . $view_update . '</a>';
+		$out .= '<img style="display:none" id="usc_shipping_throbber" class="usc_shipping_throbber" src="' . plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/images/arrows-throbber.gif') . '" />';
+		$out .= "</fieldset>";
+		
+		$form_html .= $out;
 		
 		return $form_html;
 	}
@@ -447,7 +460,7 @@ class USC_eShop_Shipping_Extension
 	 */
 	function admin_notices()
 	{
-	if (isset($_SESSION['usc_notices']))
+		if (isset($_SESSION['usc_notices']))
 		{
 			foreach ($_SESSION['usc_notices'] as $notice)
 			{

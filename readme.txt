@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: eShop, Canada Post, USPS, United States Postal Service, UPS, United Parcel Service, Federal Express, Fedex, Correios, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 2.0.12
+Stable tag: 2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,7 +21,8 @@ This framework includes the Canada Post module for free.
 * [USPS extension](http://usestrict.net/2012/07/usps-module-for-wordpress-eshop-shipping-extension/),
 * [UPS extension](http://usestrict.net/2012/07/ups-module-for-wordpress-eshop-shipping-extension/),
 * [Fedex extension](http://usestrict.net/2012/10/fedex-module-for-eshop-shipping-extension/),
-* [Correios (Brazil) extension](http://usestrict.net/2012/08/modulo-correios-brasil-para-o-eshop-shipping-extension/) 
+* [Correios (Brazil) extension](http://usestrict.net/2012/08/modulo-correios-brasil-para-o-eshop-shipping-extension/)
+* [Bulk Package Class Helper](http://usestrict.net/2012/10/bulk-package-class-helper-for-eshop-shipping-extension/)
 
 Other modules will be made available soon at [UseStrict Consulting](http://usestrict.net)
 
@@ -43,6 +44,11 @@ Other modules will be made available soon at [UseStrict Consulting](http://usest
 * Fedex module is available for purchase [here](http://usestrict.net/2012/10/fedex-module-for-eshop-shipping-extension/).
 * Other modules will be available soon at [UseStrict Consulting](http://usestrict.net)
 
+= How can I set Package Classes to all my items in one sweep? =
+
+* We offer a helper plugin that allows the user to manage Package Class to Product association in bulk. 
+Find out more [here](http://usestrict.net/2012/10/bulk-package-class-helper-for-eshop-shipping-extension).
+
 
 == Screenshots ==
 
@@ -51,6 +57,10 @@ Other modules will be made available soon at [UseStrict Consulting](http://usest
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+= 2.1 =
+* Handling eShop "free shipping over value" option.
+* Playing nicely with new Bulk Package Class management.
+
 = 2.0.12 =
 * Fixed a bug where the shipping would sometimes not be carried over into the checkout overview form.
 * Fixed the shipping option field rendering when the form fails with an error - maintaing state.
