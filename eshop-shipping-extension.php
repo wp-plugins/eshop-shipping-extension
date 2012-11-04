@@ -289,7 +289,7 @@ class USC_eShop_Shipping_Extension
 				error_log("Error getting rates for " . get_class($mod) . ": " . print_r($out,1));
 			}
 		}
-error_log(__LINE__ . ' Session: ' . print_r($_SESSION,1));
+
 		echo json_encode($out);
 		exit; // WP requirement for ajax-related methods
 	}
