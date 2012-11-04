@@ -15,7 +15,7 @@ jQuery(document).ready(function($){
 	 * @desc      Wrapper for get_rates
 	 * @param     bool from_button 
 	 */
-	eShopShippingModule.call_get_rates = function(from_button){
+	eShopShippingModule.call_get_rates = function(callback){
 		
 		var validated_fields,
 			country,
@@ -54,7 +54,7 @@ jQuery(document).ready(function($){
 		$("#usc_update_shipping_options").text(eShopShippingModule.lang['update-shipping-options']);
 		
 		// Make the call
-		eShopShippingModule.get_rates(validated_fields.data);
+		eShopShippingModule.get_rates(validated_fields.data,callback);
 		
 	};
 	
@@ -64,7 +64,7 @@ jQuery(document).ready(function($){
 	 * @desc      Triggers the ajax call to get the rates
 	 * @param     object fields 
 	 */
-	eShopShippingModule.get_rates = function(fields) {
+	eShopShippingModule.get_rates = function(fields,callback) {
 		
 		fields.action = eShopShippingModule.ajaxaction;
 		$("#usc_shipping_throbber").show();
@@ -77,7 +77,7 @@ jQuery(document).ready(function($){
 			success : function(ajax_response){
 				
 				$("#usc_shipping_throbber").hide();
-				eShopShippingModule.create_shipping_html(ajax_response);
+				eShopShippingModule.create_shipping_html(ajax_response,false,callback);
 				
 			}
 		});
@@ -89,7 +89,7 @@ jQuery(document).ready(function($){
 	 * @desc     Creates the actual HTML for shipping
 	 * @param    object ajax_response
 	 */
-	eShopShippingModule.create_shipping_html = function(data_to_process, reload) {
+	eShopShippingModule.create_shipping_html = function(data_to_process, reload, callback) {
 
 		var count = 0, 
 			is_multi_carrier = false,
@@ -157,7 +157,7 @@ jQuery(document).ready(function($){
 		});
 		
 		// Create details HTML for the selected option
-		eShopShippingModule.create_details_html();
+		eShopShippingModule.create_details_html(callback);
 	};
 	
 	
@@ -167,64 +167,68 @@ jQuery(document).ready(function($){
 	 * @desc     Creates the details HTML for the selected shipping option
 	 * @param    protected eShopShippingModule.details
 	 */
-	eShopShippingModule.create_details_html = function () {
+	eShopShippingModule.create_details_html = function (callback) {
 		
 		var sel_option = $("#usc_shipping_services :selected").val(),
 	    dls, dld, pickup;
 	
-	// Reset the HTML div
-	$("#usc_shipping_details").html('');
-
-	if (typeof eShopShippingModule.services !== 'undefined' && 
-		typeof eShopShippingModule.services[sel_option] !== 'undefined') {
-		
-		dls = $("<dl>",{'class': 'usc_shipping_details'});
+		// Reset the HTML div
+		$("#usc_shipping_details").html('');
 	
-		$.each(eShopShippingModule.services[sel_option], function(key,value){
+		if (typeof eShopShippingModule.services !== 'undefined' && 
+			typeof eShopShippingModule.services[sel_option] !== 'undefined') {
 			
-			// We can't simply use an array of inputs for the additional services
-			// because eShop has some un-overrideable functions that end up getting 'Array' as value.
-			// So we create individual ones and then use jQuery to merge them into CSVs to handle elsewhere.
-			var id = key.replace(/\s+/g,'_');
-			var checked = (typeof eShopShippingModule.startup_details !== 'undefined' &&
-						   typeof eShopShippingModule.startup_details[0].additional_services[key] !== 'undefined') ? ' checked="checked"' : '';
-			var input = '<input id="item_'+id+'" type="checkbox" name="additional_shipping_service" value="'+key+'" '+checked+'/>';
-			
-			var curr = value.match(/^\d+\.\d+$/) ? eShopShippingModule.currency : '';
-			
-			dls.append('<dt>' +input +' <label for="item_'+id+'">'+key+'</label></dt>')
-			   .append('<dd><label for="item_'+id+'">'+curr+' '+value+'</label></dd>');
-		});
+			dls = $("<dl>",{'class': 'usc_shipping_details'});
 		
-		$("#usc_shipping_details").append($("<span>",{'class': 'usc_details_headline'}).html(eShopShippingModule.translate('Extra Services'))).append(dls);
-		$("#usc_shipping_details").append($("<div>",{style : 'clear:both'}));
-	}
-	
-	if (typeof eShopShippingModule.details[sel_option] !== 'undefined') {
-	
-	    dld = $("<dl>",{'class': 'usc_shipping_details'});
+			$.each(eShopShippingModule.services[sel_option], function(key,value){
+				
+				// We can't simply use an array of inputs for the additional services
+				// because eShop has some un-overrideable functions that end up getting 'Array' as value.
+				// So we create individual ones and then use jQuery to merge them into CSVs to handle elsewhere.
+				var id = key.replace(/\s+/g,'_');
+				var checked = (typeof eShopShippingModule.startup_details !== 'undefined' &&
+							   typeof eShopShippingModule.startup_details[0].additional_services[key] !== 'undefined') ? ' checked="checked"' : '';
+				var input = '<input id="item_'+id+'" type="checkbox" name="additional_shipping_service" value="'+key+'" '+checked+'/>';
+				
+				var curr = value.match(/^\d+\.\d+$/) ? eShopShippingModule.currency : '';
+				
+				dls.append('<dt>' +input +' <label for="item_'+id+'">'+key+'</label></dt>')
+				   .append('<dd><label for="item_'+id+'">'+curr+' '+value+'</label></dd>');
+			});
+			
+			$("#usc_shipping_details").append($("<span>",{'class': 'usc_details_headline'}).html(eShopShippingModule.translate('Extra Services'))).append(dls);
+			$("#usc_shipping_details").append($("<div>",{style : 'clear:both'}));
+		}
 		
-		$.each(eShopShippingModule.details[sel_option], function(key,value){
+		if (typeof eShopShippingModule.details[sel_option] !== 'undefined') {
+		
+		    dld = $("<dl>",{'class': 'usc_shipping_details'});
 			
-			var curr = value.match(/^\d+\.\d+$/) ? eShopShippingModule.currency : '';
-			var transl = value.match(/\d+-\d+-\d+/) ? eShopShippingModule.format_date(value) : eShopShippingModule.translate(value);
-			
-			if (key == 'usc_pickup') {
-				pickup = value;
+			$.each(eShopShippingModule.details[sel_option], function(key,value){
+				
+				var curr = value.match(/^\d+\.\d+$/) ? eShopShippingModule.currency : '';
+				var transl = value.match(/\d+-\d+-\d+/) ? eShopShippingModule.format_date(value) : eShopShippingModule.translate(value);
+				
+				if (key == 'usc_pickup') {
+					pickup = value;
+				}
+				else {
+					dld.append('<dt>'+eShopShippingModule.translate(key)+'</dt>')
+					   .append('<dd>'+curr+transl+'</dd>');
+				}
+			});
+	
+			if (pickup) {
+				$("#usc_shipping_details").html('<div id="usc_pickup_text">'+pickup+'</div>');
 			}
 			else {
-				dld.append('<dt>'+eShopShippingModule.translate(key)+'</dt>')
-				   .append('<dd>'+curr+transl+'</dd>');
+				$("#usc_shipping_details").append($("<span>",{'class' : 'usc_details_headline'}).html(eShopShippingModule.translate('Service Details'))).append(dld);
 			}
-		});
-
-		if (pickup) {
-			$("#usc_shipping_details").html('<div id="usc_pickup_text">'+pickup+'</div>');
 		}
-		else {
-			$("#usc_shipping_details").append($("<span>",{'class' : 'usc_details_headline'}).html(eShopShippingModule.translate('Service Details'))).append(dld);
+		
+		if (typeof callback == 'function') {
+			callback();
 		}
-	}
 		
 	};
 	
@@ -285,7 +289,7 @@ jQuery(document).ready(function($){
 	}
 	
 	if (fields.weight != parseFloat(fields.weight)) {
-			errors.push(eShopShippingModuleUPS.lang.invalid_weight + ' "' + fields.weight + '"');
+			errors.push(eShopShippingModule.lang.invalid_weight + ' "' + fields.weight + '"');
 	}
 	
 	// Errors are handled by the caller
@@ -427,27 +431,11 @@ jQuery(document).ready(function($){
 	}
 	
 	
-//	$("#country,#shipcountry").change(function(){
-//		eShopShippingModule.call_get_rates();
-//	});
-	
 	$("#usc_update_shipping_options").click(function(e){
 		eShopShippingModule.call_get_rates();
 		e.preventDefault();
 	});
 	
-//	$("#state, #zip, #country, #shipcountry" +
-//	  "#ship_state, #ship_altstate, #ship_postcode").blur(function(){
-//		  
-//		  // Check that we have a state/zip/country before calling get_rates
-//		  var state   = ($.trim($("#ship_state").val()) || $.trim($("#ship_altstate").val()) || $.trim($("#state").val()) || $.trim($("#altstate").val())),
-//		      country = ($.trim($("#country").val())    || $.trim($("#shipcountry").val())),
-//		      zip     = ($.trim($("#zip").val())        || $.trim($("#ship_postcode").val()));
-//		  
-//		  if (state && country && zip) {
-//			  eShopShippingModule.call_get_rates();
-//		  }
-//	});
 	
 	// Handle the additional_services upon submission
 	$("#submitit").closest('form').submit(function(){
