@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS, USPS, and Correios. Correios, UPS, and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       2.1
+* Version:       2.1.1
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1.1');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -289,7 +289,7 @@ class USC_eShop_Shipping_Extension
 				error_log("Error getting rates for " . get_class($mod) . ": " . print_r($out,1));
 			}
 		}
-
+error_log(__LINE__ . ' Session: ' . print_r($_SESSION,1));
 		echo json_encode($out);
 		exit; // WP requirement for ajax-related methods
 	}
@@ -649,6 +649,7 @@ class USC_eShop_Shipping_Extension
 		}
 		
 		$msgs['update-shipping-options'] = __('Update Shipping Options', $this->domain);
+		$msgs['invalid_weight'] = __('Invalid Weight', $this->domain);
 
 		return $msgs;
 	}
