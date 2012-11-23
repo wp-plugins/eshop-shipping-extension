@@ -113,10 +113,13 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 
 		if (! $prod_meta) return; // WP saves everything twice, once with a weird post_id, then lastly with the correct one.
 		
-		if ($opts['package_class'] == 'product' && ! $_POST['eshop_product_package_class'])
+		if ($opts['package_class'] == 'product')
 		{
-			delete_post_meta( $post_ID, '_eshop_stock');
-			add_filter('redirect_post_location','eshop_error');
+			if (! $_POST['eshop_product_package_class'])
+			{
+				delete_post_meta( $post_ID, '_eshop_stock');
+				add_filter('redirect_post_location','eshop_error');
+			}
 		}
 		else
 		{
