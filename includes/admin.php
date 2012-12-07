@@ -592,7 +592,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 										   needed for support requests. Do not turn it on unless something is wrong!',$this->domain); ?></em> 
 										  
 										  <?php if ($opts['debug_mode']) :?>
-										  <p><a href="#" id="display_debug_contents"><?php _e('Display debug contents',$this->domain); ?></a></p>
+										  <br /><br /><a href="#" id="display_debug_contents"><?php _e('Display debug contents',$this->domain); ?></a><br />
 										  <?php endif;?>
 									</p>
 									
@@ -667,6 +667,10 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 										</tr>
 										<?php endforeach; ?>
 									</table>
+									<?php if (has_filter(usc_after_carrier_list))
+										  {
+												echo apply_filters('usc_after_carrier_list',$opts); 
+										  }?>
 									<br />
 									<hr />									
 									<p><strong><?php _e('Shipping Details CSS Styles:',$this->domain); ?></strong><br />
