@@ -493,7 +493,7 @@ EOF;
 			$xml->addChild('customer-number', $opts['customer_number']);
 		}
 		
-		$xml->addChild('parcel-characteristics')->addChild('weight',$conv['data']);
+		$xml->addChild('parcel-characteristics')->addChild('weight',number_format($conv['data'],3));
 		
 		if (! $opts['package_class']) $opts['package_class'] = '';
 		

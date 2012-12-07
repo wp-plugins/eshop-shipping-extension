@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: eShop, Canada Post, USPS, United States Postal Service, UPS, United Parcel Service, Federal Express, Fedex, Correios, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 2.1.3
+Stable tag: 2.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,7 @@ This framework includes the Canada Post module for free.
 * [Fedex extension](http://usestrict.net/2012/10/fedex-module-for-eshop-shipping-extension/),
 * [Correios (Brazil) extension](http://usestrict.net/2012/08/modulo-correios-brasil-para-o-eshop-shipping-extension/)
 * [Bulk Package Class Helper](http://usestrict.net/2012/10/bulk-package-class-helper-for-eshop-shipping-extension/)
+* [Handling Fee Add-on](http://usestrict.net/2012/12/handling-fee-add-on-for-eshop-shipping-extension)
 
 Other modules will be made available soon at [UseStrict Consulting](http://usestrict.net)
 
@@ -50,6 +51,10 @@ Other modules will be made available soon at [UseStrict Consulting](http://usest
 Find out more [here](http://usestrict.net/2012/10/bulk-package-class-helper-for-eshop-shipping-extension).
 
 
+= Is it possible to add a Handling Fee to my shipments? =
+
+Yes! By using the Handling Fee Add-on. You can get it [here](http://usestrict.net/2012/12/handling-fee-add-on-for-eshop-shipping-extension/).
+
 == Screenshots ==
 
 1. A few easy settings get you up and running in minutes.
@@ -57,6 +62,11 @@ Find out more [here](http://usestrict.net/2012/10/bulk-package-class-helper-for-
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+= 2.1.4 =
+* Added support for the Handling Fee add-on.
+* A few minor html fixes in the admin screen. 
+* Number formatting for Canada Post weight, maximum 3 decimals.
+
 = 2.1.3 =
 * Fixed a bug with the free shipping option.
 

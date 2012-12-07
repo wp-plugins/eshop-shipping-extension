@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS, USPS, and Correios. Correios, UPS, and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       2.1.3
+* Version:       2.1.4
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1.3');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1.4');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -266,20 +266,6 @@ class USC_eShop_Shipping_Extension
 			exit; // WP requirement for ajax-related methods
 		}
 		
-		
-		if ($opts['in_store_pickup'])
-		{
-			$service_info = array();
-			$service_name = __('In-Store Pickup',$this->domain);
-			$service_info[$service_name]['success'] = true;
-			$service_info[$service_name]['data'][$service_name]['price'] = '0.00';
-			$service_info[$service_name]['data'][$service_name]['details']['usc_pickup'] = $opts['in_store_pickup_text'];
-			
-			$out = $service_info;
-			
-			$_SESSION['usc_3rd_party_shipping'.$blog_id] = (array)$_SESSION['usc_3rd_party_shipping'.$blog_id] + $service_info;
-		}
-		
 		foreach ($this->active_modules as $mod)
 		{
 			$out[$mod->module_name] = $mod->get_rates($_REQUEST);
@@ -288,6 +274,21 @@ class USC_eShop_Shipping_Extension
 			{
 				error_log("Error getting rates for " . get_class($mod) . ": " . print_r($out,1));
 			}
+		}
+
+		if (has_filter('usc_do_handling'))	$out = apply_filters('usc_do_handling', $opts, $out);
+		
+		if ($opts['in_store_pickup'])
+		{
+			$service_info = array();
+			$service_name = __('In-Store Pickup',$this->domain);
+			$service_info[$service_name]['success'] = true;
+			$service_info[$service_name]['data'][$service_name]['price'] = '0.00';
+			$service_info[$service_name]['data'][$service_name]['details']['usc_pickup'] = $opts['in_store_pickup_text'];
+				
+			$out = $service_info + $out;
+				
+			$_SESSION['usc_3rd_party_shipping'.$blog_id] = $service_info + (array)$_SESSION['usc_3rd_party_shipping'.$blog_id];
 		}
 
 		echo json_encode($out);
