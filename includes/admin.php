@@ -226,96 +226,101 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 		// Massage Package Classes
 		# Iterate through all fields to get the right order
 		# since people can mess up rel numbers by adding/deleting rows
-		$count = 1;
-		$package_classes = array();
-		foreach ($input['package_class_elements'] as $p)
+		if (! isset($_FILES['usc_upload_pack_class_csv']) || $_FILES['usc_upload_pack_class_csv']['error'])
 		{
-			// Skip empty rows
-			if (!$p['name'] && ! $p['width'] && !$p['height'] && !$p['length'] && !$p['girth'])
+			$count = 1;
+			$package_classes = array();
+			foreach ($input['package_class_elements'] as $p)
 			{
-				continue;
-			}
-			
-			$has_error = false;
-			foreach(array_keys($p) as $key)
-			{
-				switch($key)
+				// Skip empty rows
+				if (!$p['name'] && ! $p['width'] && !$p['height'] && !$p['length'] && !$p['girth'])
 				{
-					case 'name':
-						! $p[$key] && add_settings_error("package_class_elements",
-														 "package_class_elements",sprintf(__('Package Class Row %d: "Name" is required!'),$count), 'error')
-						&& $has_error = true;
-						break;
-					case 'length':
-						if (!$p[$key])
-						{
-							add_settings_error("package_class_elements",
-							"package_class_elements",sprintf(__('Package Class Row %d: "Length" is required and must be greater than 0!'),$count), 'error')
-							&& $has_error = true;
-						}
-						else
-						{
-							! is_numeric($p[$key]) && add_settings_error("package_class_elements",
-													  "package_class_elements",sprintf(__('Package Class Row %d: "Length" must be a number!'),$count), 'error')
-							&& $has_error = true;
-						}
-						break; 
-					case 'width':
-						if (!$p[$key])
-						{
-							add_settings_error("package_class_elements",
-									"package_class_elements",sprintf(__('Package Class Row %d: "Width" is required and must be greater than 0!'),$count), 'error')
-							&& $has_error = true;
-						}
-						else
-						{
-							! is_numeric($p[$key]) && add_settings_error("package_class_elements",
-									"package_class_elements",sprintf(__('Package Class Row %d: "Width" must be a number!'),$count), 'error')
-							&& $has_error = true;
-						}
-						break;
-					case 'height':
-						if (!$p[$key])
-						{
-							add_settings_error("package_class_elements",
-									"package_class_elements",sprintf(__('Package Class Row %d: "Height" is required and must be greater than 0!'),$count), 'error')
-							&& $has_error = true;
-						}
-						else
-						{
-							! is_numeric($p[$key]) && add_settings_error("package_class_elements",
-									"package_class_elements",sprintf(__('Package Class Row %d: "Height" must be a number!'),$count), 'error')
-							&& $has_error = true;
-						}
-						break;
-					case 'girth':
-						$p[$key] && ! is_numeric($p[$key]) && ($has_error = 1) && 
-							add_settings_error("package_class_elements",
-							"package_class_elements",sprintf(__('Package Class Row %d: "Girth", if set, must be a number!'),$count), 'error')
-							&& $has_error = true;
-						break;
-					default:
-						break;
+					continue;
 				}
 				
-			}
-
-			if ($has_error === false)
-			{
-				if ( $p['length'] < $p['height'] || 
-					 $p['length'] < $p['width']  ||
-				    ($p['girth'] && $p['length'] < $p['girth']) )
+				$has_error = false;
+				foreach(array_keys($p) as $key)
 				{
-					add_settings_error("package_class_elements",
-							"package_class_elements",sprintf(__('Package Class Row %d: "Length", must be the largest dimension!'),$count), 'error');
-					$has_error = true;
+					switch($key)
+					{
+						case 'name':
+							$p[$key] = htmlspecialchars_decode($p[$key]);
+							
+							! $p[$key] && add_settings_error("package_class_elements",
+															 "package_class_elements",sprintf(__('Package Class Row %d: "Name" is required!'),$count), 'error')
+							&& $has_error = true;
+							break;
+						case 'length':
+							if (!$p[$key])
+							{
+								add_settings_error("package_class_elements",
+								"package_class_elements",sprintf(__('Package Class Row %d: "Length" is required and must be greater than 0!'),$count), 'error')
+								&& $has_error = true;
+							}
+							else
+							{
+								! is_numeric($p[$key]) && add_settings_error("package_class_elements",
+														  "package_class_elements",sprintf(__('Package Class Row %d: "Length" must be a number!'),$count), 'error')
+								&& $has_error = true;
+							}
+							break; 
+						case 'width':
+							if (!$p[$key])
+							{
+								add_settings_error("package_class_elements",
+										"package_class_elements",sprintf(__('Package Class Row %d: "Width" is required and must be greater than 0!'),$count), 'error')
+								&& $has_error = true;
+							}
+							else
+							{
+								! is_numeric($p[$key]) && add_settings_error("package_class_elements",
+										"package_class_elements",sprintf(__('Package Class Row %d: "Width" must be a number!'),$count), 'error')
+								&& $has_error = true;
+							}
+							break;
+						case 'height':
+							if (!$p[$key])
+							{
+								add_settings_error("package_class_elements",
+										"package_class_elements",sprintf(__('Package Class Row %d: "Height" is required and must be greater than 0!'),$count), 'error')
+								&& $has_error = true;
+							}
+							else
+							{
+								! is_numeric($p[$key]) && add_settings_error("package_class_elements",
+										"package_class_elements",sprintf(__('Package Class Row %d: "Height" must be a number!'),$count), 'error')
+								&& $has_error = true;
+							}
+							break;
+						case 'girth':
+							$p[$key] && ! is_numeric($p[$key]) && ($has_error = 1) && 
+								add_settings_error("package_class_elements",
+								"package_class_elements",sprintf(__('Package Class Row %d: "Girth", if set, must be a number!'),$count), 'error')
+								&& $has_error = true;
+							break;
+						default:
+							break;
+					}
+					
 				}
+	
+				if ($has_error === false)
+				{
+					if ( $p['length'] < $p['height'] || 
+						 $p['length'] < $p['width']  ||
+					    ($p['girth'] && $p['length'] < $p['girth']) )
+					{
+						add_settings_error("package_class_elements",
+								"package_class_elements",sprintf(__('Package Class Row %d: "Length", must be the largest dimension!'),$count), 'error');
+						$has_error = true;
+					}
+				}
+	
+				$package_classes[$count++] = $p;
 			}
 
-			$package_classes[$count++] = $p;
+			$input['package_class_elements'] = $package_classes;
 		}
-		
-		$input['package_class_elements'] = $package_classes;
 		
 		
 		// Run module-specific validation
@@ -494,8 +499,21 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 						else {
 							$("#in-store-pickup-text").hide();
 						}
-							
 					});
+
+					// Deselect all selected third party when none is selected
+					$("#third_party_none").click(function(){
+						$(".third_party_chkbx").each(function(){
+							$(this).attr('checked',false);
+							$(".modules").hide();
+						});
+					});
+
+					$("input.third_party_chkbx[type=checkbox]").click(function(){
+						if($(this).is(':checked')) {
+							$("#third_party_none").attr('checked',false);
+						}
+					})
 				});
 			</script>
 			
@@ -511,7 +529,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 		
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
 
-			<form method="post" action="options.php">
+			<form method="post" action="options.php" enctype="multipart/form-data" >
 			<?php settings_fields($this->options_name); ?>
 			<div id="side-info-column" class="inner-sidebar">
 				<div class="meta-box-sortables">
@@ -622,13 +640,19 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 									<em><?php _e('None checked reverts to eShop\'s default settings.',$this->domain); ?></em></p>
 									
 									<table>
+										<?php $checked = (count($opts['third_party']) == 1 && $opts['third_party'][0] == 'on') ? 'checked="checked"' : ''; ?>
+										<tr>
+											<th><?php _e('None',$this->domain);?></th>
+											<td><input type="radio" id="third_party_none" <?php echo $checked; ?> name="<?php echo $this->options_name; ?>[third_party][]" /></td>
+										</tr>
+										
 										<?php foreach ($this->modules as $k => $v) :
 											if ($v->is_postal !== true) continue; // Show mutually exclusive services first
 										
 											$checked = in_array($k,$opts['third_party']) ? 'checked="checked"' : ''; 
 										?>
 										<tr>
-											<th style="width: 150px"><label for="<?php echo "third_party_$k"?>"><?php echo $v->module_name; ?></label></th>
+											<th style="width: 150px"><label for="<?php echo "third_party_$k"?>"><?php echo $v->module_name . ($v->version ? " (v$v->version)" : ''); ?></label></th>
 											<td><input type="radio" class="third_party_chkbx" id="third_party_<?php echo $k?>" value="<?php echo $k; ?>" <?php echo $checked ?> name="<?php echo $this->options_name; ?>[third_party][]" /></td>
 										</tr>
 										<?php endforeach; ?>
@@ -638,7 +662,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 											$checked = in_array($k,$opts['third_party']) ? 'checked="checked"' : ''; 
 										?>
 										<tr>
-											<th style="width: 150px"><label for="<?php echo "third_party_$k"?>"><?php echo $v->module_name; ?></label></th>
+											<th style="width: 150px"><label for="<?php echo "third_party_$k"?>"><?php echo $v->module_name . ($v->version ? " (v$v->version)" : ''); ?></label></th>
 											<td><input type="checkbox" class="third_party_chkbx" id="third_party_<?php echo $k?>" value="<?php echo $k; ?>" <?php echo $checked ?> name="<?php echo $this->options_name; ?>[third_party][]" /></td>
 										</tr>
 										<?php endforeach; ?>
@@ -672,6 +696,8 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 													    'The plugin will then fetch the shipping rates based on the total dimensions of your products, ' .
 													    'as if they were all in one box. Also, make sure to always set the fallback dimensions in the ' . 
 													    'Courier Settings Boxes in case a product is missing a Package Class.',$this->domain);?></p>
+											<p><strong><?php _e('Don\'t forget to assign the package classes to your products in the Product Entry form or you will ' . 
+													            'not be able to make your product available when editing it!',$this->domain); ?></strong></p>
 											<hr />
 											
 											<h4><?php _e('Package Options',$this->domain);?></h4>
@@ -819,7 +845,6 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 															.append($('<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name; ?>[package_class_elements]['+new_rel+'][length]" value="" size="8" /></td>'))
 															.append($('<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name; ?>[package_class_elements]['+new_rel+'][width]" value="" size="8" /></td>'))
 															.append($('<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name; ?>[package_class_elements]['+new_rel+'][height]" value="" size="8" /></td>'))
-															.append($('<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name; ?>[package_class_elements]['+new_rel+'][girth]" value="" size="8" /></td>'))
 															.append($('<td><a href="#" class="del_pack_row" rel="'+new_rel+'" style="color:red"><?php _e('Delete',$this->domain);?></a></td>'));
 
 														last_row.after(data);
@@ -840,7 +865,6 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 														<th style="text-align:center"><?php _e('Length',$this->domain); ?></th>
 														<th style="text-align:center"><?php _e('Width',$this->domain); ?></th>
 														<th style="text-align:center"><?php _e('Height',$this->domain); ?></th>
-														<th style="text-align:center"><?php _e('Girth',$this->domain); ?></th>
 														<th>&nbsp;</th>
 													</tr>
 													<?php $count=0; foreach ($opts['package_class_elements'] as $pe) : $count++; ?>
@@ -850,11 +874,10 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 															<input type="checkbox" class="pack_child" rel="<?php echo $count; ?>" />
 														<?php endif;?>
 														</td>
-														<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name . "[package_class_elements][$count][name]"; ?>" value="<?php echo $pe['name']; ?>" size="20"/></td>
+														<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name . "[package_class_elements][$count][name]"; ?>" value="<?php echo htmlspecialchars($pe['name']); ?>" size="20"/></td>
 														<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name . "[package_class_elements][$count][length]"; ?>" value="<?php echo $pe['length']; ?>" size="8" /></td>
 														<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name . "[package_class_elements][$count][width]"; ?>" value="<?php echo $pe['width']; ?>" size="8" /></td>
 														<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name . "[package_class_elements][$count][height]"; ?>" value="<?php echo $pe['height']; ?>" size="8" /></td>
-														<td><input type="text" class="package_class_elements" name="<?php echo $this->options_name . "[package_class_elements][$count][girth]"; ?>" value="<?php echo $pe['girth']; ?>" size="8" /></td>
 														<td style="color:red">
 														<?php if ($count != 1) :?>
 															<a href="#" class="del_pack_row" rel="<?php echo $count; ?>" style="color:red"><?php _e('Delete',$this->domain);?></a>
@@ -871,8 +894,9 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 														<td colspan="2" style="text-align:right"><a href="#" id="usc_pack_bulk_delete" style="color:red"><?php _e('Bulk Delete',$this->domain); ?></a></td>
 													</tr>
 												</table>
-											</div>
-											
+												</div>
+												<?php // Added filter to show package class admin data ?>
+												<?php echo apply_filters('usc_end_package_class_div',''); ?>											
 											</div>
 										</div>										
 									</div>
