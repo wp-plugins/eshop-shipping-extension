@@ -410,7 +410,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 		
 		$this->admin_notices();
 		?>
-		<?php settings_errors();?>
+		
 		<div class="wrap">
 			<script type="text/javascript">
 				jQuery(document).ready(function($){
