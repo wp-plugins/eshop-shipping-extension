@@ -3,8 +3,8 @@ Contributors: useStrict
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VLQU2MMXKB6S2
 Tags: eShop, Canada Post, USPS, United States Postal Service, UPS, United Parcel Service, Federal Express, Fedex, Correios, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
-Tested up to: 3.4.2
-Stable tag: 2.1.4
+Tested up to: 3.5
+Stable tag: 2.1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,11 @@ Yes! By using the Handling Fee Add-on. You can get it [here](http://usestrict.ne
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+= 2.1.5 =
+* Fixed duplicate admin notices with WP 3.5.
+* Updated screenshot-1
+* Updated css to force float:left and clear:both on View/Update Shipping Options text
+
 = 2.1.4 =
 * Added support for the Handling Fee add-on.
 * A few minor html fixes in the admin screen. 

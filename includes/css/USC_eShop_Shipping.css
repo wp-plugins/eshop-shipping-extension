@@ -44,4 +44,5 @@ div#usc_pickup_text
 
 #usc_update_shipping_options {
     clear:both;
+    float:left;
 }
