@@ -640,7 +640,7 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 									<em><?php _e('None checked reverts to eShop\'s default settings.',$this->domain); ?></em></p>
 									
 									<table>
-										<?php $checked = (count($opts['third_party']) == 1 && $opts['third_party'][0] == 'on') ? 'checked="checked"' : ''; ?>
+										<?php $checked = (count($opts['third_party']) == 1 || $opts['third_party'][0] == 'on') ? 'checked="checked"' : ''; ?>
 										<tr>
 											<th><?php _e('None',$this->domain);?></th>
 											<td><input type="radio" id="third_party_none" <?php echo $checked; ?> name="<?php echo $this->options_name; ?>[third_party][]" /></td>
