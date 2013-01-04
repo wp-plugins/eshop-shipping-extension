@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: eShop, Canada Post, USPS, United States Postal Service, UPS, United Parcel Service, Federal Express, Fedex, Correios, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 2.1.6
+Stable tag: 2.1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,7 @@ This framework includes the Canada Post module for free.
 * [Correios (Brazil) extension](http://usestrict.net/2012/08/modulo-correios-brasil-para-o-eshop-shipping-extension/)
 * [Bulk Package Class Helper](http://usestrict.net/2012/10/bulk-package-class-helper-for-eshop-shipping-extension/)
 * [Handling Fee Add-on](http://usestrict.net/2012/12/handling-fee-add-on-for-eshop-shipping-extension)
+* [Free Shipping Locations Lite (free)](http://usestrict.net/2013/01/eshop-free-shipping-locations-lite/)
 
 Other modules will be made available soon at [UseStrict Consulting](http://usestrict.net)
 
@@ -55,6 +56,18 @@ Find out more [here](http://usestrict.net/2012/10/bulk-package-class-helper-for-
 
 Yes! By using the Handling Fee Add-on. You can get it [here](http://usestrict.net/2012/12/handling-fee-add-on-for-eshop-shipping-extension/).
 
+= I want to offer free Domestic shipping for purchases over a certain amount. How do I do that? =
+
+eShop supports free shipping for purchases of a given total price under Settings->eShop->Discounts. However, you cannot specify the location without installing another of UseStrict's plugins:
+eshop-free-shipping-locations-lite or eshop-free-shipping-locations-pro. The Lite version checks the client's state against the state the admin specified as being eligible for free shipping - regardless of the amount spent.
+The Pro version gives you more flexibility: 
+
+* Select multiple countries/states
+* Specify whether the locations override the price or if both price and location are taken into consideration
+* And more to come
+
+  
+
 == Screenshots ==
 
 1. A few easy settings get you up and running in minutes.
@@ -62,6 +75,9 @@ Yes! By using the Handling Fee Add-on. You can get it [here](http://usestrict.ne
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+= 2.1.7 =
+* Added support for [Free Shipping Locations modules](http://usestrict.net/2013/01/eshop-free-shipping-locations-lite).
+
 = 2.1.6 =
 * Merging errors in 2.1.5 removed the duplicate admin notices fix.
 
