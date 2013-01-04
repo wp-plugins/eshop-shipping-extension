@@ -146,8 +146,12 @@ jQuery(document).ready(function($){
 
 					var attrs = (typeof selected_service !== 'undefined' &&
 								        selected_service == untouched_svc) ? {selected : "selected", value : untouched_svc} : {value : untouched_svc};
-					
-					el.append($('<option/>',attrs).text(svc + ' ('+eShopShippingModule.currency+' ' + data['price'] + ')'));
+
+			       var price = '';
+				   if (data && data.price) {
+					   price = ' ('+eShopShippingModule.currency+' ' + data.price + ')';
+				   }
+				   el.append($('<option/>',attrs).text(svc + price));
 				});
 			}
 
