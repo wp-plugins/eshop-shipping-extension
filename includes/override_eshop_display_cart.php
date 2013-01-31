@@ -277,17 +277,21 @@ class USC_override_eShop_Display_Cart
 							// 							$shipcost=$wpdb->get_var("SELECT $shipzone FROM $table2 where weight <= '$totalweight' && class='$shiparray' and rate_type='ship_weight' order by weight DESC limit 1");
 							
 							
+error_log(__LINE__ . ' HERE!! ' . print_r($shipping,1));							
 							$shipping += $_SESSION['usc_3rd_party_shipping'.$blog_id][$_POST['eshop_shiptype']]['price'];
 							$shipping += apply_filters('usc_calc_additional_services',$_POST['eshop_shiptype'],$_POST['additional_shipping_services']);
 							
 							$_SESSION['eshopshiptype'.$blog_id] = $_POST['eshop_shiptype'];
 							$shiparray = 0;
+error_log(__LINE__ . ' HERE!! ' . print_r($shipping,1));							
 							// End USC Eshop Shipping Modules Customization
 					}
-		
+error_log(__LINE__ . ' HERE!! ' . print_r($shipping,1));		
 					//display shipping cost
 					//discount shipping?
 					if(is_shipfree(calculate_total())  || eshop_only_downloads()) $shipping=0;
+
+error_log(__LINE__ . ' HERE!! ' . print_r(eshop_only_downloads(),1));
 					
 					$echo.= '<tr class="alt shippingrow"><th headers="cartItem'.$iswidget.'" id="scharge" class="leftb">';
 					if($eshopoptions['shipping']=='4' && !eshop_only_downloads() && $shiparray!='0'){
