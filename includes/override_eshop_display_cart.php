@@ -284,10 +284,10 @@ class USC_override_eShop_Display_Cart
 							$shiparray = 0;
 							// End USC Eshop Shipping Modules Customization
 					}
-		
 					//display shipping cost
 					//discount shipping?
 					if(is_shipfree(calculate_total())  || eshop_only_downloads()) $shipping=0;
+
 					
 					$echo.= '<tr class="alt shippingrow"><th headers="cartItem'.$iswidget.'" id="scharge" class="leftb">';
 					if($eshopoptions['shipping']=='4' && !eshop_only_downloads() && $shiparray!='0'){
