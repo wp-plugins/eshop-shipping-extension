@@ -17,7 +17,8 @@ class USC_eShop_Canada_Post extends USC_eShop_Shipping_Extension
 	
 	function __construct()
 	{
-		$this->version = '1.0F';
+		$this->version = '1.1F';
+		add_filter('usc_carrier_service_list',array(&$this,'_get_all_service_names'),10,1);
 	}
 	
 	function USC_eShop_Canada_Post()
@@ -891,6 +892,33 @@ EOF;
 				      'false'				   => __('No', $this->domain));
 		
 		return $msgs;
+	}
+	
+	
+	/**
+	 * @package USC_eShop_Canada_Post
+	 * @method  _get_all_service_names()
+	 * @desc    Returns a list of all service names
+	 * @return  array
+	 */
+	public function _get_all_service_names($list=array())
+	{
+		$list['Canada Post'] = array(
+				'Expedited Parcel',
+				'Expedited Parcel USA',
+				'International Parcel Surface',
+				'Priority',
+				"Priority Worldwide envelope INT'L",
+				'Priority Worldwide envelope USA',
+				"Priority Worldwide pak INT'L",
+				'Priority Worldwide pak USA',
+				'Regular Parcel',
+				'Xpresspost',
+				"Xpresspost International",
+				'Xpresspost USA',
+		);
+		
+		return $list;
 	}
 	
 }
