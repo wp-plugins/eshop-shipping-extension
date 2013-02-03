@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: eShop, Canada Post, USPS, United States Postal Service, UPS, United Parcel Service, Federal Express, Fedex, Correios, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 2.1.8
+Stable tag: 2.1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,7 +59,7 @@ Yes! By using the Handling Fee Add-on. You can get it [here](http://usestrict.ne
 = I want to offer free Domestic shipping for purchases over a certain amount. How do I do that? =
 
 eShop supports free shipping for purchases of a given total price under Settings->eShop->Discounts. However, you cannot specify the location without installing another of UseStrict's plugins:
-eshop-free-shipping-locations-lite or eshop-free-shipping-locations-pro. The Lite version checks the client's state against the state the admin specified as being eligible for free shipping - regardless of the amount spent.
+[eshop-free-shipping-locations-lite](http://wordpress.org/extend/plugins/eshop-free-shipping-locations-lite/) or eshop-free-shipping-locations-pro (coming soon). The Lite version checks the client's state against the state the admin specified as being eligible for free shipping - regardless of the amount spent.
 The Pro version gives you more flexibility: 
 
 * Select multiple countries/states
@@ -75,6 +75,9 @@ The Pro version gives you more flexibility:
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+= 2.1.9 =
+* Added filter for Canada Post to work with Custom Handling fee add-on v2.0. 
+
 = 2.1.8 = 
 * Changed logic to identify if eShop is installed. Thanks Nicolaus Sommer.
 
