@@ -57,9 +57,15 @@ class USC_override_eShop_Display_Cart
 				
 			$echo .= '<th id="cartTotal'.$iswidget.'" class="btbr">'.$totalstring.'</th>';
 			$etax = $eshopoptions['etax'];
+			
+			$usc_do_alt_display = 1; //has_filter('usc_eshop_alternate_tax_display');
+			
 			if(($pzone!='' && isset($eshopoptions['tax']) && $eshopoptions['tax']=='1')|| ('yes' == $eshopoptions['downloads_only'] && isset($etax['unknown']) && $etax['unknown']!='')){
-				$echo .= '<th id="carttax" class="bt">'.__('Tax %','eshop').'</th>
-				<th id="carttaxamt" class="btbr">'.__('Tax Amt','eshop').'</th>';
+				if (! $usc_do_alt_display)
+				{
+					$echo .= '<th id="carttax" class="bt">'.__('Tax %','eshop').'</th>
+					<th id="carttaxamt" class="btbr">'.__('Tax Amt','eshop').'</th>';
+				}
 			}
 			if($iswidget=='' && $change == 'true'){
 				$eshopdeleteheaderimage=apply_filters('eshop_delete_header_image',WP_PLUGIN_URL.'/eshop/no.png');
@@ -162,12 +168,19 @@ class USC_override_eShop_Display_Cart
 							if(isset($disc_line))
 								$ttotax=$disc_line * $opt["qty"];
 							$taxamt=round(($ttotax * $taxrate)/100, 2);
-							$echo.= '<td>'.$taxrate.'</td><td>'.sprintf( __('%1$s%2$s','eshop'), $currsymbol, number_format_i18n($taxamt,__('2','eshop'))).'</td>';
+							
+							if (! $usc_do_alt_display)
+							{
+								$echo.= '<td>'.$taxrate.'</td><td>'.sprintf( __('%1$s%2$s','eshop'), $currsymbol, number_format_i18n($taxamt,__('2','eshop'))).'</td>';
+							}
 							$taxtotal += $taxamt;
 							$_SESSION['eshopcart'.$blog_id][$productid]['tax_rate']=$taxrate;
 							$_SESSION['eshopcart'.$blog_id][$productid]['tax_amt']=$taxamt;
 						}else{
-							$echo.= '<td></td><td></td>';
+							if  (! $usc_do_alt_display)
+							{
+								$echo.= '<td></td><td></td>';
+							}
 						}
 		
 					}
@@ -199,7 +212,10 @@ class USC_override_eShop_Display_Cart
 				$emptycell='';
 		
 			if(($pzone!='' && isset($taxtotal) && isset($eshopoptions['tax']) && $eshopoptions['tax']=='1') || ('yes' == $eshopoptions['downloads_only'] && isset($etax['unknown']) && $etax['unknown']!='')){
-				$emptycell='<td headers="subtotal carttaxamt" class="amts lb" colspan="2">'.sprintf( __('%1$s%2$s','eshop'), $currsymbol, number_format_i18n($taxtotal,__('2','eshop'))).'</td>';
+				if (! $usc_do_alt_display)
+				{
+					$emptycell='<td headers="subtotal carttaxamt" class="amts lb" colspan="2">'.sprintf( __('%1$s%2$s','eshop'), $currsymbol, number_format_i18n($taxtotal,__('2','eshop'))).'</td>';
+				}
 			}
 			$echo.= "<tr class=\"stotal\"><th id=\"subtotal$iswidget\" class=\"leftb\">".__('Sub-Total','eshop').' '.$disc_applied."</th><td headers=\"subtotal$iswidget cartTotal$iswidget\" class=\"amts lb\" colspan=\"2\">".sprintf( __('%1$s%2$s','eshop'), $currsymbol, number_format_i18n($sub_total,__('2','eshop')))."</td>$emptycell</tr>\n";
 		
@@ -312,7 +328,12 @@ class USC_override_eShop_Display_Cart
 						$taxtext = '';
 						if($taxamt > '0.00')
 							$taxtext = sprintf( __('%1$s%2$s','eshop'), $currsymbol, number_format_i18n($taxamt,__('2','eshop')));
-						$echo.= '<td>'.$taxrate.'</td><td>'.$taxtext.'</td>';
+						
+						if (! $usc_do_alt_display)
+						{
+							$echo.= '<td class="a">'.$taxrate.'</td><td class="b">'.$taxtext.'</td>';
+						}
+						
 						$shiptax=$taxamt;
 						$_SESSION['shipping'.$blog_id]['tax']=$shiptax;
 						$_SESSION['shipping'.$blog_id]['taxrate']=$taxrate;
@@ -322,6 +343,13 @@ class USC_override_eShop_Display_Cart
 					$_SESSION['shipping'.$blog_id]['cost']=$shipping;
 					$final_price=$sub_total+$shipping;
 					$_SESSION['final_price'.$blog_id]=$final_price;
+					
+					if ($usc_do_alt_display && $pzone!='' && isset($taxtotal) && isset($eshopoptions['tax']) && $eshopoptions['tax']=='1')
+					{
+						$echo .= '<tr class="stotal"><th class="leftb">' . __('Tax','eshop') . '</th>';
+						$echo .= '<td>' . $_SESSION['eshopcart'.$blog_id][$productid]['tax_rate'] . '%</td>';
+						$echo.= '<td headers="taxtotal" class="taxttotal amts lb" colspan="2"><strong>'.sprintf( __('%1$s%2$s','eshop'), $currsymbol, number_format_i18n($taxtotal,__('2','eshop'))).'</td>';
+					}
 				}
 				$excltax = '';
 				if(isset($taxtotal) && isset($eshopoptions['tax']) && $eshopoptions['tax']=='1'){
@@ -336,7 +364,11 @@ class USC_override_eShop_Display_Cart
 					$withtax = $final_price + $taxtotal;
 				}
 				if(isset($eshopoptions['tax']) && $eshopoptions['tax']=='1'){
-					$echo.= '<td headers="taxtotal" class="taxttotal amts lb" colspan="2"><strong>'.sprintf( __('%1$s%2$s <span>%3$s</span>','eshop'), $currsymbol, number_format_i18n($withtax,__('2','eshop')), __('(incl.tax)','eshop')).'</strong></td>';
+					
+					if (! $usc_do_alt_display)
+					{
+						$echo.= '<td headers="taxtotal" class="taxttotal amts lb" colspan="2"><strong>'.sprintf( __('%1$s%2$s <span>%3$s</span>','eshop'), $currsymbol, number_format_i18n($withtax,__('2','eshop')), __('(incl.tax)','eshop')).'</strong></td>';
+					}
 				}
 				$echo .= "</tr>";
 			}
