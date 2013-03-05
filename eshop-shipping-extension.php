@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS, USPS, and Correios. Correios, UPS, and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       2.1.9
+* Version:       2.1.10
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1.9');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1.10');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -68,7 +68,7 @@ class USC_eShop_Shipping_Extension
 		wp_enqueue_script( $this->domain, ESHOP_SHIPPING_EXTENSION_MODULES_URL . '/../eshop_shipping_extension.js', array( 'jquery' ),  ESHOP_SHIPPING_EXTENSION_VERSION);
 		
 		// Add the filter to update the cart form with the shipping fields
-		add_filter('usc_add_shipping_fields', array(&$this,'add_shipping_fields'), 10, 2);
+		add_filter('usc_add_shipping_fields', array(&$this,'add_shipping_fields'), 10, 3);
 		
 		// Add the filter to show the shipping selection in the order
 		add_filter('usc_shipping_info_for_orders', array(&$this, 'shipping_info_for_orders'), 10, 0);
@@ -209,9 +209,18 @@ class USC_eShop_Shipping_Extension
 	 */
 	function get_eshop_options($force_reload=false)
 	{
+		global $eshopoptions;
+		
 		if (! $this->eshop_options || $force_reload === true)
 		{
-			$this->eshop_options = get_option('eshop_plugin_settings');
+			if (! empty($eshopoptions))
+			{
+				$this->eshop_options = $eshopoptions;
+			}
+			else
+			{
+				$this->eshop_options = get_option('eshop_plugin_settings');
+			}
 		}
 		
 		return $this->eshop_options;
@@ -350,9 +359,14 @@ class USC_eShop_Shipping_Extension
 	 * @param string $form_html
 	 * @param array $reqdarray
 	 */
-	function add_shipping_fields($form_html,$reqdarray)
+	function add_shipping_fields($form_html, $reqdarray, $position = 'under_shipping')
 	{
-		global $blog_id;
+		global $blog_id, $eshopoptions;
+		
+		if ($position != 'under_shipping' && $eshopoptions['hide_shipping'] != 'yes')
+		{
+			return $form_html;
+		}
 		
 		$free_shipping_applies = is_shipfree(calculate_total());
 		

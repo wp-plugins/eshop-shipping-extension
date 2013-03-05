@@ -230,6 +230,8 @@ class USC_override_eShop_showform
 		
 		$echo = apply_filters('eshopaddtocheckout',$echo);
 		
+		$echo = apply_filters('usc_add_shipping_fields',$echo,$reqdarray,'under_mailing');
+		
 		if('yes' != $eshopoptions['hide_addinfo']){
 			$echo .= '<fieldset class="eshop fld3">
 			<legend>'.__('Additional information','eshop').'</legend>
@@ -299,7 +301,7 @@ class USC_override_eShop_showform
 				$echo.= "</select></span>";
 				$echo .='</fieldset>';
 				
-				$echo = apply_filters('usc_add_shipping_fields',$echo,$reqdarray);
+				$echo = apply_filters('usc_add_shipping_fields',$echo,$reqdarray,'under_shipping');
 				
 			}
 		}
