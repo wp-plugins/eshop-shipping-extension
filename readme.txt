@@ -3,8 +3,8 @@ Contributors: useStrict
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VLQU2MMXKB6S2
 Tags: eShop, Canada Post, USPS, United States Postal Service, UPS, United Parcel Service, Federal Express, Fedex, Correios, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
-Tested up to: 3.5
-Stable tag: 2.1.10
+Tested up to: 3.5.1
+Stable tag: 2.1.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,9 @@ The Pro version gives you more flexibility:
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+= 2.1.11 =
+* Added get_options filter.
+
 = 2.1.10 =
 * Showing shipping fieldset even if shipping fields were hidden.
 

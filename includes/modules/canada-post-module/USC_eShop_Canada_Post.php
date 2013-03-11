@@ -518,6 +518,10 @@ EOF;
 					$post_id = $val['postid'];
 					$qty     = $val['qty']; 
 					
+					$is_free = apply_filters('usc_ese_is_free_class', false, $post_id);
+					
+					if ($is_free === true) continue;
+					
 					$prod_meta = maybe_unserialize(get_post_meta($post_id,'_eshop_product', TRUE));
 					
 					if (! $prod_meta['sel_package_class'])
@@ -564,6 +568,10 @@ EOF;
 					$post_id = $val['postid'];
 					$qty     = $val['qty'];
 				
+					$is_free = apply_filters('usc_ese_is_free_class', false, $post_id, $val['option']);
+					
+					if ($is_free === true) continue;
+
 					$prod_meta = maybe_unserialize(get_post_meta($post_id,'_eshop_product', TRUE));
 				
 					if (! $prod_meta['products'][$val['option']]['sel_package_class'])
