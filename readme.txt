@@ -25,6 +25,7 @@ This framework includes the Canada Post module for free.
 * [Bulk Package Class Helper](http://usestrict.net/2012/10/bulk-package-class-helper-for-eshop-shipping-extension/)
 * [Handling Fee Add-on](http://usestrict.net/2012/12/handling-fee-add-on-for-eshop-shipping-extension)
 * [Free Shipping Locations Lite (free)](http://usestrict.net/2013/01/eshop-free-shipping-locations-lite/)
+* [Per Product Stock Control](http://usestrict.net/2013/03/eshop-per-product-stock-control/)
 
 Other modules will be made available soon at [UseStrict Consulting](http://usestrict.net)
 
