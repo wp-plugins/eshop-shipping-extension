@@ -57,6 +57,7 @@ class USC_override_eShop_Display_Cart
 				
 			$echo .= '<th id="cartTotal'.$iswidget.'" class="btbr">'.$totalstring.'</th>';
 			$etax = $eshopoptions['etax'];
+						
 			if(($pzone!='' && isset($eshopoptions['tax']) && $eshopoptions['tax']=='1')|| ('yes' == $eshopoptions['downloads_only'] && isset($etax['unknown']) && $etax['unknown']!='')){
 				$echo .= '<th id="carttax" class="bt">'.__('Tax %','eshop').'</th>
 				<th id="carttaxamt" class="btbr">'.__('Tax Amt','eshop').'</th>';
@@ -152,7 +153,7 @@ class USC_override_eShop_Display_Cart
 						
 					//TAX
 					$etax = $eshopoptions['etax'];
-					if(($pzone!='' && isset($eshopoptions['tax']) && $eshopoptions['tax']=='1') || ('yes' == $eshopoptions['downloads_only'] && isset($etax['unknown']) && $etax['unknown']!='')){
+					if(($pzone!='' && isset($eshopoptions['tax']) && $eshopoptions['tax']=='1') || ('yes' == $eshopoptions['downloads_only'] && isset($etax['unknown']) && $etax['unknown']!='')){						
 						if(isset($eshop_product['products'][$opt['option']]['tax']) && $eshop_product['products'][$opt['option']]['tax']!='' && $eshop_product['products'][$opt['option']]['tax']!='0'){
 							if($pzone!='')
 								$taxrate=eshop_get_tax_rate($eshop_product['products'][$opt['option']]['tax'], $pzone);
