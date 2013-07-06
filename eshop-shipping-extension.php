@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS, USPS, and Correios. Correios, UPS, and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       2.1.11
+* Version:       2.1.12
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1.11');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1.12');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -804,6 +804,8 @@ class USC_eShop_Shipping_Extension
 	 */
 	function convert_currency($from_curr, $from_value)
 	{
+		global $wp_locale;
+		
 		$eshop_opts = $this->get_eshop_options();
 		$to_curr    = $eshop_opts['currency'];
 		$from_value = str_replace(',', '.', $from_value);
@@ -815,14 +817,18 @@ class USC_eShop_Shipping_Extension
 		$url = "http://www.google.com/ig/calculator?hl=en&q=${from_value}${from_curr}%3D%3F${to_curr}";
 		
 		// Can't use json_decode here because of PHP bug with unquoted keys
-		$out = file_get_contents($url);
-		
-		preg_match('/rhs:\s*"([\d\.]+).*?"/',$out,$matches);
+		$out = wp_remote_get($url);
+		if (is_wp_error($out) )
+			return $from_value;
+
+		preg_match('/rhs:\s*"([^ ]+)/',$out['body'],$matches);
 		
 		if (! isset($matches[1])) return $from_value;
 		
-		$conv = number_format($matches[1],2);
+		$value = preg_replace('/\xa0/i','',$matches[1]); // remove pesky hex characters from the number, e.g. 2\xa0345.67.
 		
+		$conv = number_format($value,2,$wp_locale->number_format['decimal_point'],'');
+
 		return $conv;
 	}
 	
