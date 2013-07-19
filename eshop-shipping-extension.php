@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS, USPS, and Correios. Correios, UPS, and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       2.1.12
+* Version:       2.1.13
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -26,7 +26,7 @@ define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1.12');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1.13');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -269,7 +269,11 @@ class USC_eShop_Shipping_Extension
 		
 		header("Content-type: application/json");
 		
-		if (is_shipfree(calculate_total()))
+		// Allow blacklisting of service
+		$blacklist = apply_filters('usc_ese_blacklist', array());
+		
+		if ( (! isset($blacklist['free_shipping']) || ! $blacklist['free_shipping']) 
+			 && is_shipfree(calculate_total()))
 		{
 			$service_info = array();
 			$service_name = __('Your purchase is eligible for free shipping.',$this->domain);
@@ -289,8 +293,12 @@ class USC_eShop_Shipping_Extension
 			exit; // WP requirement for ajax-related methods
 		}
 		
+		
 		foreach ($this->active_modules as $mod)
 		{
+			if (isset($blacklist[$mod->module_name]) && $blacklist[$mod->module_name])
+				continue;
+			
 			$out[$mod->module_name] = $mod->get_rates($_REQUEST);
 			
 			if ($out[$mod->module_name]['success'] == false)
