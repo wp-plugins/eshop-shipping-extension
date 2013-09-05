@@ -422,7 +422,7 @@ jQuery(document).ready(function($){
 	};
 	
 	
-	if ($.fn.jquery >= 1.7) {
+	if (($.fn.jquery + '') >= '1.7') {
 		
 		$("#usc_shipping_services").on("change", function(){
 			eShopShippingModule.create_details_html();
