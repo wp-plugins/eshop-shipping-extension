@@ -422,9 +422,9 @@ jQuery(document).ready(function($){
 	};
 	
 	
-	if (typeof $.fn.on !== 'undefined') {
+	if (typeof $.fn.on == 'function') {
 		
-		$("#usc_shipping_services").on("change", function(){
+		$(document).on("change", '#usc_shipping_services', function(){
 			eShopShippingModule.create_details_html();
 		});
 	}
