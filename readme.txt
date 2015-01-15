@@ -3,8 +3,8 @@ Contributors: useStrict
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VLQU2MMXKB6S2
 Tags: eShop, Canada Post, USPS, United States Postal Service, UPS, United Parcel Service, Federal Express, Fedex, Correios, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
-Tested up to: 4.0
-Stable tag: 2.1.16
+Tested up to: 4.1
+Stable tag: 2.1.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,6 +76,9 @@ The Pro version gives you more flexibility:
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+= 2.1.17 =
+* Added: filter usc_ese_filter_services_array to manipulate services (sort, change names, whatever you want to do).
+
 = 2.1.16 =
 * Fixed: using delegation for jQuery.on().
 

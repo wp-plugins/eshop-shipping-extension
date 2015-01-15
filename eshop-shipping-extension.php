@@ -3,7 +3,7 @@
 * Plugin Name:   eShop Shipping Extension
 * Plugin URI:	 http://usestrict.net/2012/06/eshop-shipping-extension-for-wordpress-canada-post/
 * Description:   eShop extension to use third-party shipping services. Currently supports Canada Post, UPS, USPS, and Correios. Correios, UPS, and USPS modules can be purchased at http://goo.gl/rkmu0
-* Version:       2.1.16
+* Version:       2.1.17
 * Author:        Vinny Alves
 * Author URI:    http://www.usestrict.net
 *
@@ -20,13 +20,13 @@
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 *
-* Copyright (C) 2012 www.usestrict.net, released under the GNU General Public License.
+* Copyright (C) 2012-2015 www.usestrict.net, released under the GNU General Public License.
 */
 define('ESHOP_SHIPPING_EXTENSION_ABSPATH', plugin_dir_path(__FILE__));
 define('ESHOP_SHIPPING_EXTENSION_INCLUDES', ESHOP_SHIPPING_EXTENSION_ABSPATH . '/includes');
 define('ESHOP_SHIPPING_EXTENSION_MODULES', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/modules');
 define('ESHOP_SHIPPING_EXTENSION_THIRD_PARTY', ESHOP_SHIPPING_EXTENSION_INCLUDES . '/third-party');
-define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1.16');
+define('ESHOP_SHIPPING_EXTENSION_VERSION', '2.1.17');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN', 'eshop-shipping-extension');
 define('ESHOP_SHIPPING_EXTENSION_DOMAIN_CSS_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/css'));
 define('ESHOP_SHIPPING_EXTENSION_MODULES_URL',plugins_url( ESHOP_SHIPPING_EXTENSION_DOMAIN . '/includes/modules'));
@@ -305,9 +305,15 @@ class USC_eShop_Shipping_Extension
 			{
 				error_log("Error getting rates for " . get_class($mod) . ": " . print_r($out,1));
 			}
+			
+			$out = apply_filters( 'usc_ese_filter_rates', $out );
 		}
 
+		// The filter below is wrong, but we need to keep backwards compatibility, so let's call it again, right.
 		if (has_filter('usc_do_handling'))	$out = apply_filters('usc_do_handling', $opts, $out);
+		
+		// Allow for sorting, price manipulation, etc.
+		$out = apply_filters('usc_ese_filter_services_array', $out, $opts );
 		
 		if ($opts['in_store_pickup'])
 		{
