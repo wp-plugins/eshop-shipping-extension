@@ -84,35 +84,10 @@ jQuery(document).ready(function($){
 	};
 	
 	/**
-	 * @package  eShopShippingModule
-	 * @function create_shipping_html()
-	 * @desc     Creates the actual HTML for shipping
-	 * @param    object ajax_response
+	 * Creates the service drop-down html
 	 */
-	eShopShippingModule.create_shipping_html = function(data_to_process, reload, callback) {
-
-		var count = 0, 
-			is_multi_carrier = false,
-			ajax_response, selected_service;
+	var build_svc_dropdown = function(ajax_response, is_multi_carrier){
 		
-		eShopShippingModule.details  = {}; // Reset details
-		eShopShippingModule.services = {}; // Reset services
-
-		if (reload) {
-			ajax_response = data_to_process[1];
-			selected_service = data_to_process[0].selected_service;
-		}
-		else {
-			ajax_response = data_to_process;
-		}
-		
-		for (i in ajax_response) {
-			if (ajax_response.hasOwnProperty(i)) count++;
-		}
-
-		if (count > 1) is_multi_carrier = true; // There's more than one carrier, set up
-		
-		// Set up the select object
 		$("#usc_shipping_options").html("<select id=\"usc_shipping_services\" name=\"eshop_shiptype\"></select>");
 		
 		$.each(ajax_response,function(key,val) {
@@ -159,7 +134,105 @@ jQuery(document).ready(function($){
 				$("#usc_shipping_services").append(el);
 			}
 		});
+	};
+	
+	
+	/**
+	 * Creates the service radio-list html
+	 */
+	var build_svc_radio_list = function(ajax_response, is_multi_carrier) {
 		
+		var list_div = $("<div/>", {id:'usc_shipping_services'});
+		
+		$.each(ajax_response,function(key,val) {
+			
+			var carrier_div  = $("#carrier-" + key, list_div);
+			var carrier_html =  is_multi_carrier ? "<strong>" + key + "</strong><br><ul>" : "<ul>";
+			
+			if ( ! $(carrier_div).length ) {
+				carrier_div = $("<div/>", {id: 'carrier-' + key});
+				$(list_div).append(carrier_div);
+			}
+			
+			if ( val.success === false ) {
+				carrier_html += "<li>" + val.msgs.join("; ") + "</li>";
+			}
+			else {
+				
+				var ul = $("<ul/>");
+				
+				$.each( val.data, function(svc, data) {
+					
+					var re = new RegExp(key + ' - '),
+				    	untouched_svc = svc,
+				    	li    = $("<li/>"),
+					    label = $("<label/>"),
+					    input = $("<input/>", {type: 'radio', value: untouched_svc, name: 'eshop_shiptype'});
+				
+					svc = svc.replace(re, '');
+					
+					eShopShippingModule.details[untouched_svc]  = data['details'];  // Populate details object
+					eShopShippingModule.services[untouched_svc] = data['services']; // Populate services object
+					
+					var price = '';
+				    if (data && data.price) {
+				    	price = ' ( '+eShopShippingModule.currency+' ' + data.price + ' )';
+				    }
+					
+					$(label).append(input).append(' ').append(svc).append(price);
+					$(li).append(label);
+					$(ul).append(li);
+				});
+				
+				carrier_html += $(ul).html();
+			}
+
+			carrier_html += "</ul>";
+			
+			$(carrier_div).append(carrier_html);
+			$(list_div).append(carrier_div);
+			$("#usc_shipping_options").append(list_div);
+		});
+	};
+	
+	
+	/**
+	 * @package  eShopShippingModule
+	 * @function create_shipping_html()
+	 * @desc     Creates the actual HTML for shipping
+	 * @param    object ajax_response
+	 */
+	eShopShippingModule.create_shipping_html = function(data_to_process, reload, callback) {
+
+		var count = 0, 
+			is_multi_carrier = false,
+			ajax_response, selected_service;
+		
+		eShopShippingModule.details  = {}; // Reset details
+		eShopShippingModule.services = {}; // Reset services
+
+		if (reload) {
+			ajax_response = data_to_process[1];
+			selected_service = data_to_process[0].selected_service;
+		}
+		else {
+			ajax_response = data_to_process;
+		}
+		
+		for (i in ajax_response) {
+			if (ajax_response.hasOwnProperty(i)) count++;
+		}
+
+		if (count > 1) is_multi_carrier = true; // There's more than one carrier, set up
+		
+		// Set up the select object
+		if ( 'as-dropdown' === eShopShippingModule.svc_display_pref ) {
+			build_svc_dropdown(ajax_response, is_multi_carrier);
+		}
+		else {
+			build_svc_radio_list(ajax_response, is_multi_carrier);
+		}
+			
 		// Create details HTML for the selected option
 		eShopShippingModule.create_details_html(callback);
 	};
@@ -173,9 +246,9 @@ jQuery(document).ready(function($){
 	 */
 	eShopShippingModule.create_details_html = function (callback) {
 		
-		var sel_option = $("#usc_shipping_services :selected").val(),
+		var sel_option = 'as-dropdown' === eShopShippingModule.svc_display_pref ? $("#usc_shipping_services :selected").val() : $("#usc_shipping_services :checked").val(),
 	    dls, dld, pickup;
-	
+		
 		// Reset the HTML div
 		$("#usc_shipping_details").html('');
 	

@@ -898,8 +898,27 @@ class USC_eShop_Shipping_Extension_Admin extends USC_eShop_Shipping_Extension
 												<?php // Added filter to show package class admin data ?>
 												<?php echo apply_filters('usc_end_package_class_div',''); ?>											
 											</div>
-										</div>										
+										</div>
 									</div>
+									
+									<hr />
+									
+									<?php if ( ! isset($opts['display_format']) ) $opts['display_format'] = 'as-dropdown'; ?>
+									
+									<p>
+										<strong><?php _e('Shipping Service Display:', $this->domain); ?></strong><br /><br />
+										<?php _e('When displaying the list of available shipping services to the visitor, display them...', $this->domain); ?><br><br>
+									<label><input type="radio" id="as-dropdown" name="<?php echo $this->options_name; ?>[display_format]" value="as-dropdown"
+										<?php echo checked($opts['display_format'], 'as-dropdown') ; ?>
+									 /> <?php _e('As Drop-down')?></label><br>
+									 <label><input type="radio" id="as-radio-list" name="<?php echo $this->options_name; ?>[display_format]" value="as-radio-list"
+										<?php echo checked($opts['display_format'], 'as-radio-list') ; ?>
+									 /> <?php _e('As List of Radio Buttons')?></label>
+									 
+									 </p>
+									 
+									 <hr>
+									
 								</div>
 								
 							</div>
