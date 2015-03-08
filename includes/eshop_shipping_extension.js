@@ -15,26 +15,26 @@ jQuery(document).ready(function($){
 	 * @desc      Wrapper for get_rates
 	 * @param     bool from_button 
 	 */
-	eShopShippingModule.call_get_rates = function(callback){
+	eShopShippingModule.call_get_rates = function(callback, fields){
 		
 		var validated_fields,
 			country,
-			fields = {address1 : $("#address1").val(), 
-					  address2 : $("#address2").val(), 
-					  city     : $("#city").val(), 
-					  altstate : $("#altstate").val(), 
-					  state    : $("#state").val(), 
-					  zip      : $("#zip").val(), 
-					  weight   : $("#cart_weight").val(),
-					  country  : $("#country").val(),
-					  shipcountry  : $("#shipcountry").val(),
-					  ship_address : $("#ship_address").val(), 
-					  ship_city    : $("#ship_city").val(), 
-					  ship_state   : $("#ship_state").val(), 
-					  ship_altstate : $("#ship_altstate").val(), 
-					  ship_postcode : $("#ship_postcode").val(),
-					  amount        : $("input[name=amount]").val()
-					  };
+			fields = fields || {  address1 : $("#address1").val(), 
+								  address2 : $("#address2").val(), 
+								  city     : $("#city").val(), 
+								  altstate : $("#altstate").val(), 
+								  state    : $("#state").val(), 
+								  zip      : $("#zip").val(), 
+								  weight   : $("#cart_weight").val(),
+								  country  : $("#country").val(),
+								  shipcountry  : $("#shipcountry").val(),
+								  ship_address : $("#ship_address").val(), 
+								  ship_city    : $("#ship_city").val(), 
+								  ship_state   : $("#ship_state").val(), 
+								  ship_altstate : $("#ship_altstate").val(), 
+								  ship_postcode : $("#ship_postcode").val(),
+								  amount        : $("input[name=amount]").val()
+								  };
 		
 		for (i in fields) {
 			fields[i] = $.trim(fields[i]); 
@@ -356,41 +356,53 @@ jQuery(document).ready(function($){
 	    name,errors   = [];
 	
 	
-	if (fields.ship_name) {
-		name = fields.ship_name;
-	}
-	else {
-		fields.first_name = typeof fields.first_name != 'undefined' ? fields.first_name : '';
-		fields.last_name  = typeof fields.last_name != 'undefined' ? fields.last_name : '';
-		name = fields.first_name + ' ' + fields.last_name;
-	}
-	
-	if (fields.weight != parseFloat(fields.weight)) {
-			errors.push(eShopShippingModule.lang.invalid_weight + ' "' + fields.weight + '"');
-	}
-	
-	// Errors are handled by the caller
-	if (errors.length > 0) {
-		return {
-			success : false,
-			msgs : errors
-		};
-	}
+		if (fields.ship_name) {
+			name = fields.ship_name;
+		}
+		else {
+			fields.first_name = typeof fields.first_name != 'undefined' ? fields.first_name : '';
+			fields.last_name  = typeof fields.last_name != 'undefined' ? fields.last_name : '';
+			name = fields.first_name + ' ' + fields.last_name;
+		}
 		
-	
-	return { 
-		success : true,
-		data : { city   : city,
-				 state  : state,
-				 country: country,
-				 weight : fields.weight,
-				 zip    : zip,
-				 address: address,
-				 name   : name,
-				 phone  : phone,
-				 amount : fields.amount
-			   }
-	};
+		if (fields.weight != parseFloat(fields.weight)) {
+				errors.push(eShopShippingModule.lang.invalid_weight + ' "' + fields.weight + '"');
+		}
+		
+		// Errors are handled by the caller
+		if (errors.length > 0) {
+			return {
+				success : false,
+				msgs : errors
+			};
+		}
+			
+		
+		var data = { city   : city,
+			 state  : state,
+			 country: country,
+			 weight : fields.weight,
+			 zip    : zip,
+			 address: address,
+			 name   : name,
+			 phone  : phone,
+			 amount : fields.amount
+		   };
+		
+		if ( fields.height )
+			data.height = fields.height;
+		
+		if ( fields.width )
+			data.width = fields.width;
+		
+		if ( fields.length )
+			data.length = fields.length;
+		
+		
+		return { 
+			success : true,
+			data: data
+		};
 		
 	};
 	
