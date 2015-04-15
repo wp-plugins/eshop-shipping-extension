@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: eShop, Canada Post, USPS, United States Postal Service, UPS, United Parcel Service, Federal Express, Fedex, Correios, Shipping Extension, Third Party Shipping, Shipping Quotes
 Requires at least: 3.0
 Tested up to: 4.1.1
-Stable tag: 2.3.1
+Stable tag: 2.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,6 +76,9 @@ The Pro version gives you more flexibility:
 1. The shipping mode selected is displayed next to the Shipping item in the order form, so you know what kind of service your client selected. 
 
 == Changelog ==
+= 2.3.2 = 
+* Remove schema from ajaxurl. In an edge case, somehting was returning the wrong-schema, so use schema-less for all.
+
 = 2.3.1 =
 * Fix premature loading of pluggable.php, which was breaking User Switching functionality offered by the plugin with the same name.
 
